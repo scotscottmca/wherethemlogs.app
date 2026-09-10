@@ -1,0 +1,93 @@
+{
+  "vendors": [
+    {
+      "name": "2BrightSparks",
+      "icon": "https://www.2brightsparks.com/favicon.ico",
+      "apps": [
+        {
+          "name": "SyncBackFree",
+          "documentation": "https://www.2brightsparks.com/assets/pdf/SyncBackFree.pdf",
+          "logs": [
+            "%APPDATA%\\2BrightSparks\\SyncBackFree\\Logs",
+            "%TEMP%\\SyncBackFree.log"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3CX Ltd.",
+      "icon": "https://www.3cx.com/favicon.ico",
+      "apps": [
+        {
+          "name": "3CX Call Flow Designer (EXE-x64)",
+          "documentation": "https://www.3cx.com/docs/manual/",
+          "logs": [
+            "%APPDATA%\\3CX\\CallFlowDesigner\\Logs",
+            "C:\\ProgramData\\3CX\\CallFlowDesigner\\Logs"
+          ]
+        },
+        {
+          "name": "3CX Phone System Latest (EXE)",
+          "documentation": "https://www.3cx.com/docs/manual/",
+          "logs": [
+            "C:\\Program Files\\3CX Phone System\\Logs",
+            "C:\\ProgramData\\3CX Phone System\\Logs",
+            "/var/log/3cxphonesystem/"
+          ]
+        },
+        {
+          "name": "3CXPhone for Windows (MSI-x86)",
+          "documentation": "https://www.3cx.com/docs/manual/",
+          "logs": [
+            "%APPDATA%\\3CX\\Phone\\Logs",
+            "%LOCALAPPDATA%\\3CX\\Phone\\Logs"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3d-io GmbH",
+      "icon": "https://www.exr-io.com/favicon.ico",
+      "apps": [
+        {
+          "name": "Exr-IO (EXE)",
+          "documentation": "http://www.exr-io.com",
+          "logs": [
+            "%APPDATA%\\3D-IO\\Exr-IO\\Logs",
+            "%TEMP%\\Exr-IO_debug.log"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3Dconnexion",
+      "icon": "https://3dconnexion.com/favicon.ico",
+      "apps": [
+        {
+          "name": "3Dconnexion 3DxWare 10 (EXE-x64)",
+          "documentation": "https://3dconnexion.com/support/",
+          "logs": [
+            "C:\\Program Files\\3Dconnexion\\3DxWare\\Logs",
+            "%PROGRAMDATA%\\3Dconnexion\\3DxWare\\Logs",
+            "%APPDATA%\\3Dconnexion\\3DxWare\\3DxWare.log"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3Dflow srl",
+      "icon": "https://www.3dflow.net/favicon.ico",
+      "apps": [
+        {
+          "name": "3DF Zephyr Free (EXE-x64)",
+          "documentation": "https://www.3dflow.net/support/",
+          "logs": [
+            "%APPDATA%\\3Dflow\\Zephyr\\Logs",
+            "%LOCALAPPDATA%\\3Dflow\\Zephyr\\logs.txt",
+            "C:\\Users\\[username]\\AppData\\Roaming\\3Dflow\\Zephyr\\Logs"
+          ]
+        }
+      ]
+    }
+  ]
+}

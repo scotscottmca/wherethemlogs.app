@@ -50,25 +50,71 @@ if (dryRun) {
 const client = new CosmosClient({ endpoint, aadCredentials: new DefaultAzureCredential() });
 const db = client.database(databaseName);
 
-let written = 0;
-for (const vendor of seed.vendors) {
-  await db.container("vendors").items.upsert({
-    ...vendor,
-    createdAt: vendor.createdAt ?? now,
-    updatedAt: now,
-  });
-  written += 1;
-}
-console.log(`  vendors: ${written}`);
+/**
+ * Cosmos data-plane access is separate from Azure RBAC, so being Owner on the
+ * subscription grants nothing here. A 403 almost always means the signed-in
+ * principal has no data-plane role assignment, and the message says which
+ * principal was refused — so say what to do about it rather than printing a
+ * stack trace at someone who just wants their data in.
+ */
+function explain(err) {
+  if (err?.code !== 403) return null;
 
-written = 0;
-for (const app of seed.apps) {
-  await db.container("apps").items.upsert({
-    ...app,
-    createdAt: app.createdAt ?? app.updatedAt ?? now,
-    updatedAt: app.updatedAt ?? now,
-  });
-  written += 1;
+  const account = new URL(endpoint).hostname.split(".")[0];
+  const principal = /principal \[([0-9a-f-]{36})\]/i.exec(err.body?.message ?? "")?.[1];
+
+  return [
+    "",
+    "Cosmos refused the connection: this identity has no data-plane role.",
+    "",
+    "  Azure RBAC and Cosmos data-plane RBAC are separate systems. Being Owner",
+    "  on the subscription grants nothing inside the account.",
+    "",
+    principal ? `  The principal it refused was ${principal}.` : "  Check which identity you are signed in as: az ad signed-in-user show --query id -o tsv",
+    "",
+    "  Grant it, then run this again:",
+    "",
+    `    az cosmosdb sql role assignment create \\`,
+    `      --account-name ${account} \\`,
+    `      --resource-group <resource-group> \\`,
+    `      --scope "/" \\`,
+    principal ? `      --principal-id ${principal} \\` : `      --principal-id <your-object-id> \\`,
+    `      --role-definition-id 00000000-0000-0000-0000-000000000002`,
+    "",
+    "  To keep it across a clean rebuild, add the id to developerPrincipalIds",
+    "  in infra/main.parameters.json and commit it.",
+    "",
+  ].join("\n");
 }
-console.log(`  apps: ${written}`);
+
+async function upsertAll(container, rows, stamp) {
+  let written = 0;
+  for (const row of rows) {
+    await db.container(container).items.upsert(stamp(row));
+    written += 1;
+  }
+  console.log(`  ${container}: ${written}`);
+}
+
+try {
+  await upsertAll("vendors", seed.vendors, (v) => ({
+    ...v,
+    createdAt: v.createdAt ?? now,
+    updatedAt: now,
+  }));
+
+  await upsertAll("apps", seed.apps, (a) => ({
+    ...a,
+    createdAt: a.createdAt ?? a.updatedAt ?? now,
+    updatedAt: a.updatedAt ?? now,
+  }));
+} catch (err) {
+  const message = explain(err);
+  if (message) {
+    console.error(message);
+    process.exit(1);
+  }
+  throw err;
+}
+
 console.log("Done. The API caches for 60s, so give it a moment before checking /api/summary.");

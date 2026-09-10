@@ -116,13 +116,22 @@ assignments — the container's access to Cosmos, Blob and the registry.
 
 ### 3. Deploy the infrastructure
 
-Add your own object id so you can seed and debug against Cosmos:
+Add your own object id so you can seed and debug against Cosmos. Cosmos
+data-plane RBAC is a separate system from Azure RBAC — being Owner on the
+subscription grants nothing inside the account, so without this the seed script
+gets a 403.
 
 ```bash
 az ad signed-in-user show --query id -o tsv
 ```
 
-Put it in `infra/main.parameters.json` under `developerPrincipalIds`, then:
+Put it in `infra/main.parameters.json` under `developerPrincipalIds` **and commit
+it**. An object id is an identifier, not a credential. It has to be committed
+because the workflows deploy the file from the repository: leave it only in your
+working tree and a workflow run will not create the assignment, which is a
+confusing way to lose access you thought you had.
+
+Then:
 
 ```bash
 az deployment group create \
@@ -186,8 +195,10 @@ npm run seed -- --endpoint https://<cosmosAccountName>.documents.azure.com:443/
 never deletes, so a record dropped from `scripts/seed-data.json` stays in the
 database.
 
-`Forbidden` here means your object id is not in `developerPrincipalIds`; add it
-and redeploy the infrastructure.
+`Forbidden` here means the identity has no Cosmos data-plane role. The script
+prints the principal that was refused and the exact command to grant it. To fix
+it permanently rather than for this machine, add the id to
+`developerPrincipalIds` and redeploy the infrastructure.
 
 ### 7. Turn on sign-in for the admin surface
 
