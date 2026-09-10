@@ -3,6 +3,13 @@
 One application, deployed as one container image, plus the Azure resources it
 runs on.
 
+All Azure access is by **user-assigned managed identity**, created before
+anything that needs it. A system-assigned identity would be created *with* the
+container app, which makes its own role assignments circular — the app cannot
+pull its image from the registry until a role is granted to a principal that
+does not exist until the app is created. `AZURE_CLIENT_ID` on the container
+tells `DefaultAzureCredential` which identity to present.
+
 ```mermaid
 flowchart LR
   Browser --> CA
@@ -186,11 +193,14 @@ For a staging environment, set it to 0.
 
 - **The container app is created with a placeholder image**
   (`mcr.microsoft.com/k8se/quickstart`), because the real image does not exist
-  until `deploy-app` has run once. `deploy-infra` reads the currently deployed
-  image and passes it back in, so re-running infrastructure never rolls the
-  application back. Worth knowing before running `az deployment group create` by
-  hand — pass `containerImage=` yourself, or the next request serves the
-  quickstart page.
+  until `deploy-app` has run once. That placeholder serves plain HTTP on port 80
+  and has no `/api/live`, so the template switches both the ingress port and the
+  probes off until a real image is supplied — otherwise the revision never
+  becomes healthy and the deployment fails with `Operation expired`, which names
+  nothing useful. `deploy-infra` reads the currently deployed image and passes it
+  back in, so re-running infrastructure never rolls the application back. Worth
+  knowing before running `az deployment group create` by hand: pass
+  `containerImage=` yourself, or the next request serves the quickstart page.
 - **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything —
   the app, the seed script, local development — authenticates with Entra ID.
 - **Serverless caps a container at 5,000 RU/s and 1 TB.** Both are orders of

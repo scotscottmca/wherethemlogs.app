@@ -109,6 +109,45 @@ module registry 'modules/registry.bicep' = {
   }
 }
 
+// Created before everything that needs it, so the role assignments below are
+// in place by the time the container app first tries to pull its image.
+module identity 'modules/identity.bicep' = {
+  name: 'identity'
+  params: {
+    location: location
+    tags: tags
+    name: 'id-${prefix}-${token}'
+  }
+}
+
+module acrPull 'modules/acr-role.bicep' = {
+  name: 'acr-pull'
+  params: {
+    registryName: registryName
+    principalId: identity.outputs.principalId
+  }
+  dependsOn: [registry]
+}
+
+module cosmosAccess 'modules/cosmos-role.bicep' = {
+  name: 'cosmos-access'
+  params: {
+    cosmosAccountName: data.outputs.accountName
+    principalId: identity.outputs.principalId
+    roleDefinitionId: cosmosDataContributorRoleId
+  }
+}
+
+module blobAccess 'modules/blob-role.bicep' = {
+  name: 'blob-access'
+  params: {
+    storageAccountName: storageAccountName
+    principalId: identity.outputs.principalId
+    roleDefinitionId: blobContributorRoleId
+  }
+  dependsOn: [storage]
+}
+
 module web 'modules/containerapp.bicep' = {
   name: 'web'
   params: {
@@ -120,6 +159,8 @@ module web 'modules/containerapp.bicep' = {
     logAnalyticsSharedKey: monitoring.outputs.sharedKey
     registryLoginServer: registry.outputs.loginServer
     containerImage: containerImage
+    identityResourceId: identity.outputs.id
+    identityClientId: identity.outputs.clientId
     cosmosEndpoint: data.outputs.endpoint
     cosmosDatabaseName: data.outputs.databaseName
     storageAccountName: storageAccountName
@@ -130,36 +171,11 @@ module web 'modules/containerapp.bicep' = {
     authClientId: authClientId
     authTenantId: authTenantId
   }
+  // The image pull happens as the app starts, so the grant has to be done.
+  dependsOn: [acrPull, cosmosAccess, blobAccess]
 }
 
-// --- Data-plane access, all by managed identity. No keys are issued. --------
-
-module webAcrPull 'modules/acr-role.bicep' = {
-  name: 'web-acr-pull'
-  params: {
-    registryName: registryName
-    principalId: web.outputs.principalId
-  }
-}
-
-module webCosmosAccess 'modules/cosmos-role.bicep' = {
-  name: 'web-cosmos-access'
-  params: {
-    cosmosAccountName: data.outputs.accountName
-    principalId: web.outputs.principalId
-    roleDefinitionId: cosmosDataContributorRoleId
-  }
-}
-
-module webBlobAccess 'modules/blob-role.bicep' = {
-  name: 'web-blob-access'
-  params: {
-    storageAccountName: storageAccountName
-    principalId: web.outputs.principalId
-    roleDefinitionId: blobContributorRoleId
-  }
-}
-
+// Developers and the seed script reach Cosmos as themselves.
 module developerCosmosAccess 'modules/cosmos-role.bicep' = [
   for (principalId, i) in developerPrincipalIds: {
     name: 'dev-cosmos-access-${i}'
@@ -172,6 +188,7 @@ module developerCosmosAccess 'modules/cosmos-role.bicep' = [
 ]
 
 output containerAppName string = web.outputs.name
+output identityClientId string = identity.outputs.clientId
 output siteUrl string = 'https://${web.outputs.fqdn}'
 output registryName string = registry.outputs.name
 output registryLoginServer string = registry.outputs.loginServer

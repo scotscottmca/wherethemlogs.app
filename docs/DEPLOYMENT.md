@@ -72,7 +72,16 @@ Keep the outputs — `containerAppName`, `registryName`, `cosmosAccountName`,
 `siteUrl`.
 
 The container app comes up on a placeholder image, because the real one does not
-exist yet. That is expected; step 5 replaces it.
+exist yet. Its ingress port and health probes stay off until step 5 supplies a
+real image — the placeholder serves port 80 and has no `/api/live`, and probing
+it would fail the revision. That is expected.
+
+If a deployment has already failed and left the app in a terminal state, delete
+it before re-running; there is nothing in it to preserve:
+
+```bash
+az containerapp delete -n ca-wtla-prod -g rg-wtla-prod --yes
+```
 
 > **Cosmos is serverless and free tier is off.** Both are set in
 > `infra/main.parameters.json`, and both are decided at account creation —

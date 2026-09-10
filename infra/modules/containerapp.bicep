@@ -7,6 +7,8 @@ param logAnalyticsCustomerId string
 param logAnalyticsSharedKey string
 param registryLoginServer string
 param containerImage string
+param identityResourceId string
+param identityClientId string
 param cosmosEndpoint string
 param cosmosDatabaseName string
 param storageAccountName string
@@ -45,17 +47,59 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   }
 }
 
+/**
+ * The container app is created before its image exists, on a placeholder from
+ * MCR. That placeholder serves plain HTTP on port 80 and has no /api/live, so
+ * the real port and the real probes would fail it into a revision that never
+ * becomes healthy — which surfaces as "Operation expired", not as anything
+ * that names the probe. Both switch on once a real image is supplied.
+ */
+var isPlaceholder = startsWith(containerImage, 'mcr.microsoft.com/')
+var appPort = isPlaceholder ? 80 : 3000
+
+var appProbes = [
+  {
+    // Liveness and readiness both use /api/live, which never touches Cosmos.
+    // Restarting or de-rotating the last replica because the database is having
+    // a bad minute turns a degraded site into a down one.
+    type: 'Liveness'
+    httpGet: { path: '/api/live', port: 3000 }
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    failureThreshold: 3
+  }
+  {
+    type: 'Readiness'
+    httpGet: { path: '/api/live', port: 3000 }
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+  }
+  {
+    type: 'Startup'
+    httpGet: { path: '/api/live', port: 3000 }
+    initialDelaySeconds: 3
+    periodSeconds: 3
+    failureThreshold: 20
+  }
+]
+
 resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: appName
   location: location
   tags: tags
-  identity: { type: 'SystemAssigned' }
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${identityResourceId}': {}
+    }
+  }
   properties: {
     environmentId: environment.id
     configuration: {
       ingress: {
         external: true
-        targetPort: 3000
+        targetPort: appPort
         transport: 'auto'
         allowInsecure: false
         traffic: [
@@ -65,8 +109,8 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       registries: [
         {
           server: registryLoginServer
-          // Pull with the app's own identity. No registry password anywhere.
-          identity: 'system'
+          // Pull with the pre-created identity, which already holds AcrPull.
+          identity: identityResourceId
         }
       ]
       // Revisions are the rollback story: a bad deploy is one traffic shift away
@@ -91,33 +135,11 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'ICONS_CONTAINER_NAME', value: iconsContainerName }
             { name: 'ICONS_CONTAINER_URL', value: iconsContainerUrl }
             { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: appInsightsConnectionString }
+            // Tells DefaultAzureCredential which identity to use. Without it a
+            // user-assigned identity is ambiguous and the SDK picks nothing.
+            { name: 'AZURE_CLIENT_ID', value: identityClientId }
           ]
-          probes: [
-            {
-              // Liveness and readiness both use /api/live, which never touches
-              // Cosmos. Restarting or de-rotating the last replica because the
-              // database is having a bad minute turns degraded into down.
-              type: 'Liveness'
-              httpGet: { path: '/api/live', port: 3000 }
-              initialDelaySeconds: 10
-              periodSeconds: 30
-              failureThreshold: 3
-            }
-            {
-              type: 'Readiness'
-              httpGet: { path: '/api/live', port: 3000 }
-              initialDelaySeconds: 5
-              periodSeconds: 10
-              failureThreshold: 3
-            }
-            {
-              type: 'Startup'
-              httpGet: { path: '/api/live', port: 3000 }
-              initialDelaySeconds: 3
-              periodSeconds: 3
-              failureThreshold: 20
-            }
-          ]
+          probes: isPlaceholder ? [] : appProbes
         }
       ]
       scale: {
@@ -166,6 +188,5 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (!
 }
 
 output name string = containerApp.name
-output principalId string = containerApp.identity.principalId
 output fqdn string = containerApp.properties.configuration.ingress.fqdn
 output environmentId string = environment.id
