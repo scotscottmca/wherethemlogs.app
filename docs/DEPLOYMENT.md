@@ -202,52 +202,85 @@ it permanently rather than for this machine, add the id to
 
 ### 7. Turn on sign-in for the admin surface
 
-Until this is done `/admin` is unreachable by anyone, including you: with no
-provider configured there is no `/.auth/login/...` endpoint to redirect to.
+Until this is done `/admin` returns 503 and says so plainly: no provider is
+configured, so there is nothing to sign in to.
 
-**Create a GitHub OAuth app** at <https://github.com/settings/developers>:
+Entra ID, single tenant, assignment required. That combination shuts the front
+door rather than guarding it: nobody outside the tenant can complete sign-in at
+all, and inside it only accounts you explicitly assign get a token.
+
+**Register the application:**
+
+```bash
+SITE=$(az containerapp show -n <containerAppName> -g rg-wtla-prod \
+  --query properties.configuration.ingress.fqdn -o tsv)
+
+az ad app create --display-name "Where Them Logs App" \
+  --web-redirect-uris "https://$SITE/.auth/login/aad/callback" \
+  --sign-in-audience AzureADMyOrg
+```
+
+`AzureADMyOrg` is the part that makes it single tenant. Do not change it to a
+multi-tenant audience unless you mean to let other directories in.
+
+**Add the `admin` app role** (Portal, App registrations, your app, App roles):
 
 | Field | Value |
 | --- | --- |
-| Application name | Where Them Logs App |
-| Homepage URL | `https://<your-fqdn>` |
-| Authorization callback URL | `https://<your-fqdn>/.auth/login/github/callback` |
+| Display name | Admin |
+| Allowed member types | Users/Groups |
+| Value | `admin` |
+| Description | Can add, edit and delete catalogue records |
 
-Generate a client secret, then put it on the container app. It is set directly
-so it never passes through a template or a parameters file:
+**Require assignment, then assign yourself** (Portal, Enterprise applications,
+your app):
+
+- Properties, set **Assignment required?** to **Yes**. Without this any account
+  in the tenant can sign in, and only the app role stops them; with it, an
+  unassigned account cannot get a token at all and never reaches the site.
+- Users and groups, add yourself with the **Admin** role.
+
+**Store the secret and configure the app:**
 
 ```bash
 az containerapp secret set -n <containerAppName> -g rg-wtla-prod \
-  --secrets github-client-secret=<the-secret-value>
+  --secrets aad-client-secret=<the-client-secret>
 ```
 
 Set these in `infra/main.parameters.json` and redeploy the infrastructure:
 
 ```json
-"authProvider":      { "value": "github" },
-"authClientId":      { "value": "<the OAuth app client id>" },
-"adminGithubLogins": { "value": "scotscottmca" }
+"authProvider":  { "value": "aad" },
+"authClientId":  { "value": "<application (client) id>" },
+"authTenantId":  { "value": "<directory (tenant) id>" }
 ```
 
-**GitHub authenticates but carries no roles**, so `adminGithubLogins` is the
-authorization list: comma separated, matched against the login or the numeric
-user id. Empty means nobody is an admin. Signing in is never sufficient on its
-own, so a stranger who finds the site and signs in gets the 403 page, not the
-catalogue.
+Auth only switches on when `authClientId` is non-empty, so committing the
+placeholders is safe: the app reports itself unconfigured rather than
+redirecting into a login endpoint that was never deployed.
 
-If a login that should work does not, sign in and open `/api/me`. It returns
-your own claims verbatim, so you can put the value that actually arrives into
-the allowlist rather than guessing which claim type the provider used.
+**What each refusal looks like**, so none of them reads as a bug:
+
+| Who | What they get |
+| --- | --- |
+| Not in the tenant | An Entra sign-in error. They never reach the site. |
+| In the tenant, not assigned | `AADSTS50105` from Entra. Also never reaches the site. |
+| Assigned but no `admin` role | The site's own 403 page |
+| Anonymous | Redirected to sign in |
 
 <details>
-<summary>Entra ID instead, if this ever needs org SSO</summary>
+<summary>GitHub instead, if a tenant is ever inconvenient</summary>
 
-Register an application, add an **app role** with value `admin`, assign users
-or groups to it, then set `authProvider` to `aad` with `authClientId` and
-`authTenantId`, and store the secret as `aad-client-secret`. The role arrives in
-the token's `roles` claim and the directory becomes the allowlist, so
-`adminGithubLogins` is not used. Both paths are supported at once by the code;
-only one provider can be configured on the container app at a time.
+Create a GitHub OAuth app with callback
+`https://<fqdn>/.auth/login/github/callback`, store the secret as
+`github-client-secret`, and set `authProvider` to `github`, `authClientId` to
+the OAuth client id, and `adminGithubLogins` to a comma separated allowlist.
+
+GitHub authenticates anyone with an account and carries no roles, so that
+allowlist is the entire lock. An empty list refuses everyone. Strangers can
+reach the consent screen and land on the 403 page; they can read and write
+nothing. `/api/me` prints the caller's own claims, which is how you find the
+value to allowlist.
 
 </details>
 

@@ -26,10 +26,17 @@ param minReplicas int = 1
 param maxReplicas int = 5
 
 @description('''
-Which provider signs admins in. "github" needs a GitHub OAuth app, which any
-account can create in two minutes; "aad" needs an Entra app registration and a
-tenant admin. "none" deploys with no sign-in at all, which leaves /admin
-unreachable by anyone.
+Which provider signs admins in.
+
+"aad" is the tight one: a single-tenant app registration means nobody outside
+the tenant can complete sign-in at all, and with "Assignment required" switched
+on inside it, only explicitly assigned accounts get a token. The front door is
+shut rather than guarded.
+
+"github" needs only a two-minute OAuth app, but GitHub lets anyone authenticate,
+so the allowlist in the app is the whole lock.
+
+"none" deploys with no sign-in, which leaves /admin unreachable by anyone.
 ''')
 @allowed(['none', 'github', 'aad'])
 param authProvider string = 'none'
@@ -64,6 +71,12 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
     zoneRedundant: false
   }
 }
+
+// Naming a provider is not the same as having configured one. Until the client
+// id is filled in there is no /.auth/login/... endpoint, so the app is told
+// "none" and says so, rather than redirecting people into a 404.
+var authConfigured = authProvider != 'none' && !empty(authClientId)
+var effectiveAuthProvider = authConfigured ? authProvider : 'none'
 
 var appProbes = [
   {
@@ -146,7 +159,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             // Tells DefaultAzureCredential which identity to use. Without it a
             // user-assigned identity is ambiguous and the SDK picks nothing.
             { name: 'AZURE_CLIENT_ID', value: identityClientId }
-            { name: 'AUTH_PROVIDER', value: authProvider }
+            { name: 'AUTH_PROVIDER', value: effectiveAuthProvider }
             { name: 'ADMIN_GITHUB_LOGINS', value: adminGithubLogins }
           ]
           probes: appProbes
@@ -170,7 +183,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 // catalogue itself is public; the app's middleware and route handlers decide
 // what the admin surface needs. Skipped entirely while authProvider is 'none',
 // which leaves /admin unreachable rather than open.
-resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (authProvider != 'none') {
+resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (authConfigured) {
   parent: containerApp
   name: 'current'
   properties: {
@@ -204,7 +217,14 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (a
               clientSecretSettingName: 'aad-client-secret'
             }
             validation: {
-              allowedAudiences: [ 'api://${authClientId}' ]
+              // The sign-in flow's ID token carries aud = the client id. The
+              // Application ID URI form is only the audience when the app is
+              // called as an API. Accepting only the second would reject every
+              // browser login, so both are listed.
+              allowedAudiences: [
+                authClientId
+                'api://${authClientId}'
+              ]
             }
           }
         }

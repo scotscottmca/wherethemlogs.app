@@ -12,12 +12,28 @@ import { isAdmin } from "@/lib/server/auth";
 export function middleware(request: NextRequest) {
   if (isAdmin(request)) return NextResponse.next();
 
+  const isApi = request.nextUrl.pathname.startsWith("/api/");
   const signedIn = request.headers.get("x-ms-client-principal") !== null;
 
-  if (request.nextUrl.pathname.startsWith("/api/")) {
+  // Which provider to send people to. Container Apps exposes one path per
+  // configured provider, so this follows the infrastructure rather than being
+  // guessed, and "none" is a real state that has to be answered before
+  // anything else: sending someone to a login endpoint that was never deployed
+  // produces a 404 nobody can diagnose.
+  const provider = process.env.AUTH_PROVIDER ?? "none";
+
+  if (provider === "none") {
+    const message =
+      "Admin sign-in is not configured on this deployment. Set authProvider and authClientId in the infrastructure parameters, and redeploy.";
+    return isApi
+      ? NextResponse.json({ error: "auth_not_configured", message }, { status: 503 })
+      : NextResponse.rewrite(new URL("/403?reason=unconfigured", request.url), { status: 503 });
+  }
+
+  if (isApi) {
     return NextResponse.json(
       signedIn
-        ? { error: "forbidden", message: "This action needs the admin role." }
+        ? { error: "forbidden", message: "This account is not an administrator." }
         : { error: "unauthorized", message: "Sign in to continue." },
       { status: signedIn ? 403 : 401 },
     );
@@ -28,9 +44,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL("/403", request.url), { status: 403 });
   }
 
-  // Which provider to send people to. Container Apps exposes one path per
-  // configured provider, so this follows the Bicep rather than being guessed.
-  const provider = process.env.AUTH_PROVIDER === "aad" ? "aad" : "github";
   const login = new URL(`/.auth/login/${provider}`, request.url);
   login.searchParams.set("post_login_redirect_uri", request.nextUrl.pathname);
   return NextResponse.redirect(login);

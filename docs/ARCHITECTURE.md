@@ -167,11 +167,24 @@ where the design lives.**
 | GitHub | Any GitHub account | `ADMIN_GITHUB_LOGINS`, an allowlist of logins or numeric ids |
 | Entra ID | Anyone in the tenant | An `admin` app role in the token's `roles` claim |
 
-GitHub is the default because it needs no tenant admin and no directory: a
-two-minute OAuth app registration. Its cost is that anyone with a GitHub account
-can *sign in*, so the allowlist is not a convenience, it is the lock. An empty
-allowlist refuses everyone, including the person who set it up - which is the
-right failure direction, and is covered by a test case rather than assumed.
+**Entra ID is the configured provider**, single tenant with assignment required.
+That combination shuts the front door rather than guarding it: an account
+outside the tenant cannot complete sign-in, and an unassigned account inside it
+cannot get a token. Only the app role decides admin, so nothing local needs
+maintaining.
+
+GitHub remains supported and is the easier setup - a two-minute OAuth app, no
+tenant admin - but it authenticates anyone with an account and carries no roles,
+which makes `ADMIN_GITHUB_LOGINS` the entire lock rather than a convenience.
+Strangers reach the consent screen and land on the 403 page. An empty allowlist
+refuses everyone, including whoever configured it, which is the right failure
+direction and is covered by a case rather than assumed.
+
+**Naming a provider is not configuring one.** Auth switches on only when the
+client id is non-empty, and until then the app reports itself unconfigured with
+a 503 rather than redirecting people to a login endpoint that was never
+deployed. That distinction exists because the earlier build did exactly that and
+answered 404 with nothing to explain it.
 
 Claim types differ by provider and by how the platform maps them, so
 `getPrincipal` matches a set rather than betting on one, and never returns null

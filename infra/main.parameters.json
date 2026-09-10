@@ -26,7 +26,7 @@
       ]
     },
     "authProvider": {
-      "value": "github"
+      "value": "aad"
     },
     "authClientId": {
       "value": ""
@@ -35,7 +35,7 @@
       "value": ""
     },
     "adminGithubLogins": {
-      "value": "scotscottmca"
+      "value": ""
     }
   }
 }
