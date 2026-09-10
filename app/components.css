@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Components — The Location Code
+   Components - The Location Code
    ========================================================================== */
 
 /* --- Header -------------------------------------------------------------- */
@@ -181,7 +181,7 @@
   color: var(--bone-dim);
 }
 
-/* The bay figure, stencilled hard to the grid — not a metric in a box. */
+/* The bay figure, stencilled hard to the grid - not a metric in a box. */
 .sign__count {
   margin: 0;
   display: flex;
@@ -802,13 +802,6 @@
   color: var(--hivis);
   text-decoration: underline;
 }
-.foot__seed {
-  padding: 0 var(--gutter) 1.6rem;
-  color: var(--bone-faint);
-  max-width: 84ch;
-  line-height: 1.55;
-  font-size: 0.78rem;
-}
 
 /* --- Consent bar --------------------------------------------------------- */
 
@@ -1127,7 +1120,7 @@ body:has(.consent) {
 }
 
 /* Recent additions: what arrived, not where it lives. Name and the platforms
-   it covers — the paths are one click away on the pick list. */
+   it covers - the paths are one click away on the pick list. */
 .pick__app {
   font-stretch: 80%;
   font-weight: 700;
@@ -1156,4 +1149,846 @@ body:has(.consent) {
 }
 .pick__link:hover .zonetag {
   border-color: var(--ink);
+}
+
+/* ==========================================================================
+   Stock control - the curator's bench
+   Same warehouse: the record being written is a label plate that has not been
+   printed yet, so a field row is a path row with an input where the path goes.
+   ========================================================================== */
+
+/* --- The aisle band ------------------------------------------------------ */
+/* Sits where the zone banding sits and is built from the same parts, but
+   carries the trail: here the aisle you are in is the vendor, not the OS. */
+
+.admBand__cell {
+  cursor: pointer;
+}
+.admBand__cell[aria-current="true"] {
+  background: var(--hivis);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: default;
+}
+.admBand__cell[aria-current="true"] .tag {
+  color: var(--ink);
+}
+.admBand .zones__legend {
+  color: var(--bone-faint);
+}
+
+/* --- The bay header ------------------------------------------------------ */
+/* Bench scale, not room scale. The aisle sign shouts down a corridor; this is
+   read at arm's length, so it takes the headline role rather than the display. */
+
+.admBay {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.75rem clamp(1rem, 3vw, 2.5rem);
+  padding-block: clamp(1.3rem, 2.6vw, 2.1rem) clamp(0.9rem, 1.6vw, 1.25rem);
+}
+.admBay__id {
+  min-width: 0;
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+}
+.admBay__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--bone-faint);
+  text-decoration: none;
+}
+.admBay__back:hover {
+  color: var(--hivis);
+  text-decoration: underline;
+}
+.admBay__h {
+  margin: 0;
+  font-stretch: 68%;
+  font-weight: 900;
+  font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.008em;
+  text-transform: uppercase;
+  color: var(--bone);
+  word-break: break-word;
+}
+.admBay__facts {
+  margin: 0;
+  color: var(--bone-faint);
+}
+.admBay__acts {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.admBay__acts .btn {
+  margin-top: 0;
+}
+
+/* --- The two-column rack ------------------------------------------------- */
+
+.admAisle {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  border-top: var(--rule-heavy) solid var(--ink-rule);
+}
+
+.admRail {
+  border-right: var(--rule) solid var(--ink-rule);
+  align-self: start;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.admRail__sum {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.admRail__sum::-webkit-details-marker {
+  display: none;
+}
+.admRail__sum:hover .admRail__chev {
+  color: var(--hivis);
+}
+.admRail__chev {
+  color: var(--bone-faint);
+}
+.admRail__legend {
+  display: none;
+  color: var(--bone-faint);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+/* Wide: the rail is always open, the same way the results filters are, and the
+   space the toggle used takes the legend for the count column instead. */
+@media (min-width: 1081px) {
+  .admRail__sum {
+    cursor: default;
+    pointer-events: none;
+  }
+  .admRail__chev {
+    display: none;
+  }
+  .admRail__legend {
+    display: inline;
+  }
+}
+
+.admRail__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem clamp(0.9rem, 1.6vw, 1.25rem);
+  border-bottom: var(--rule) solid var(--ink-rule);
+  text-decoration: none;
+  color: var(--bone-dim);
+  transition: background 120ms linear, color 120ms linear;
+}
+.admRail__row:hover {
+  background: var(--ink-raised);
+  color: var(--bone);
+}
+.admRail__row[aria-current="true"] {
+  background: var(--hivis);
+  color: var(--ink);
+}
+.admRail__row[aria-current="true"] .tag {
+  color: var(--hivis-ink);
+}
+.admRail__row--up {
+  background: var(--ink-raised);
+  color: var(--bone-faint);
+}
+.admRail__name {
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admRail__meta {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.admWork {
+  min-width: 0;
+}
+
+/* --- A record ------------------------------------------------------------ */
+
+.admRecord + .admRecord {
+  border-top: var(--rule-heavy) solid var(--ink-rule);
+}
+.admRecord__head {
+  gap: 0.4rem 1rem;
+  flex-wrap: wrap;
+}
+.admRecord__hint {
+  color: var(--bone-faint);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+/* --- Fields -------------------------------------------------------------- */
+/* The path row, with an input where the printed path goes. The cell takes the
+   focus ring; the input never draws a box, because nothing in this world does. */
+
+.fields {
+  display: grid;
+  gap: 0;
+  border-left: var(--rule) solid var(--ink-rule);
+  margin: clamp(0.9rem, 1.6vw, 1.25rem) clamp(0.9rem, 1.6vw, 1.25rem) 0;
+}
+
+.frow {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr);
+  align-items: start;
+  gap: 0 0.9rem;
+  padding: 0.5rem 0 0.55rem 0.75rem;
+}
+.frow + .frow {
+  border-top: var(--rule) solid var(--ink-rule);
+}
+.frow__label {
+  padding-top: 0.62rem;
+  color: var(--bone-dim);
+}
+.frow[data-bad="true"] .frow__label {
+  background: var(--bone);
+  color: var(--ink);
+  padding-inline: 0.4rem;
+  margin-left: -0.4rem;
+}
+.frow__cell {
+  min-width: 0;
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+}
+
+.frow__in {
+  width: 100%;
+  background: var(--ink-raised);
+  border: 0;
+  outline: 0;
+  color: var(--bone);
+  caret-color: var(--hivis);
+  padding: 0.42rem 0.55rem;
+  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  border-bottom: var(--rule) solid var(--ink-rule);
+}
+.frow__in.mono {
+  font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.frow__in::placeholder {
+  color: var(--bone-faint);
+  opacity: 1;
+}
+.frow__in:focus,
+.frow__in:focus-visible {
+  outline: 2px solid var(--hivis);
+  outline-offset: -2px;
+  border-bottom-color: var(--hivis);
+}
+textarea.frow__in {
+  resize: vertical;
+  min-height: 3.4rem;
+}
+.admSelectWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  max-width: 24rem;
+}
+.admSelect {
+  appearance: none;
+  border-radius: 0;
+  cursor: pointer;
+  padding-right: 2.1rem;
+}
+.admSelectWrap__mark {
+  position: absolute;
+  right: 0.6rem;
+  color: var(--bone-dim);
+  pointer-events: none;
+}
+
+.frow__hint {
+  margin: 0;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--bone-faint);
+  max-width: 68ch;
+}
+
+/* Rejected: bone label stock over painted steel. Cyan confirms, bone corrects -
+   and the block always prints the word, so colour never carries it alone. */
+.frow__bad {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--bone);
+  max-width: 76ch;
+}
+.frow__badTag {
+  background: var(--bone);
+  color: var(--ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  flex: 0 0 auto;
+}
+
+.frow__set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+button.tog {
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* --- Icons --------------------------------------------------------------- */
+
+.admIcon {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+.admIcon__img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  background: var(--ink-raised);
+  border: var(--rule) solid var(--ink-rule);
+  padding: 3px;
+  flex: 0 0 auto;
+}
+.admIcon__img--empty {
+  border-style: dashed;
+}
+.admUp {
+  display: inline-flex;
+  align-items: center;
+  border: var(--rule) solid var(--ink-rule);
+  padding: 0.3rem 0.6rem;
+  color: var(--bone-dim);
+  cursor: pointer;
+}
+.admUp:hover {
+  border-color: var(--bone-dim);
+  color: var(--bone);
+}
+.admUp:focus-within {
+  outline: 3px solid var(--hivis);
+  outline-offset: 2px;
+}
+
+/* --- Committing ---------------------------------------------------------- */
+
+.admCommit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: clamp(0.9rem, 1.6vw, 1.25rem);
+}
+.admCommit .btn {
+  margin-top: 0;
+}
+.admCommit .btn:disabled {
+  background: var(--ink-rule);
+  color: var(--bone-faint);
+  cursor: not-allowed;
+}
+.admCommit .btn--ghost:disabled {
+  background: transparent;
+  border-color: var(--ink-rule);
+}
+.admCommit__note {
+  margin: 0;
+  color: var(--bone-faint);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  max-width: 62ch;
+}
+
+/* The confirmed reading, printed into the record's own header line. */
+.admRead {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--hivis);
+  color: var(--ink);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  animation: rack-in 320ms var(--ease-rack) both;
+}
+
+/* --- Notices ------------------------------------------------------------- */
+/* Docked to the record, full width, never floating and never a toast. */
+
+.admNotice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0 0.9rem;
+  padding: clamp(0.9rem, 1.6vw, 1.25rem);
+  border-bottom: var(--rule) solid var(--ink-rule);
+  background: var(--ink-raised);
+}
+.admNotice__code {
+  margin: 0;
+  background: var(--bone);
+  color: var(--ink);
+  font-weight: 700;
+  padding: 0.18rem 0.45rem;
+  white-space: nowrap;
+}
+.admNotice__body {
+  min-width: 0;
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+.admNotice__p {
+  margin: 0;
+  color: var(--bone);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  max-width: 76ch;
+}
+.admNotice__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.admNotice__acts .btn {
+  margin-top: 0;
+}
+
+/* Whose value survives: theirs and yours, side by side, in the machine voice. */
+.admDiff {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  table-layout: fixed;
+}
+.admDiff th,
+.admDiff td {
+  border: var(--rule) solid var(--ink-rule);
+  padding: 0.4rem 0.55rem;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.45;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.admDiff thead th {
+  background: var(--ink);
+  color: var(--bone-dim);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.admDiff tbody th {
+  color: var(--bone-dim);
+  font-weight: 600;
+  width: 8rem;
+}
+.admDiff tbody td {
+  color: var(--bone);
+}
+
+/* --- The delete manifest ------------------------------------------------- */
+
+.admManifest {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  border-top: var(--rule) solid var(--ink-rule);
+}
+.admManifest__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.5rem 0.7rem;
+  border-bottom: var(--rule) solid var(--ink-rule);
+  text-decoration: none;
+  color: var(--bone);
+}
+.admManifest__row:hover {
+  background: var(--ink);
+}
+.admManifest__name {
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.admManifest__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--bone-faint);
+}
+.admManifest__row:hover .admManifest__go {
+  color: var(--hivis);
+}
+
+/* --- Deleting ------------------------------------------------------------ */
+
+.admRemove {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+  padding: clamp(0.9rem, 1.6vw, 1.25rem);
+}
+.admRemove__p {
+  margin: 0;
+  color: var(--bone-dim);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  max-width: 76ch;
+}
+
+.admDel__armed {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.admDel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: var(--rule) solid var(--ink-rule);
+  color: var(--bone-dim);
+  padding: 0.36rem 0.65rem;
+  cursor: pointer;
+}
+.admDel:hover {
+  border-color: var(--bone-dim);
+  color: var(--bone);
+}
+.admDel:disabled {
+  color: var(--bone-faint);
+  cursor: not-allowed;
+}
+/* Armed: bone stock, the way a correction sticker reads. */
+.admDel--go,
+.admDel--go:hover {
+  background: var(--bone);
+  border-color: var(--bone);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* --- Stock list ---------------------------------------------------------- */
+
+.scan__bar--bench {
+  min-height: clamp(52px, 5.4vw, 62px);
+}
+.scan__bar--bench .scan__input {
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+}
+.scan__bar--bench .scan__hint {
+  border-left: 1.5px solid var(--ink);
+  padding-left: 0.85rem;
+}
+/* The public bar hides its hint on a phone because it teaches a keyboard
+   shortcut. This one prints how many rows survived the filter, which is the
+   whole answer, so it stays. */
+@media (pointer: coarse), (max-width: 860px) {
+  .scan__bar--bench .scan__hint {
+    display: flex;
+    padding-left: 0.6rem;
+  }
+}
+
+.admStock {
+  --stock-cols: minmax(0, 1fr) 11rem 12rem 11rem 6.5rem;
+  border-top: var(--rule-heavy) solid var(--ink-rule);
+}
+.admStock--bays {
+  --stock-cols: minmax(0, 1fr) 12rem 11rem 6.5rem;
+  border-top: 0;
+}
+.admStock__row {
+  display: grid;
+  grid-template-columns: var(--stock-cols);
+  align-items: center;
+  gap: 0.4rem 1rem;
+  padding: 0.55rem clamp(0.9rem, 1.6vw, 1.25rem);
+  border-bottom: var(--rule) solid var(--ink-rule);
+  text-decoration: none;
+  color: var(--bone);
+  transition: background 120ms linear;
+}
+.admStock__row:hover {
+  background: var(--ink-raised);
+}
+.admStock__name {
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admStock__vendor {
+  color: var(--bone-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admStock__slug {
+  font-size: 0.8rem;
+  color: var(--bone-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admStock__count {
+  color: var(--bone-faint);
+  white-space: nowrap;
+  text-align: right;
+}
+.admZones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+/* --- Log paths ----------------------------------------------------------- */
+
+.admPaths {
+  border-top: var(--rule) solid var(--ink-rule);
+}
+.admPath:last-child {
+  border-bottom: var(--rule) solid var(--ink-rule);
+}
+.admPath--edit,
+.admPath--edit:hover {
+  background: var(--ink-raised);
+  outline: var(--rule-heavy) solid var(--hivis);
+  outline-offset: calc(var(--rule-heavy) * -1);
+}
+.admPath--edit .plate__body {
+  padding: 0 0 0.2rem;
+  gap: 0;
+}
+.admPath--edit .fields {
+  margin-top: 0.6rem;
+}
+.admPath__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.55rem clamp(0.9rem, 1.6vw, 1.25rem);
+  border-bottom: var(--rule) solid var(--ink-rule);
+  background: var(--ink);
+}
+.admPath--edit .admNotice {
+  background: var(--ink);
+}
+.admPath__edit {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 0;
+  color: var(--bone-faint);
+  cursor: pointer;
+  padding: 0;
+}
+.admPath__edit:hover {
+  color: var(--hivis);
+  text-decoration: underline;
+}
+.admPath__row {
+  grid-template-columns: minmax(0, 1fr);
+}
+.admPath__len {
+  color: var(--bone-faint);
+  white-space: nowrap;
+}
+
+/* The path prints itself back at full contrast: what you typed is what the
+   store holds, trailing space and all - and the reading says when it is not. */
+.admProof {
+  width: 100%;
+  border: var(--rule) solid var(--ink-rule);
+  background: var(--ink);
+  padding: 0.45rem 0.6rem 0.5rem;
+  display: grid;
+  gap: 0.3rem;
+  justify-items: start;
+}
+.admProof__code {
+  margin: 0;
+  background: var(--hivis);
+  color: var(--ink);
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+}
+.admProof__len {
+  margin: 0;
+  color: var(--bone-faint);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+/* The forward action at the foot of the stack it adds to. Cyan owns the cell. */
+.admAdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: var(--hivis);
+  color: var(--ink);
+  border: 0;
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.admAdd:hover {
+  background: var(--bone);
+}
+
+/* --- Responsive ---------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+  /* The record you came to write comes first; its index follows it. */
+  .admAisle {
+    display: flex;
+    flex-direction: column;
+  }
+  .admWork {
+    order: 1;
+  }
+  .admRail {
+    order: 2;
+    position: static;
+    max-height: none;
+    border-right: 0;
+    border-top: var(--rule-heavy) solid var(--ink-rule);
+  }
+  .admStock {
+    --stock-cols: minmax(0, 1fr) 11rem 6.5rem;
+  }
+  .admStock--bays {
+    --stock-cols: minmax(0, 1fr) 11rem 6.5rem;
+  }
+  .admStock__slug {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .admBay {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  /* The trail is three cells at most, so it wraps and keeps the principal on
+     screen rather than scrolling it off the end of the band. */
+  .admBand {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .admBand .zones__legend {
+    display: flex;
+    flex: 1 0 100%;
+    margin-left: 0;
+    border-left: 0;
+    border-top: var(--rule) solid var(--ink-rule);
+    padding-inline: var(--gutter);
+  }
+  /* Name on its own line, its facts wrapping beneath it: four stacked cells is
+     not density, it is a list pretending to be a table. */
+  .admStock__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.75rem;
+  }
+  .admStock__name {
+    flex: 1 0 100%;
+  }
+  .admStock__vendor,
+  .admStock__count {
+    text-align: left;
+  }
+  .frow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
+    padding-block: 0.65rem;
+  }
+  .frow__label {
+    padding-top: 0;
+  }
+  .frow[data-bad="true"] .frow__label {
+    justify-self: start;
+    margin-left: 0;
+  }
+  .admNotice {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.6rem;
+    justify-items: start;
+  }
+  .admDiff {
+    font-size: 0.75rem;
+  }
+  .admDiff tbody th {
+    width: 5.5rem;
+  }
 }
