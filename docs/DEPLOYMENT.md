@@ -164,8 +164,8 @@ gh secret set AZURE_TENANT_ID --body (az account show --query tenantId -o tsv)
 gh secret set AZURE_SUBSCRIPTION_ID --body (az account show --query id -o tsv)
 
 gh variable set AZURE_RESOURCE_GROUP --body "rg-wtla-prod"
-gh variable set AZURE_CONTAINERAPP_NAME --body "<containerAppName output>"
-gh variable set AZURE_REGISTRY_NAME --body "<registryName output>"
+gh variable set AZURE_CONTAINERAPP_NAME --body "ca-wtla-prod"
+gh variable set AZURE_REGISTRY_NAME --body "crwtlaprods7gilgc3be"
 ```
 
 Create a GitHub **environment** named `production`, so the deploy jobs and the
@@ -191,7 +191,7 @@ that the catalogue is empty.
 
 ```powershell
 npm install
-npm run seed -- --endpoint https://<cosmosAccountName>.documents.azure.com:443/
+npm run seed -- --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/
 ```
 
 24 vendors, 33 apps, 86 log paths. Idempotent - re-running upserts by id. It
@@ -215,12 +215,27 @@ all, and inside it only accounts you explicitly assign get a token.
 **Register the application:**
 
 ```powershell
-$SITE = az containerapp show -n <containerAppName> -g rg-wtla-prod `
+$SITE = az containerapp show -n ca-wtla-prod -g rg-wtla-prod `
   --query properties.configuration.ingress.fqdn -o tsv
+
+# Check it before using it. An empty $SITE builds "https:///.auth/..." and az
+# rejects that as "Invalid value specified for property 'web'", which names the
+# property rather than the missing hostname.
+if (-not $SITE) { throw "Could not read the container app FQDN. Is ca-wtla-prod deployed?" }
+"Redirect URI: https://$SITE/.auth/login/aad/callback"
 
 az ad app create --display-name "Where Them Logs App" `
   --web-redirect-uris "https://$SITE/.auth/login/aad/callback" `
   --sign-in-audience AzureADMyOrg
+```
+
+Then keep the ids the next steps need:
+
+```powershell
+$CLIENT_ID = az ad app list --display-name "Where Them Logs App" --query "[0].appId" -o tsv
+$TENANT_ID = az account show --query tenantId -o tsv
+az ad sp create --id $CLIENT_ID     # the enterprise app, needed for assignment
+"client $CLIENT_ID / tenant $TENANT_ID"
 ```
 
 `AzureADMyOrg` is the part that makes it single tenant. Do not change it to a
@@ -246,7 +261,7 @@ your app):
 **Store the secret and configure the app:**
 
 ```powershell
-az containerapp secret set -n <containerAppName> -g rg-wtla-prod `
+az containerapp secret set -n ca-wtla-prod -g rg-wtla-prod `
   --secrets aad-client-secret=<the-client-secret>
 ```
 
@@ -275,7 +290,7 @@ redirecting into a login endpoint that was never deployed.
 <summary>GitHub instead, if a tenant is ever inconvenient</summary>
 
 Create a GitHub OAuth app with callback
-`https://<fqdn>/.auth/login/github/callback`, store the secret as
+`https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/.auth/login/github/callback`, store the secret as
 `github-client-secret`, and set `authProvider` to `github`, `authClientId` to
 the OAuth client id, and `adminGithubLogins` to a comma separated allowlist.
 
@@ -308,7 +323,7 @@ npm install
 
 # PowerShell has no inline "VAR=x command" prefix, so set them on the session.
 $env:LOCAL_ADMIN_BYPASS = "true"
-$env:COSMOS_ENDPOINT    = "https://<account>.documents.azure.com:443/"
+$env:COSMOS_ENDPOINT    = "https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/"
 $env:COSMOS_DATABASE    = "wtla"
 
 npm run dev            # http://localhost:3777
@@ -325,7 +340,7 @@ To exercise the container as it actually ships:
 ```powershell
 docker build -t wtla:local .
 docker run --rm -p 3888:3000 `
-  -e COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/ `
+  -e COSMOS_ENDPOINT=https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/ `
   -e COSMOS_DATABASE=wtla `
   wtla:local
 ```
@@ -339,8 +354,8 @@ seeing; it is what a real outage looks like.
 **The application** - revisions, and this is the fast one:
 
 ```powershell
-az containerapp revision list -n <containerAppName> -g rg-wtla-prod -o table
-az containerapp ingress traffic set -n <containerAppName> -g rg-wtla-prod `
+az containerapp revision list -n ca-wtla-prod -g rg-wtla-prod -o table
+az containerapp ingress traffic set -n ca-wtla-prod -g rg-wtla-prod `
   --revision-weight <previous-revision>=100
 ```
 
@@ -360,13 +375,13 @@ switch `backupPolicy` to `Continuous` for self-service point-in-time restore.
 ```powershell
 # Invoke-RestMethod rather than curl: PowerShell parses the JSON for you, and
 # an ampersand in a bare URL is a command separator, so the last one needs quotes.
-Invoke-RestMethod https://<site>/api/live      # is the process answering
-Invoke-RestMethod https://<site>/api/health    # can it reach Cosmos
-Invoke-RestMethod "https://<site>/api/search?q=teams&platform=windows"
+Invoke-RestMethod https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/live      # is the process answering
+Invoke-RestMethod https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/health    # can it reach Cosmos
+Invoke-RestMethod "https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/search?q=teams&platform=windows"
 ```
 
 Logs:
 
 ```powershell
-az containerapp logs show -n <containerAppName> -g rg-wtla-prod --follow
+az containerapp logs show -n ca-wtla-prod -g rg-wtla-prod --follow
 ```
