@@ -1,7 +1,7 @@
 name: CI
 
-# Every PR gets both halves typechecked and built, whichever half it touched,
-# so a merge to main never fails at the deploy step.
+# Every PR is typechecked and built the same way the deploy does it, so a merge
+# to main never fails at the deploy step.
 on:
   pull_request:
     branches: [main]
@@ -18,8 +18,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      web: ${{ steps.filter.outputs.web }}
-      api: ${{ steps.filter.outputs.api }}
+      app: ${{ steps.filter.outputs.app }}
       infra: ${{ steps.filter.outputs.infra }}
     steps:
       - uses: actions/checkout@v4
@@ -27,53 +26,68 @@ jobs:
         id: filter
         with:
           filters: |
-            web:
+            app:
               - 'app/**'
               - 'components/**'
               - 'lib/**'
               - 'public/**'
-              - 'staticwebapp.config.json'
+              - 'middleware.ts'
               - 'next.config.mjs'
+              - 'tsconfig.json'
               - 'package.json'
               - 'package-lock.json'
-            api:
-              - 'api/**'
+              - 'Dockerfile'
             infra:
               - 'infra/**'
 
-  web:
+  app:
     needs: changes
-    if: needs.changes.outputs.web == 'true'
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
-      - name: Fail if the export is empty
-        run: test -f out/index.html && test -f out/search/index.html
 
-  api:
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: api/package-lock.json
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run build
+      # `next build` happily compiles route trees that crash at runtime — two
+      # different slug names on one path segment, for instance. Booting the
+      # image is the only thing that catches those.
+      - name: Build the image
+        run: docker build -t wtla:ci .
+
+      - name: Boot it and check the routes
+        run: |
+          set -euo pipefail
+          docker run -d --name wtla-ci -p 3888:3000 \
+            -e COSMOS_ENDPOINT=https://unreachable.documents.azure.com:443/ \
+            -e COSMOS_DATABASE=wtla wtla:ci
+          for _ in $(seq 1 20); do
+            curl -sf http://localhost:3888/api/live >/dev/null && break
+            sleep 2
+          done
+          curl -sf http://localhost:3888/api/live >/dev/null
+
+          admin=$(printf '%s' '{"auth_typ":"aad","claims":[{"typ":"oid","val":"ci"},{"typ":"roles","val":"admin"}]}' | base64 -w0)
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3888/api/admin/vendors)" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H "x-ms-client-principal: $admin" http://localhost:3888/api/me)" = "200"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3888/privacy)" = "200"
+
+          # The store is deliberately unreachable: the pages must degrade, not 500.
+          test "$(curl -s -o /dev/null -m 90 -w '%{http_code}' http://localhost:3888/)" = "200"
+          echo "route smoke test passed"
+
+      - name: Container logs
+        if: always()
+        run: docker logs wtla-ci 2>&1 | tail -40 || true
+
+      - name: Stop
+        if: always()
+        run: docker rm -f wtla-ci || true
 
   infra:
     needs: changes

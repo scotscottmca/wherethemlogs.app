@@ -27,3 +27,6 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 
 output connectionString string = appInsights.properties.ConnectionString
 output workspaceId string = workspace.id
+output customerId string = workspace.properties.customerId
+@secure()
+output sharedKey string = workspace.listKeys().primarySharedKey

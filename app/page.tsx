@@ -1,66 +1,43 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Header, Footer, ZoneTabs } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { IconArrow } from "@/components/Icons";
-import { getSummary, toPlates, PLATFORM_META, type Platform, type SummaryResponse } from "@/lib/api";
+import { PLATFORM_META, toPlates, type Platform } from "@/lib/api";
+import { summary } from "@/lib/server/catalog";
 import { requestAppUrl } from "@/lib/site";
+
+// Rendered per request, straight out of Cosmos. No client fetch, no loading
+// shell, and the catalogue is in the HTML a crawler receives.
+export const dynamic = "force-dynamic";
 
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 
-export default function HomePage() {
-  return (
-    <Suspense fallback={<Shell platform="all" />}>
-      <Home />
-    </Suspense>
-  );
-}
-
-function Home() {
-  const params = useSearchParams();
-  const raw = params.get("platform") ?? "all";
-  const platform: Platform | "all" = ZONES.has(raw) ? (raw as Platform) : "all";
-
-  const [summary, setSummary] = useState<SummaryResponse | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    const ctl = new AbortController();
-    getSummary({ signal: ctl.signal })
-      .then(setSummary)
-      .catch((err: unknown) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        setFailed(true);
-      });
-    return () => ctl.abort();
-  }, []);
-
-  return <Shell platform={platform} summary={summary} failed={failed} />;
-}
-
-function Shell({
-  platform,
-  summary,
-  failed = false,
+export default async function Home({
+  searchParams,
 }: {
-  platform: Platform | "all";
-  summary?: SummaryResponse | null;
-  failed?: boolean;
+  searchParams: Promise<{ platform?: string }>;
 }) {
+  const sp = await searchParams;
+  const platform: Platform | "all" = ZONES.has(sp.platform ?? "") ? (sp.platform as Platform) : "all";
+
+  let data: Awaited<ReturnType<typeof summary>> | null = null;
+  try {
+    data = await summary();
+  } catch {
+    // The store is unreachable. The page still renders, and says so, rather
+    // than 500ing at someone mid-incident.
+  }
+
   const counts: Record<string, number> = {
-    all: summary?.apps ?? 0,
-    ...(summary?.byPlatform ?? { windows: 0, macos: 0, linux: 0 }),
+    all: data?.apps ?? 0,
+    ...(data?.byPlatform ?? { windows: 0, macos: 0, linux: 0 }),
   };
 
-
-  const recent = summary
-    ? toPlates(summary.recent).filter((p) => platform === "all" || p.platform === platform)
+  const recent = data
+    ? toPlates(data.recent).filter((p) => platform === "all" || p.platform === platform)
     : [];
 
   return (
@@ -83,7 +60,7 @@ function Shell({
             </p>
             <p className="sign__count">
               <span className="sign__countNum">
-                {summary ? String(summary.apps).padStart(3, "0") : "———"}
+                {data ? String(data.apps).padStart(3, "0") : "———"}
               </span>
               <span className="tag mono">apps racked · seed catalogue</span>
             </p>
@@ -99,7 +76,7 @@ function Shell({
                 Recent additions
               </h2>
               <Link
-                href={platform === "all" ? "/search/" : `/search/?platform=${platform}`}
+                href={platform === "all" ? "/search" : `/search?platform=${platform}`}
                 className="ahead__all tag mono"
               >
                 Browse the whole index
@@ -107,16 +84,12 @@ function Shell({
               </Link>
             </div>
 
-            {failed ? (
+            {!data ? (
               <div className="rackNote">
                 <p style={{ margin: 0 }}>
                   The catalogue is not answering. The index is still there — reload in a
                   moment, or search anyway and the scanner will retry.
                 </p>
-              </div>
-            ) : !summary ? (
-              <div className="rackNote">
-                <p style={{ margin: 0 }}>Reading the rack&hellip;</p>
               </div>
             ) : recent.length ? (
               recent.map((plate) => <Plate key={plate.key} plate={plate} />)
@@ -147,7 +120,7 @@ function Shell({
         </p>
       </main>
 
-      <Footer entryCount={summary?.apps ?? null} />
+      <Footer entryCount={data?.apps ?? null} />
       <Consent />
     </>
   );

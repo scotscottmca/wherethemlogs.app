@@ -44,10 +44,20 @@ jobs:
 
       - name: What-if
         run: |
+          set -euo pipefail
+          current=$(az containerapp show \
+            --name "${{ vars.AZURE_CONTAINERAPP_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --query "properties.template.containers[0].image" -o tsv 2>/dev/null || true)
+
+          extra=()
+          [ -n "$current" ] && extra=(--parameters "containerImage=$current")
+
           az deployment group what-if \
             --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
             --template-file infra/main.bicep \
-            --parameters infra/main.parameters.json
+            --parameters infra/main.parameters.json \
+            "${extra[@]}"
 
   deploy:
     needs: validate
@@ -70,11 +80,29 @@ jobs:
       - name: Deploy Bicep
         id: bicep
         run: |
+          set -euo pipefail
+
+          # The container app is created with a placeholder image, because the
+          # real one does not exist until deploy-app has run once. Re-running
+          # infra must not roll the app back to that placeholder, so read what
+          # is deployed now and hand it straight back in.
+          current=$(az containerapp show \
+            --name "${{ vars.AZURE_CONTAINERAPP_NAME }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --query "properties.template.containers[0].image" -o tsv 2>/dev/null || true)
+
+          extra=()
+          if [ -n "$current" ]; then
+            echo "Preserving the running image: $current"
+            extra=(--parameters "containerImage=$current")
+          fi
+
           az deployment group create \
             --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
             --name "infra-$GITHUB_RUN_ID" \
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
+            "${extra[@]}" \
             --query properties.outputs -o json | tee outputs.json
 
       - name: Summarise

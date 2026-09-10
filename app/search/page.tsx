@@ -1,24 +1,38 @@
-"use client";
-
-import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import type { Metadata } from "next";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { IconArrow, IconClose } from "@/components/Icons";
-import {
-  PLATFORM_META,
-  TYPE_GROUPS,
-  searchApps,
-  toPlates,
-  type Platform,
-  type SearchResponse,
-} from "@/lib/api";
+import { PLATFORM_META, TYPE_GROUPS, toPlates, type Platform } from "@/lib/api";
+import { search } from "@/lib/server/catalog";
 import { requestAppUrl } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
+
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+
+type SP = { q?: string; platform?: string; type?: string | string[] };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SP>;
+}): Promise<Metadata> {
+  const { q } = await searchParams;
+  return {
+    title: q ? `“${q}” — results` : "Browse the index",
+    description: q
+      ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
+      : undefined,
+  };
+}
+
+function asTypes(t: SP["type"]): string[] {
+  if (!t) return [];
+  return (Array.isArray(t) ? t : [t]).flatMap((v) => v.split(",")).filter(Boolean);
+}
 
 function buildHref(base: { q: string; platform: Platform | "all"; types: string[] }) {
   const p = new URLSearchParams();
@@ -26,103 +40,43 @@ function buildHref(base: { q: string; platform: Platform | "all"; types: string[
   if (base.platform !== "all") p.set("platform", base.platform);
   base.types.forEach((t) => p.append("type", t));
   const s = p.toString();
-  return s ? `/search/?${s}` : "/search/";
+  return s ? `/search?${s}` : "/search";
 }
 
-export default function SearchPage() {
-  return (
-    <Suspense fallback={<Frame />}>
-      <Results />
-    </Suspense>
-  );
-}
+export default async function Results({ searchParams }: { searchParams: Promise<SP> }) {
+  const sp = await searchParams;
+  const q = (sp.q ?? "").slice(0, 120);
+  const platform: Platform | "all" = ZONES.has(sp.platform ?? "") ? (sp.platform as Platform) : "all";
+  const types = asTypes(sp.type);
 
-function Results() {
-  const params = useSearchParams();
-  const q = (params.get("q") ?? "").slice(0, 120);
-  const rawPlatform = params.get("platform") ?? "all";
-  const platform: Platform | "all" = ZONES.has(rawPlatform) ? (rawPlatform as Platform) : "all";
-  const types = useMemo(
-    () => params.getAll("type").flatMap((t) => t.split(",")).filter(Boolean),
-    [params],
-  );
+  let failed = false;
+  let poolPlates: ReturnType<typeof toPlates> = [];
+  let plates: ReturnType<typeof toPlates> = [];
+  let offered = new Set<string>();
 
-  // Two calls: the unfiltered pool drives the honest zone counts and the
-  // "N of M matching" line; the filtered call drives the rack.
-  const [pool, setPool] = useState<SearchResponse | null>(null);
-  const [filtered, setFiltered] = useState<SearchResponse | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    const ctl = new AbortController();
-    setFailed(false);
-    Promise.all([
-      searchApps({ q, platform: "all" }, { signal: ctl.signal }),
-      searchApps({ q, platform, types }, { signal: ctl.signal }),
-    ])
-      .then(([all, narrow]) => {
-        setPool(all);
-        setFiltered(narrow);
-      })
-      .catch((err: unknown) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        setFailed(true);
-      });
-    return () => ctl.abort();
-  }, [q, platform, types]);
-
-  const plates = filtered ? toPlates(filtered.results) : [];
+  try {
+    // The unfiltered pool drives honest zone counts and the "N of M" line;
+    // the filtered one drives the rack. Both hit the same in-process cache.
+    const [pool, narrowed] = await Promise.all([
+      search({ q, platform: "all", types: [] }),
+      search({ q, platform, types }),
+    ]);
+    poolPlates = toPlates(pool.results);
+    plates = toPlates(narrowed.results);
+    offered = new Set(narrowed.results.flatMap((a) => a.types));
+  } catch {
+    failed = true;
+  }
 
   // The tabs count what the rack shows — plates, not apps — so "WIN 2" and
   // "2 plates on the pick list" can never disagree.
-  const poolPlates = pool ? toPlates(pool.results) : [];
   const counts: Record<string, number> = { all: poolPlates.length };
   for (const meta of PLATFORM_META) {
     counts[meta.id] = poolPlates.filter((p) => p.platform === meta.id).length;
   }
 
-  const offered = new Set(filtered ? filtered.results.flatMap((a) => a.types) : []);
   const hasFilters = platform !== "all" || types.length > 0;
 
-  return (
-    <Frame
-      q={q}
-      platform={platform}
-      types={types}
-      counts={counts}
-      hasFilters={hasFilters}
-      offered={offered}
-      plates={plates}
-      poolCount={poolPlates.length}
-      loading={!filtered && !failed}
-      failed={failed}
-    />
-  );
-}
-
-function Frame({
-  q = "",
-  platform = "all",
-  types = [],
-  counts = { all: 0, windows: 0, macos: 0, linux: 0 },
-  hasFilters = false,
-  offered = new Set<string>(),
-  plates = [],
-  poolCount = 0,
-  loading = true,
-  failed = false,
-}: {
-  q?: string;
-  platform?: Platform | "all";
-  types?: string[];
-  counts?: Record<string, number>;
-  hasFilters?: boolean;
-  offered?: Set<string>;
-  plates?: ReturnType<typeof toPlates>;
-  poolCount?: number;
-  loading?: boolean;
-  failed?: boolean;
-} = {}) {
   return (
     <>
       <Header />
@@ -144,13 +98,11 @@ function Frame({
           </div>
           <div>
             <p className="tag mono" style={{ margin: 0 }}>
-              {loading
-                ? "Reading the rack…"
-                : failed
-                  ? "The catalogue is not answering"
-                  : `${plates.length} ${plates.length === 1 ? "plate" : "plates"} on the pick list${
-                      hasFilters ? ` · ${poolCount} match the query` : ""
-                    }`}
+              {failed
+                ? "The catalogue is not answering"
+                : `${plates.length} ${plates.length === 1 ? "plate" : "plates"} on the pick list${
+                    hasFilters ? ` · ${poolPlates.length} match the query` : ""
+                  }`}
             </p>
             <a className="picklist__refine tag mono" href="#refine">
               Jump to refine
@@ -244,15 +196,11 @@ function Frame({
           </details>
 
           <div className="resultsBody">
-            {loading ? (
-              <div className="void">
-                <p className="void__p">Reading the rack&hellip;</p>
-              </div>
-            ) : failed ? (
+            {failed ? (
               <div className="void">
                 <h2 className="void__h">The catalogue is not answering</h2>
                 <p className="void__p">
-                  The index is still there — this is the API, not your query. Reload in a
+                  The index is still there — this is the store, not your query. Reload in a
                   moment.
                 </p>
               </div>
@@ -261,18 +209,18 @@ function Frame({
             ) : (
               <div className="void">
                 <h2 className="void__h">
-                  {poolCount
+                  {poolPlates.length
                     ? "Every match was filtered out"
                     : q
                       ? `Nothing racked under “${q}”`
                       : "The index is empty for this zone"}
                 </h2>
                 <p className="void__p">
-                  {poolCount
-                    ? `“${q}” matches ${poolCount} ${poolCount === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
+                  {poolPlates.length
+                    ? `“${q}” matches ${poolPlates.length} ${poolPlates.length === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
                     : "Check the spelling, try the vendor name, or open a request — the catalogue grows from them."}
                 </p>
-                {poolCount ? (
+                {poolPlates.length ? (
                   <Link className="btn tag mono" href={buildHref({ q, platform: "all", types: [] })}>
                     Clear the filters
                     <IconArrow size={15} />

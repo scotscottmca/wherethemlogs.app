@@ -1,15 +1,49 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const projectRoot = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 export default {
-  /**
-   * Static export. The site is a CDN-served bundle on Azure Static Web Apps and
-   * every byte of data comes from the linked Function App at /api/*.
-   *
-   * This is what buys independent deploys: SWA's Next.js hybrid mode owns /api
-   * itself and ignores staticwebapp.config.json's routing and role rules, which
-   * would break both the separate backend and the admin gating.
-   */
-  output: "export",
-  trailingSlash: true,
-  images: { unoptimized: true },
+  // Without this, Next walks up looking for a workspace root and can settle on
+  // a parent directory that happens to hold a lockfile — which nests the
+  // standalone output somewhere the Dockerfile is not looking.
+  outputFileTracingRoot: projectRoot,
+  // Standalone bundles the server and only the dependencies it actually uses,
+  // which is what the container image copies.
+  output: "standalone",
+  poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "x-content-type-options", value: "nosniff" },
+          { key: "referrer-policy", value: "strict-origin-when-cross-origin" },
+          { key: "permissions-policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+          { key: "cross-origin-opener-policy", value: "same-origin" },
+          {
+            key: "content-security-policy",
+            value: [
+              "default-src 'self'",
+              // Next's hydration inlines its bootstrap payload.
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https://*.blob.core.windows.net",
+              "font-src 'self'",
+              "connect-src 'self'",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+        ],
+      },
+      {
+        source: "/fonts/:path*",
+        headers: [{ key: "cache-control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
+  },
 };

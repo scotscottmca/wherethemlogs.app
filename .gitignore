@@ -1,15 +1,11 @@
 node_modules
-api/node_modules
 
 # Build output
 .next
 out
-api/dist
 tsconfig.tsbuildinfo
-api/tsconfig.tsbuildinfo
 
 # Local configuration and secrets
-api/local.settings.json
 .impeccable/config.local.json
 .env*.local
 

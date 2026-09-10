@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.git
+.github
+.impeccable
+docs
+infra
+scripts
+*.md
+Dockerfile
+.dockerignore
+.env*.local
+.DS_Store

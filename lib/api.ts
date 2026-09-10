@@ -1,14 +1,16 @@
 /**
- * The catalogue API client.
+ * Shared view types and the browser's API client.
  *
- * In production the Static Web App proxies /api/* to the linked Function App,
- * so the browser talks to its own origin. For local development against a
- * running Functions host, set NEXT_PUBLIC_API_BASE (e.g. http://localhost:7071).
+ * Record shapes come straight from `lib/model.ts`, which the route handlers
+ * use too — one definition, checked by the compiler. That seam used to be a
+ * hand-maintained contract across an HTTP boundary between two deployables;
+ * it is not one any more.
  */
+import type { LogPath, Platform, ResolvedApp, Scope } from "./model";
+import { PLATFORMS } from "./model";
 
-export const PLATFORMS = ["windows", "macos", "linux"] as const;
-export type Platform = (typeof PLATFORMS)[number];
-export type Scope = "per-user" | "per-machine" | "system";
+export type { LogPath, Platform, ResolvedApp, Scope };
+export { PLATFORMS };
 
 export const PLATFORM_META: { id: Platform; code: string; name: string }[] = [
   { id: "windows", code: "WIN", name: "Windows" },
@@ -23,33 +25,6 @@ export const TYPE_GROUPS: { label: string; types: string[] }[] = [
   },
   { label: "Architecture", types: ["x86", "x64", "arm64"] },
 ];
-
-export interface LogPath {
-  id: string;
-  platform: Platform;
-  label: string;
-  path: string;
-  note?: string;
-  variant?: string;
-  types: string[];
-  scope: Scope;
-}
-
-export interface ResolvedApp {
-  id: string;
-  vendorId: string;
-  slug: string;
-  name: string;
-  aliases: string[];
-  iconUrl: string | null;
-  resolvedIconUrl: string | null;
-  vendor: { id: string; slug: string; name: string; iconUrl: string | null };
-  logPaths: LogPath[];
-  platforms: Platform[];
-  types: string[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface SearchResponse {
   query: string;
@@ -68,8 +43,6 @@ export interface SummaryResponse {
   recent: ResolvedApp[];
 }
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
-
 export class ApiError extends Error {
   constructor(readonly status: number, message: string) {
     super(message);
@@ -77,23 +50,11 @@ export class ApiError extends Error {
   }
 }
 
-async function get<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${BASE}/api${path}`, {
-    ...init,
-    headers: { accept: "application/json", ...init?.headers },
-  });
-
-  if (!response.ok) {
-    const message =
-      response.status >= 500
-        ? "The catalogue is not answering. Try again in a moment."
-        : `Request failed (${response.status}).`;
-    throw new ApiError(response.status, message);
-  }
-  return (await response.json()) as T;
-}
-
-export function searchApps(
+/**
+ * Only the browser uses this. Server components call `search()` and `summary()`
+ * in `lib/server/catalog.ts` directly — no HTTP hop to reach our own process.
+ */
+export async function searchApps(
   args: { q: string; platform: Platform | "all"; types?: string[]; limit?: number },
   init?: RequestInit,
 ): Promise<SearchResponse> {
@@ -104,11 +65,20 @@ export function searchApps(
   if (args.limit) params.set("limit", String(args.limit));
 
   const qs = params.toString();
-  return get<SearchResponse>(`/search${qs ? `?${qs}` : ""}`, init);
-}
+  const response = await fetch(`/api/search${qs ? `?${qs}` : ""}`, {
+    ...init,
+    headers: { accept: "application/json", ...init?.headers },
+  });
 
-export function getSummary(init?: RequestInit): Promise<SummaryResponse> {
-  return get<SummaryResponse>("/summary", init);
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      response.status >= 500
+        ? "The catalogue is not answering. Try again in a moment."
+        : `Request failed (${response.status}).`,
+    );
+  }
+  return (await response.json()) as SearchResponse;
 }
 
 /**

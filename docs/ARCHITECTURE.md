@@ -1,191 +1,184 @@
 # Architecture
 
-Where Them Logs App is three deployables that ship on their own schedules: a
-static site, an HTTP API, and the Azure resources both of them land on.
+One application, deployed as one container image, plus the Azure resources it
+runs on.
 
 ```mermaid
 flowchart LR
-  subgraph Browser
-    UI["Static site<br/>Next.js export"]
+  Browser --> CA
+
+  subgraph CA["Azure Container Apps"]
+    AUTH["Built-in auth<br/>Entra ID, anonymous allowed"]
+    NEXT["Next.js 15 standalone<br/>pages · route handlers · middleware"]
+    AUTH --> NEXT
   end
 
-  subgraph SWA["Azure Static Web Apps — Standard"]
-    CDN["Global CDN + routing<br/>staticwebapp.config.json"]
-    AUTH["Entra ID sign-in<br/>role gate on /admin and /api/admin"]
-  end
-
-  FN["Azure Functions<br/>Node 20, linked backend"]
-  COSMOS[("Cosmos DB — free tier<br/>vendors · apps")]
-  BLOB[("Blob Storage<br/>icons, public read")]
-  AI["Application Insights"]
-
-  UI --> CDN
-  CDN -- "/api/*  + x-ms-client-principal" --> FN
-  CDN --- AUTH
-  FN -- "managed identity" --> COSMOS
-  FN -- "managed identity" --> BLOB
-  UI -- "icon URLs" --> BLOB
-  FN --> AI
+  ACR[("Container Registry")] -. "image pull, managed identity" .-> CA
+  NEXT -- "managed identity" --> COSMOS[("Cosmos DB — free tier<br/>vendors · apps")]
+  NEXT -- "managed identity" --> BLOB[("Blob Storage<br/>icons, public read")]
+  Browser -- "icon URLs" --> BLOB
+  NEXT --> AI["Application Insights"]
 ```
 
-## The decisions, and what they cost
+## Why there is no separate API
 
-### Static Web Apps Standard, with a *linked* backend
+There was one — an Azure Function App behind Static Web Apps — and it existed
+for exactly one reason: the site was a static export, so it had no server of
+its own to talk to Cosmos with. The static export was itself forced by SWA's
+Next.js hybrid mode ignoring `staticwebapp.config.json`'s routing and role
+rules.
 
-Standard tier is doing two specific jobs here, not just buying a bigger quota:
+Container Apps runs Next.js as a real server, so that chain collapses. Route
+Handlers under `app/api/` **are** the backend, in the same process as the pages.
+What went with the Function App:
 
-1. **Linked backends.** The API is a separately deployed Function App that SWA
-   mounts at `/api/*` on the site's own domain. Managed functions — the Free
-   tier option — deploy *inside* the site's deployment, which would make
-   "deploy the UI without touching the API" impossible. This is the requirement
-   that picked the tier.
-2. **Role-based route rules.** `staticwebapp.config.json` refuses anonymous
-   traffic to `/admin/*` and `/api/admin/*` before it ever reaches a function.
+- a second cold start, a second managed identity, a second CI pipeline;
+- a network hop on every server-rendered page;
+- a type contract across an HTTP boundary that nothing checked. `lib/model.ts`
+  is now imported by both the route handlers and the client, and the compiler
+  enforces it.
 
-Because SWA proxies, the browser only ever talks to one origin. There is no
-CORS configuration in production and no API hostname in the client bundle.
+Server-rendered pages do not call their own HTTP API. `app/page.tsx` calls
+`summary()` and `app/search/page.tsx` calls `search()` directly. `/api/search`
+exists for the browser's type-ahead, which genuinely needs HTTP.
 
-### The site is a static export
+### What "deploy separately" turned into
 
-`next.config.mjs` sets `output: "export"`. This follows from the linked backend
-rather than being a separate preference: SWA's Next.js *hybrid* mode owns
-`/api` itself and largely ignores `staticwebapp.config.json`, which would break
-both the independent backend and the admin role gating.
+The original brief asked for the site and backend to deploy independently. With
+one service that is no longer literally possible, and Container Apps replaces it
+with something that covers the same ground:
 
-**What that costs.** No server-side rendering, so page HTML carries no
-catalogue content and the first paint is a shell that then calls `/api`. For a
-search tool whose visitors arrive to type a name, that is a fair trade. It
-stops being fair the day per-app pages need to rank in search results — at that
-point the site moves to Azure Container Apps or App Service running Next.js
-properly, and the API stays exactly where it is. The API boundary is what makes
-that migration cheap.
+**Revisions.** Every deploy creates a new revision. A bad one is a traffic shift
+away from undone, and the previous revision is still warm — faster and safer
+than reverting a commit and waiting for a rebuild. Path filters still keep
+application and infrastructure deploys apart.
 
-### Cosmos DB: two containers, log paths embedded
+If the API ever gets consumers other than this site — a CLI, an MDM
+integration — that is the moment to split it back out. All data access sits
+behind `lib/server/`, imported only by route handlers and page components, so
+extracting it is a move rather than a rewrite.
+
+## Server-side rendering, back again
+
+`output: "standalone"`. Pages are `force-dynamic` and rendered per request from
+Cosmos, so the catalogue is in the HTML a crawler receives and there is no
+loading shell. The static export was costing SEO on exactly the pages that
+would eventually need it; that cost is gone.
+
+Both pages catch a store failure and render a "not answering" state rather than
+500ing at someone mid-incident.
+
+## Cosmos DB: two containers, log paths embedded
 
 ```
 vendors   partition key /id         one document per vendor
 apps      partition key /vendorId   one document per app, log paths inside it
 ```
 
-**Why log paths are embedded, not their own container.** They are always read
-with their app, always written with their app, and there are a handful per app.
-A separate container would add a query to every read and a distributed write to
-every edit, in exchange for nothing. The rule of thumb held: embed what is
-bounded and read together.
+**Log paths are embedded, not their own container.** They are always read with
+their app, always written with their app, and there are a handful per app. A
+separate container would add a query to every read and a distributed write to
+every edit, for nothing.
 
-**Why vendors are referenced, not embedded.** A vendor's name and icon are
-shared across every app it owns. Embedding would mean a rename touches hundreds
-of documents. The API joins them in memory, which is free at this size.
+**Vendors are referenced, not embedded.** A vendor's name and icon are shared by
+every app it owns; embedding would make a rename touch hundreds of documents.
+The join happens in memory, which is free at this size.
 
-**Why `/vendorId` partitions the apps.** "Every app for this vendor" is the
-admin portal's main query, and that partition key makes it single-partition.
-Search fans out across partitions, which is fine: the catalogue is small and
-search is served from cache (below).
+**`/vendorId` partitions the apps** because "every app for this vendor" is the
+admin portal's main query, and that key makes it single-partition. Search fans
+out, which is fine — it is served from cache.
 
 **Moving an app between vendors** changes its partition key, which Cosmos cannot
-do in place. `PATCH /api/admin/apps/{id}` with a new `vendorId` handles it as a
-create in the new partition plus a delete from the old one.
+do in place. `PATCH /api/admin/apps/{id}` with a new `vendorId` does the
+create-then-delete; the app keeps its id.
 
-### Icons
+## Icons
 
-`Vendor.iconUrl` is required in spirit and nullable in practice.
-`App.iconUrl` is nullable and **means something when null**: inherit the
-vendor's. The fallback is resolved on read (`resolvedIconUrl` on the API
-response), never stored resolved, so changing a vendor icon updates every app
-that inherits it without a migration.
+`App.iconUrl` is nullable and **null means something**: inherit the vendor's.
+The fallback resolves on read (`resolvedIconUrl`), never stored resolved, so
+changing a vendor icon updates every app that inherits it with no migration.
 
 Icons live in a public-read blob container on the storage account's own origin.
 That is deliberate: an SVG is executable in a browsing context, so serving user
-uploads from the site's origin would be a stored-XSS vector. The Content
-Security Policy allows `img-src` from `*.blob.core.windows.net` and nothing
+uploads from the site's origin would be a stored-XSS vector. The CSP in
+`next.config.mjs` allows `img-src` from `*.blob.core.windows.net` and nothing
 else.
 
-### Caching
+## Caching
 
-The catalogue is small, read constantly and written rarely, so each Function
-instance holds the whole thing for 60 seconds (`api/src/lib/catalog.ts`).
-Search then costs no request units at all. Admin writes call `invalidate()`, so
-the writing instance is immediately correct and the others catch up within the
-TTL.
+The catalogue is small, read constantly and written rarely, so each replica
+holds all of it for 60 seconds (`lib/server/catalog.ts`). Search then costs no
+request units. Admin writes call `invalidate()`, so the writing replica is
+immediately correct and the others catch up within the TTL.
 
-This is a process-local cache with no cross-instance invalidation. If editors
-ever need writes visible everywhere instantly, the upgrade is the Cosmos change
-feed pushing an invalidation — not a shorter TTL.
+Process-local, with no cross-replica invalidation. If editors ever need writes
+visible everywhere instantly, the upgrade is the Cosmos change feed pushing an
+invalidation — not a shorter TTL.
 
 ## Authentication
 
 | Surface | Who gets in | Enforced by |
 | --- | --- | --- |
-| The site, `/api/search`, `/api/summary`, `/api/vendors`, `/api/apps/{slug}` | Anyone | Nothing. It is a public reference. |
-| `/admin/*` (portal, not yet built) | `admin` role | `staticwebapp.config.json` |
-| `/api/admin/*` | `admin` role | `staticwebapp.config.json`, **and** `requireAdmin()` in the function |
+| The site, `/api/search`, `/api/summary`, `/api/vendors`, `/api/apps/{slug}`, `/api/me` | Anyone | Nothing. It is a public reference. |
+| `/admin/*` (portal, not yet built) | `admin` role | `middleware.ts` |
+| `/api/admin/*` | `admin` role | `middleware.ts`, **and** `requireAdmin()` in each handler |
 
-SWA authenticates with Entra ID and forwards the result to the backend as the
-`x-ms-client-principal` header. Every admin handler re-checks it, so a request
-that reaches the Function App by some other route still has to carry the role.
+Container Apps' built-in authentication signs the visitor in with Entra ID and
+injects the principal as `x-ms-client-principal`. The platform strips any
+client-supplied copy of that header, so what the app reads is what the platform
+wrote — unlike the previous design, where the Function App's own public
+hostname made the header forgeable. That whole class of hardening problem is
+gone with the second service.
 
-Roles come from **SWA invitations** by default — no code, assigned in the portal.
-To follow an Entra ID group instead, set `ADMIN_GROUP_IDS` on the Function App
-and add `"rolesSource": "/api/roles"` to the `auth` block; `api/src/functions/roles.ts`
-is written and waiting.
+`unauthenticatedClientAction` is `AllowAnonymous`, because the catalogue is
+public. The middleware decides what the admin surface needs: a signed-in
+non-admin gets the `/403` page with a 403; anyone else is redirected to
+`/.auth/login/aad`.
 
-### Residual hardening, stated plainly
+**Admin membership is an Entra ID app role.** Assign users or groups to the
+`admin` app role on the app registration and it arrives in the token's `roles`
+claim. There is no invitation list to keep in sync.
 
-The Function App has a public hostname. Nothing in this template stops someone
-calling `https://<func>.azurewebsites.net/api/admin/vendors` directly, and the
-only thing refusing them is that they cannot forge `x-ms-client-principal`
-without also… simply setting the header. **Before real data goes in, enable
-Entra ID authentication (Easy Auth) on the Function App and require it on
-`/api/admin/*`.** `docs/DEPLOYMENT.md` has the command. The code-level check is
-defence in depth, not the lock.
-
-## Independent deployability
-
-| Workflow | Fires on changes to | Deploys |
-| --- | --- | --- |
-| `deploy-web.yml` | `app/`, `components/`, `lib/`, `public/`, `staticwebapp.config.json`, `next.config.mjs`, root `package*.json` | Static Web App |
-| `deploy-api.yml` | `api/` | Function App |
-| `deploy-infra.yml` | `infra/` | Bicep, incremental |
-
-All three trigger on `push` to `main`, which is what a merged PR produces.
-`ci.yml` runs on the PR itself and typechecks and builds whichever halves the
-branch touched, so a merge never fails at the deploy step.
-
-`deploy-web.yml` also opens a **preview environment** for every PR that touches
-the site and tears it down on close — a Standard-tier feature.
-
-The two halves stay independently deployable because the contract between them
-is HTTP, versioned by nothing more than care. `lib/api.ts` on the client and
-`api/src/lib/model.ts` on the server describe the same shapes and are checked by
-neither. That is the one real seam in this design; a breaking API change means
-shipping the API first, then the site.
+`requireAdmin()` in each handler is defence in depth — a route added under
+`/api/admin/` that someone forgets to match in middleware still fails closed.
 
 ## Cost
 
 | Resource | Tier | Roughly |
 | --- | --- | --- |
-| Static Web Apps | Standard | ~$9/month |
+| Container Apps | Consumption, 0.5 vCPU / 1 GiB, min 1 replica | ~$12–18/month |
+| Container Registry | Basic | ~$5/month |
 | Cosmos DB | Free tier | $0 — first 1000 RU/s and 25 GB |
-| Functions | Consumption (Y1) | $0 at this volume — 1M free executions |
 | Storage | Standard LRS | pennies |
 | Application Insights | Pay-as-you-go | $0 under the 5 GB monthly grant |
 
+**Around $20/month, against roughly $9 for the Static Web App it replaces.**
+That is the honest price of running a server instead of a CDN.
+
+`minReplicas: 0` drops it to near zero, at the cost of a cold start of a few
+seconds on the first request after idle. It defaults to 1 because this is a tool
+people reach for mid-incident, and that is precisely when a cold start is worst.
+For a staging environment, set it to 0.
+
 **Cosmos free tier is one account per Azure subscription.** If the subscription
-already has one, `az deployment` fails on the Cosmos resource; set
-`cosmosFreeTier: false` in `infra/main.parameters.json` and expect roughly $24/month
-for 400 RU/s.
+already has one, deployment fails on the Cosmos resource; set `cosmosFreeTier`
+to `false` and expect roughly $24/month for 400 RU/s.
 
 ## Known constraints
 
-- **Static Web Apps runs in a handful of regions.** `staticWebAppLocation` is a
-  separate parameter from `location` for that reason; the backend may sit
-  elsewhere.
-- **The Function App's own storage still uses an account key.** On the Y1
-  Consumption plan the platform requires `WEBSITE_CONTENTAZUREFILECONNECTIONSTRING`,
-  which has no identity-based equivalent. *Application* data — Cosmos and the
-  icons container — is keyless. Moving to a Flex Consumption plan removes the
-  last key; it was not used here because Y1 has the widest regional coverage.
-- **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything, including
-  the seed script and local development, authenticates with Entra ID.
-- **Search ranking lives in the API** (`api/src/lib/catalog.ts`). The client does
-  no scoring, so ranking changes ship with the backend.
+- **The container app is created with a placeholder image**
+  (`mcr.microsoft.com/k8se/quickstart`), because the real image does not exist
+  until `deploy-app` has run once. `deploy-infra` reads the currently deployed
+  image and passes it back in, so re-running infrastructure never rolls the
+  application back. Worth knowing before running `az deployment group create` by
+  hand — pass `containerImage=` yourself, or the next request serves the
+  quickstart page.
+- **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything —
+  the app, the seed script, local development — authenticates with Entra ID.
+- **Probes deliberately do not check Cosmos.** `/api/live` never touches it.
+  Restarting or de-rotating the last replica because the database is having a
+  bad minute turns a degraded site into a down one, and the pages already handle
+  the degraded case. `/api/health` does check the store, and is what the deploy
+  workflow gates on.
+- **Search ranking lives in `lib/server/catalog.ts`.** The client does no
+  scoring.

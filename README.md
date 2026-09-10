@@ -11,32 +11,29 @@ unknown vintage.
 ## Layout
 
 ```
-app/  components/  lib/    the site — Next.js, static export
-api/                       the API — Azure Functions, Node 20
-infra/                     Azure resources — Bicep
-scripts/                   seed data and the seeder
-docs/                      architecture, API reference, deployment
+app/                  pages, route handlers, middleware — Next.js 15
+components/  lib/     UI, shared model, server-only data access
+infra/                Azure resources — Bicep
+scripts/              seed data and the seeder
+docs/                 architecture, API reference, deployment
 ```
 
-Three deployables, three workflows, path-filtered. Changing the site does not
-redeploy the API, and vice versa.
+One application, one image. Pages are server-rendered from Cosmos; route
+handlers under `app/api/` serve the browser and the admin portal from the same
+process.
 
 ## Run it
 
-Two terminals. The site needs the API for every byte of data.
-
-```bash
-cd api && cp local.settings.json.example local.settings.json && npm install && npm start
-```
-
 ```bash
 npm install
-NEXT_PUBLIC_API_BASE=http://localhost:7071 npm run dev   # http://localhost:3777
+LOCAL_ADMIN_BYPASS=true \
+COSMOS_ENDPOINT=https://<account>.documents.azure.com:443/ \
+COSMOS_DATABASE=wtla \
+npm run dev            # http://localhost:3777
 ```
 
-Needs [Azure Functions Core Tools v4](https://learn.microsoft.com/azure/azure-functions/functions-run-local)
-and `az login`. Full setup, including the admin bypass for local work, is in
-[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Needs `az login` with an account that holds the Cosmos data-plane role. Full
+setup is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## What's here
 
@@ -45,7 +42,7 @@ and `az login`. Full setup, including the admin bypass for local work, is in
 | `/` | Aisle sign, scanner field with live type-ahead, recent additions, recent searches, zone filter |
 | `/search` | Full results, filterable by platform, installer, architecture and scope |
 | `/privacy` | Privacy and cookie notice |
-| `/admin` | Not built yet. The API behind it is — see [docs/API.md](docs/API.md). |
+| `/admin` | Not built yet. The CRUD API behind it is — see [docs/API.md](docs/API.md). |
 
 Keyboard: `/` focuses the scanner from anywhere, arrows walk the type-ahead, `Enter`
 commits to the full results, `Shift+Enter` copies the highlighted plate's first path.
@@ -78,7 +75,7 @@ names into one.
 
 ## Before this goes live
 
-- [ ] **Lock down the Function App.** It has a public hostname; until Entra ID auth is on it, the in-code admin check is defence in depth, not the lock. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
+- [ ] Register the Entra ID app, add the `admin` app role, and set `authClientId` / `authTenantId`. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
 - [ ] Choose the analytics provider. The consent bar and `/privacy` both state plainly that
       one has not been chosen and that nothing is loaded either way — update both when it is.
 - [ ] Replace the seed catalogue with the real index.
@@ -87,9 +84,11 @@ names into one.
 
 ## Infrastructure
 
-Azure Static Web Apps (Standard) serves the site and proxies `/api/*` to a
-separately deployed Function App, which reaches Cosmos DB (free tier) and Blob
-Storage by managed identity. Why each of those, and what it costs, is in
+Azure Container Apps runs the image; Cosmos DB (free tier) and Blob Storage sit
+behind it, both reached by managed identity — no keys anywhere. Deploys are a
+new revision, so rolling back is a traffic shift rather than a rebuild.
+
+Around **$20/month**. Why each piece, and what it costs, is in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Design

@@ -1,14 +1,21 @@
 # API reference
 
-Base path `/api`, served from the site's own origin — Static Web Apps proxies
-it to the linked Function App.
+Base path `/api`, served by the same Next.js process that renders the pages.
 
 Everything under `/api/admin` needs the `admin` role. Everything else is
 anonymous.
 
+**Server-rendered pages do not use this API.** `app/page.tsx` calls `summary()`
+and `app/search/page.tsx` calls `search()` from `lib/server/catalog.ts`
+directly, in-process. These routes exist for the browser — the type-ahead — and
+for the admin portal.
+
 ---
 
 ## Records
+
+Defined once in `lib/model.ts`, imported by both the route handlers and the
+browser client.
 
 ```ts
 Vendor {
@@ -108,10 +115,31 @@ Every vendor, by name.
 
 One ResolvedApp, or `404`.
 
+### `GET /api/live`
+
+`200` always, as long as the process is answering. Deliberately does not touch
+Cosmos: it is what the container's liveness and readiness probes use, and
+restarting the last replica because the database is having a bad minute turns a
+degraded site into a down one.
+
 ### `GET /api/health`
 
-`200` with document counts, or `503` when the store is unreachable. The deploy
-workflow gates on it.
+`200` with document counts, or `503` when the store is unreachable. This is the
+one that checks Cosmos, and what the deploy workflow gates on.
+
+### `GET /api/me`
+
+Who the caller is, per the platform's authentication.
+
+```json
+{ "signedIn": true, "isAdmin": true, "userId": "…", "userDetails": "a@b.com", "identityProvider": "aad", "roles": ["admin"] }
+```
+
+Anonymous callers get `{ "signedIn": false, "isAdmin": false, "roles": [] }`.
+
+Deliberately **not** under `/api/admin`: an endpoint whose job is to answer "are
+you an admin?" cannot be gated on being one, or a signed-in non-admin receives a
+403 instead of an answer.
 
 Read endpoints send `cache-control: public, max-age=60, stale-while-revalidate=300`.
 
@@ -174,10 +202,10 @@ one app. Pass `?vendorId=` to skip the partition lookup.
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| `GET` | `/api/admin/apps/{appId}/logpaths` | |
-| `POST` | `/api/admin/apps/{appId}/logpaths` | `{ platform, label, path, scope, types?, note?, variant? }` |
-| `PATCH` | `/api/admin/apps/{appId}/logpaths/{logPathId}` | Partial |
-| `DELETE` | `/api/admin/apps/{appId}/logpaths/{logPathId}` | |
+| `GET` | `/api/admin/apps/{id}/logpaths` | |
+| `POST` | `/api/admin/apps/{id}/logpaths` | `{ platform, label, path, scope, types?, note?, variant? }` |
+| `PATCH` | `/api/admin/apps/{id}/logpaths/{logPathId}` | Partial |
+| `DELETE` | `/api/admin/apps/{id}/logpaths/{logPathId}` | |
 
 `POST` returns `400` if the same `platform` + `path` + `variant` already exists
 on the app. The same path twice on one platform is a duplicate, not a variant.
@@ -200,15 +228,6 @@ Write that `url` to a vendor's or app's `iconUrl`. The blob is immutable and
 cached for a year; replacing an icon means uploading a new one and repointing.
 Nothing garbage-collects the old blob — a cleanup job is deliberately not built
 yet.
-
-### `GET /api/admin/me`
-
-Who the caller is, per the Static Web App. The portal calls it on load so it
-can fail closed with a useful message instead of a bare `403` on first write.
-
-```json
-{ "signedIn": true, "isAdmin": true, "userId": "…", "userDetails": "a@b.com", "roles": ["anonymous","authenticated","admin"] }
-```
 
 ---
 

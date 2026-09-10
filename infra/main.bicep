@@ -9,15 +9,7 @@ param workloadName string = 'wtla'
 @allowed(['prod', 'stage'])
 param environmentName string = 'prod'
 
-@description('Region for everything except the Static Web App.')
 param location string = resourceGroup().location
-
-@description('''
-Static Web Apps is available in a limited set of regions. Pick the closest to
-`location`; the linked backend may live in a different region.
-''')
-@allowed(['westeurope', 'centralus', 'eastus2', 'westus2', 'eastasia'])
-param staticWebAppLocation string = 'westeurope'
 
 @description('''
 Cosmos DB free tier is limited to ONE account per Azure subscription. Set this
@@ -31,6 +23,25 @@ param cosmosFreeTier bool = true
 @maxValue(1000)
 param cosmosThroughput int = 400
 
+@description('''
+The image the container runs. Left at the quickstart placeholder on a first
+deploy, because the app image does not exist until the app workflow has run
+once. The infrastructure workflow reads the currently deployed image and passes
+it back in, so re-running infra never reverts the app.
+''')
+param containerImage string = 'mcr.microsoft.com/k8se/quickstart:latest'
+
+@description('0 scales to zero and costs almost nothing, at the price of a cold start. 1 keeps a tool people reach for mid-incident instant.')
+@minValue(0)
+@maxValue(5)
+param minReplicas int = 1
+
+@description('Entra ID app registration client id for admin sign-in. Empty deploys without authentication configured.')
+param authClientId string = ''
+
+@description('Entra ID tenant id. Only read when authClientId is set.')
+param authTenantId string = ''
+
 @description('Entra ID object IDs that should get Cosmos data-plane access for local development and seeding. Leave empty in CI.')
 param developerPrincipalIds array = []
 
@@ -39,13 +50,13 @@ var prefix = '${workloadName}-${environmentName}'
 var tags = {
   workload: workloadName
   environment: environmentName
-  'azd-env-name': prefix
 }
 
-// Cosmos data-plane role ids are fixed GUIDs scoped to the account.
-// Storage account names are 3-24 chars, lowercase alphanumeric only.
+// Storage and registry names are alphanumeric-only and length limited.
 var storageAccountName = toLower('st${workloadName}${environmentName}${take(token, 10)}')
+var registryName = toLower('cr${workloadName}${environmentName}${take(token, 10)}')
 
+// Cosmos data-plane roles are fixed GUIDs scoped to the account.
 var cosmosDataContributorRoleId = '00000000-0000-0000-0000-000000000002'
 // Storage Blob Data Contributor.
 var blobContributorRoleId = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
@@ -80,41 +91,63 @@ module storage 'modules/storage.bicep' = {
   }
 }
 
-module api 'modules/functions.bicep' = {
-  name: 'api'
+module registry 'modules/registry.bicep' = {
+  name: 'registry'
   params: {
     location: location
     tags: tags
-    planName: 'plan-${prefix}-${token}'
-    functionAppName: 'func-${prefix}-${token}'
-    storageAccountName: storage.outputs.name
-    appInsightsConnectionString: monitoring.outputs.connectionString
-    cosmosEndpoint: data.outputs.endpoint
-    cosmosDatabaseName: data.outputs.databaseName
-    iconsContainerUrl: storage.outputs.iconsContainerUrl
-    iconsContainerName: storage.outputs.iconsContainerName
+    name: registryName
   }
 }
 
-module web 'modules/staticwebapp.bicep' = {
+module web 'modules/containerapp.bicep' = {
   name: 'web'
   params: {
-    location: staticWebAppLocation
+    location: location
     tags: tags
-    name: 'stapp-${prefix}-${token}'
-    backendResourceId: api.outputs.functionAppId
-    backendRegion: location
+    environmentName: 'cae-${prefix}-${token}'
+    appName: 'ca-${prefix}'
+    logAnalyticsCustomerId: monitoring.outputs.customerId
+    logAnalyticsSharedKey: monitoring.outputs.sharedKey
+    registryLoginServer: registry.outputs.loginServer
+    containerImage: containerImage
+    cosmosEndpoint: data.outputs.endpoint
+    cosmosDatabaseName: data.outputs.databaseName
+    storageAccountName: storageAccountName
+    iconsContainerName: storage.outputs.iconsContainerName
+    iconsContainerUrl: storage.outputs.iconsContainerUrl
+    appInsightsConnectionString: monitoring.outputs.connectionString
+    minReplicas: minReplicas
+    authClientId: authClientId
+    authTenantId: authTenantId
   }
 }
 
 // --- Data-plane access, all by managed identity. No keys are issued. --------
 
-module apiCosmosAccess 'modules/cosmos-role.bicep' = {
-  name: 'api-cosmos-access'
+module webAcrPull 'modules/acr-role.bicep' = {
+  name: 'web-acr-pull'
+  params: {
+    registryName: registryName
+    principalId: web.outputs.principalId
+  }
+}
+
+module webCosmosAccess 'modules/cosmos-role.bicep' = {
+  name: 'web-cosmos-access'
   params: {
     cosmosAccountName: data.outputs.accountName
-    principalId: api.outputs.principalId
+    principalId: web.outputs.principalId
     roleDefinitionId: cosmosDataContributorRoleId
+  }
+}
+
+module webBlobAccess 'modules/blob-role.bicep' = {
+  name: 'web-blob-access'
+  params: {
+    storageAccountName: storageAccountName
+    principalId: web.outputs.principalId
+    roleDefinitionId: blobContributorRoleId
   }
 }
 
@@ -129,20 +162,12 @@ module developerCosmosAccess 'modules/cosmos-role.bicep' = [
   }
 ]
 
-// The API writes vendor and app icons into the public blob container.
-module apiBlobAccess 'modules/blob-role.bicep' = {
-  name: 'api-blob-access'
-  params: {
-    storageAccountName: storageAccountName
-    principalId: api.outputs.principalId
-    roleDefinitionId: blobContributorRoleId
-  }
-}
-
-output staticWebAppName string = web.outputs.name
-output staticWebAppHostname string = web.outputs.defaultHostname
-output functionAppName string = api.outputs.functionAppName
+output containerAppName string = web.outputs.name
+output siteUrl string = 'https://${web.outputs.fqdn}'
+output registryName string = registry.outputs.name
+output registryLoginServer string = registry.outputs.loginServer
 output cosmosAccountName string = data.outputs.accountName
+output cosmosEndpoint string = data.outputs.endpoint
 output cosmosDatabaseName string = data.outputs.databaseName
 output storageAccountName string = storage.outputs.name
 output iconsContainerUrl string = storage.outputs.iconsContainerUrl
