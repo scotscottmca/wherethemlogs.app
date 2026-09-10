@@ -5,6 +5,7 @@ import { apps as appsContainer, vendors } from "@/lib/server/cosmos";
 import { badRequest, json, notFound, toResponse } from "@/lib/server/errors";
 import type { App, Vendor } from "@/lib/model";
 import { partitionFor } from "@/lib/server/partition";
+import { assertAppSlugFree } from "@/lib/server/slugs";
 import { parseApp } from "@/lib/server/validate";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +39,8 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
 
     const { resource: current } = await appsContainer().item(id, vendorId).read<App>();
     if (!current) throw notFound(`App "${id}"`);
+
+    if (patch.slug && patch.slug !== current.slug) await assertAppSlugFree(patch.slug, id);
 
     // Moving an app between vendors changes its partition key, which Cosmos
     // cannot do in place: it is a create in the new partition and a delete

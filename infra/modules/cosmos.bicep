@@ -81,16 +81,15 @@ resource vendors 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@
         paths: ['/id']
         kind: 'Hash'
       }
-      uniqueKeyPolicy: {
-        uniqueKeys: [
-          { paths: ['/slug'] }
-        ]
-      }
+      // No uniqueKeyPolicy: unique keys are scoped to a partition, and this
+      // container partitions by /id, so every document is alone in its
+      // partition and the constraint would enforce nothing. Slug uniqueness is
+      // checked in the route handlers.
       indexingPolicy: {
         indexingMode: 'consistent'
         automatic: true
         includedPaths: [{ path: '/*' }]
-        excludedPaths: [{ path: '/_etag/?' }]
+        excludedPaths: [{ path: '/"_etag"/?' }]
       }
     }
   }
@@ -110,6 +109,8 @@ resource apps 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@202
         paths: ['/vendorId']
         kind: 'Hash'
       }
+      // Scoped to the partition key, so this makes a slug unique *within a
+      // vendor*. Cross-vendor uniqueness is checked in the route handlers.
       uniqueKeyPolicy: {
         uniqueKeys: [
           { paths: ['/slug'] }
@@ -119,18 +120,14 @@ resource apps 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@202
         indexingMode: 'consistent'
         automatic: true
         includedPaths: [{ path: '/*' }]
-        excludedPaths: [
-          { path: '/_etag/?' }
-          // Nothing queries inside an embedded path's note text.
-          { path: '/logPaths/*/note/?' }
-        ]
+        excludedPaths: [{ path: '/"_etag"/?' }]
+        // Serves "every app for this vendor, by name" — the admin portal's main
+        // query. Single-property ordering is served by the default range index
+        // and needs nothing here.
         compositeIndexes: [
           [
             { path: '/vendorId', order: 'ascending' }
             { path: '/name', order: 'ascending' }
-          ]
-          [
-            { path: '/updatedAt', order: 'descending' }
           ]
         ]
       }

@@ -251,7 +251,12 @@ Every failure is the same shape:
 
 ## Validation rules worth knowing
 
-- `slug` — `^[a-z0-9][a-z0-9-]*$`, unique per container, derived from `name` when omitted.
+- `slug` — `^[a-z0-9][a-z0-9-]*$`, derived from `name` when omitted, and unique
+  across the whole container. That last part is enforced in the route handlers,
+  not by the database: Cosmos unique keys are scoped to a partition, so on
+  `vendors` (partitioned by `/id`) one would enforce nothing, and on `apps`
+  (partitioned by `/vendorId`) it only makes a slug unique within one vendor. A
+  clash returns `409` naming the record that already holds it.
 - `path` — up to 1024 characters, stored **byte for byte**. Environment variables are never expanded and never normalised.
 - `types` — validated against the known list; unknown values are rejected with the full allowed set in `details.allowed`.
 - `iconUrl` / `website` — must parse as URLs and must be `https:`.

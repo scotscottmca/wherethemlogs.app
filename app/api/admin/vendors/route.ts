@@ -5,6 +5,7 @@ import { invalidate } from "@/lib/server/catalog";
 import { vendors } from "@/lib/server/cosmos";
 import { json, toResponse } from "@/lib/server/errors";
 import type { Vendor } from "@/lib/model";
+import { assertVendorSlugFree } from "@/lib/server/slugs";
 import { parseVendor } from "@/lib/server/validate";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
   try {
     requireAdmin(request);
     const input = parseVendor(await request.json());
+    await assertVendorSlugFree(input.slug!);
     const now = new Date().toISOString();
 
     const record: Vendor = {

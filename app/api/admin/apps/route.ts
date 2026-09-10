@@ -5,6 +5,7 @@ import { invalidate } from "@/lib/server/catalog";
 import { apps as appsContainer, vendors } from "@/lib/server/cosmos";
 import { badRequest, json, toResponse } from "@/lib/server/errors";
 import type { App, Vendor } from "@/lib/model";
+import { assertAppSlugFree } from "@/lib/server/slugs";
 import { parseApp } from "@/lib/server/validate";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +38,8 @@ export async function POST(request: NextRequest) {
 
     const { resource: vendor } = await vendors().item(input.vendorId!, input.vendorId!).read<Vendor>();
     if (!vendor) throw badRequest(`Vendor "${input.vendorId}" does not exist.`);
+
+    await assertAppSlugFree(input.slug!);
 
     const now = new Date().toISOString();
     const record: App = {

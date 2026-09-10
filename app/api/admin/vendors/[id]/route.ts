@@ -4,6 +4,7 @@ import { invalidate } from "@/lib/server/catalog";
 import { apps as appsContainer, vendors } from "@/lib/server/cosmos";
 import { conflict, json, notFound, toResponse } from "@/lib/server/errors";
 import type { App, Vendor } from "@/lib/model";
+import { assertVendorSlugFree } from "@/lib/server/slugs";
 import { parseVendor } from "@/lib/server/validate";
 
 export const dynamic = "force-dynamic";
@@ -36,6 +37,8 @@ export async function PATCH(request: NextRequest, { params }: Ctx) {
 
     const { resource: current } = await vendors().item(id, id).read<Vendor>();
     if (!current) throw notFound(`Vendor "${id}"`);
+
+    if (patch.slug && patch.slug !== current.slug) await assertVendorSlugFree(patch.slug, id);
 
     const next: Vendor = {
       ...current,

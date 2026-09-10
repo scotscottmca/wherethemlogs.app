@@ -101,6 +101,13 @@ The join happens in memory, which is free at this size.
 admin portal's main query, and that key makes it single-partition. Search fans
 out, which is fine — it is served from cache.
 
+**Slug uniqueness is enforced in code, not by a unique key.** Cosmos unique keys
+are scoped to a partition, which does not match what a slug means: on `vendors`
+(partitioned by `/id`) every document is alone in its partition, so the
+constraint would do nothing; on `apps` it makes a slug unique only within one
+vendor. Slugs are URLs, so `lib/server/slugs.ts` checks the whole container on
+every write — one query, on a path that writes take and reads never do.
+
 **Moving an app between vendors** changes its partition key, which Cosmos cannot
 do in place. `PATCH /api/admin/apps/{id}` with a new `vendorId` does the
 create-then-delete; the app keeps its id.
