@@ -12,15 +12,23 @@ param environmentName string = 'prod'
 param location string = resourceGroup().location
 
 @description('''
-Cosmos DB free tier is limited to ONE account per Azure subscription. Set this
-to false if the subscription already has a free-tier account, or the deployment
-will fail.
+Cosmos DB free tier is limited to ONE account per Azure subscription, so this
+is off. Turn it on only on a subscription that has no free-tier account, or the
+deployment fails.
 ''')
-param cosmosFreeTier bool = true
+param cosmosFreeTier bool = false
 
-@description('Shared throughput for the database, in RU/s. 400 is the minimum and sits inside the free tier grant of 1000.')
+@description('''
+How Cosmos throughput is bought. IMMUTABLE after the account is created.
+Serverless bills per request unit consumed, which suits a catalogue this size
+with a 60-second in-process cache in front of it.
+''')
+@allowed(['serverless', 'provisioned'])
+param cosmosMode string = 'serverless'
+
+@description('Shared RU/s for the database. Only read when cosmosMode is "provisioned".')
 @minValue(400)
-@maxValue(1000)
+@maxValue(4000)
 param cosmosThroughput int = 400
 
 @description('''
@@ -78,6 +86,7 @@ module data 'modules/cosmos.bicep' = {
     tags: tags
     accountName: 'cosmos-${prefix}-${token}'
     freeTier: cosmosFreeTier
+    mode: cosmosMode
     throughput: cosmosThroughput
   }
 }
@@ -169,5 +178,6 @@ output registryLoginServer string = registry.outputs.loginServer
 output cosmosAccountName string = data.outputs.accountName
 output cosmosEndpoint string = data.outputs.endpoint
 output cosmosDatabaseName string = data.outputs.databaseName
+output cosmosMode string = data.outputs.mode
 output storageAccountName string = storage.outputs.name
 output iconsContainerUrl string = storage.outputs.iconsContainerUrl

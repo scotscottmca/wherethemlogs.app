@@ -4,6 +4,20 @@ param accountName string
 param freeTier bool
 param throughput int
 
+@description('''
+How throughput is bought. Immutable after the account is created, so this is a
+one-way door — choose before the first deployment.
+
+serverless:  pay per request unit consumed. Right for a small catalogue that is
+             cached in-process, where actual database traffic is a couple of
+             queries per replica per minute.
+provisioned: reserve `throughput` RU/s around the clock. Right when load is
+             steady and high enough that reserved capacity is cheaper, or when
+             autoscale, multi-region writes or availability zones are needed.
+''')
+@allowed(['serverless', 'provisioned'])
+param mode string = 'serverless'
+
 @description('Set true to allow key-based access. Left off so every caller uses Entra ID.')
 param allowLocalAuth bool = false
 
@@ -40,18 +54,18 @@ resource account 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = {
         backupStorageRedundancy: 'Local'
       }
     }
-    capabilities: []
+    capabilities: mode == 'serverless' ? [ { name: 'EnableServerless' } ] : []
   }
 }
 
-// Shared throughput across the whole database keeps the free-tier grant in one
-// place. Both containers draw from it.
+// A serverless account has no provisioned throughput to share; a provisioned
+// one shares it across the whole database so both containers draw from one pool.
 resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-11-15' = {
   parent: account
   name: databaseName
   properties: {
     resource: { id: databaseName }
-    options: { throughput: throughput }
+    options: mode == 'provisioned' ? { throughput: throughput } : {}
   }
 }
 
@@ -129,3 +143,4 @@ output endpoint string = account.properties.documentEndpoint
 output databaseName string = database.name
 output vendorsContainer string = vendors.name
 output appsContainer string = apps.name
+output mode string = mode

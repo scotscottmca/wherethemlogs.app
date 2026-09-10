@@ -84,7 +84,7 @@ names into one.
 
 ## Infrastructure
 
-Azure Container Apps runs the image; Cosmos DB (free tier) and Blob Storage sit
+Azure Container Apps runs the image; Cosmos DB (serverless) and Blob Storage sit
 behind it, both reached by managed identity — no keys anywhere. Deploys are a
 new revision, so rolling back is a traffic shift rather than a rebuild.
 

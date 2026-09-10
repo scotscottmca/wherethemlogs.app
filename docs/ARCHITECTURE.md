@@ -14,7 +14,7 @@ flowchart LR
   end
 
   ACR[("Container Registry")] -. "image pull, managed identity" .-> CA
-  NEXT -- "managed identity" --> COSMOS[("Cosmos DB — free tier<br/>vendors · apps")]
+  NEXT -- "managed identity" --> COSMOS[("Cosmos DB — serverless<br/>vendors · apps")]
   NEXT -- "managed identity" --> BLOB[("Blob Storage<br/>icons, public read")]
   Browser -- "icon URLs" --> BLOB
   NEXT --> AI["Application Insights"]
@@ -74,6 +74,19 @@ Both pages catch a store failure and render a "not answering" state rather than
 vendors   partition key /id         one document per vendor
 apps      partition key /vendorId   one document per app, log paths inside it
 ```
+
+The account is **serverless**: billing is per request unit consumed rather than
+per RU/s reserved. With the catalogue cached in-process for 60 seconds, real
+database traffic is a couple of queries per replica per minute, so reserving
+capacity around the clock would be paying for idle. Free tier is off — it is
+limited to one account per subscription and this subscription's is spent
+elsewhere.
+
+Serverless is **immutable after the account is created**. Switching to
+provisioned later means a new account and a data migration, so if steady load
+ever makes reserved capacity cheaper — or autoscale, multi-region writes or
+availability zones become requirements — set `cosmosMode` to `provisioned`
+*before* the first deployment. Everything else in the template is unaffected.
 
 **Log paths are embedded, not their own container.** They are always read with
 their app, always written with their app, and there are a handful per app. A
@@ -148,21 +161,19 @@ claim. There is no invitation list to keep in sync.
 | --- | --- | --- |
 | Container Apps | Consumption, 0.5 vCPU / 1 GiB, min 1 replica | ~$12–18/month |
 | Container Registry | Basic | ~$5/month |
-| Cosmos DB | Free tier | $0 — first 1000 RU/s and 25 GB |
+| Cosmos DB | Serverless | ~$1–3/month at this traffic — billed per request unit |
 | Storage | Standard LRS | pennies |
 | Application Insights | Pay-as-you-go | $0 under the 5 GB monthly grant |
 
 **Around $20/month, against roughly $9 for the Static Web App it replaces.**
-That is the honest price of running a server instead of a CDN.
+That is the honest price of running a server instead of a CDN. Cosmos is a
+rounding error on that, because serverless plus the in-process cache means the
+database is barely touched.
 
 `minReplicas: 0` drops it to near zero, at the cost of a cold start of a few
 seconds on the first request after idle. It defaults to 1 because this is a tool
 people reach for mid-incident, and that is precisely when a cold start is worst.
 For a staging environment, set it to 0.
-
-**Cosmos free tier is one account per Azure subscription.** If the subscription
-already has one, deployment fails on the Cosmos resource; set `cosmosFreeTier`
-to `false` and expect roughly $24/month for 400 RU/s.
 
 ## Known constraints
 
@@ -175,6 +186,9 @@ to `false` and expect roughly $24/month for 400 RU/s.
   quickstart page.
 - **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything —
   the app, the seed script, local development — authenticates with Entra ID.
+- **Serverless caps a container at 5,000 RU/s and 1 TB.** Both are orders of
+  magnitude beyond this catalogue, but they are the ceiling that would force the
+  move to provisioned.
 - **Probes deliberately do not check Cosmos.** `/api/live` never touches it.
   Restarting or de-rotating the last replica because the database is having a
   bad minute turns a degraded site into a down one, and the pages already handle

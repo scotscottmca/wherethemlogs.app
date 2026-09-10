@@ -74,9 +74,10 @@ Keep the outputs — `containerAppName`, `registryName`, `cosmosAccountName`,
 The container app comes up on a placeholder image, because the real one does not
 exist yet. That is expected; step 5 replaces it.
 
-> **Cosmos free tier is one account per subscription.** If deployment fails on
-> the Cosmos resource, the subscription already has one: set `cosmosFreeTier` to
-> `false` and re-run.
+> **Cosmos is serverless and free tier is off.** Both are set in
+> `infra/main.parameters.json`, and both are decided at account creation —
+> switching afterwards means a new account and a data migration. Change
+> `cosmosMode` now or not at all.
 
 ### 4. Repository secrets and variables
 
