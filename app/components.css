@@ -1125,3 +1125,35 @@ body:has(.consent) {
   background: var(--bone);
   border-color: rgba(17, 19, 17, 0.32);
 }
+
+/* Recent additions: what arrived, not where it lives. Name and the platforms
+   it covers — the paths are one click away on the pick list. */
+.pick__app {
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pick__zones {
+  display: flex;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+}
+
+.zonetag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: var(--rule) solid var(--ink-rule);
+  padding: 0.1rem 0.35rem;
+  line-height: 1.4;
+}
+.pick__link:hover .zonetag {
+  border-color: var(--ink);
+}

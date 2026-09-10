@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { Header, Footer, ZoneTabs } from "@/components/Chrome";
+import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
 import { Consent } from "@/components/Consent";
-import { Plate } from "@/components/Plate";
 import { IconArrow } from "@/components/Icons";
-import { PLATFORM_META, toPlates, type Platform } from "@/lib/api";
+import { PLATFORM_META, type Platform } from "@/lib/api";
 import { summary } from "@/lib/server/catalog";
 import { requestAppUrl } from "@/lib/site";
 
@@ -37,7 +36,7 @@ export default async function Home({
   };
 
   const recent = data
-    ? toPlates(data.recent).filter((p) => platform === "all" || p.platform === platform)
+    ? data.recent.filter((a) => platform === "all" || a.platforms.includes(platform))
     : [];
 
   return (
@@ -92,7 +91,23 @@ export default async function Home({
                 </p>
               </div>
             ) : recent.length ? (
-              recent.map((plate) => <Plate key={plate.key} plate={plate} />)
+              <ul className="picks">
+                {recent.map((app) => (
+                  <li key={app.id} className="pick">
+                    <Link className="pick__link" href={`/search?q=${encodeURIComponent(app.name)}`}>
+                      <span className="pick__app">{app.name}</span>
+                      <span className="pick__zones">
+                        {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (
+                          <span key={m.id} className="zonetag tag mono">
+                            <ZoneSwatch zone={m.id} size={9} />
+                            {m.code}
+                          </span>
+                        ))}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <div className="rackNote">
                 <p style={{ margin: 0 }}>
