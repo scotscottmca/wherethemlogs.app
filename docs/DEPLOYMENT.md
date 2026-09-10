@@ -4,6 +4,13 @@ Two deployables — the application image and the Azure resources — with a
 workflow each. Do the first-run steps in order; after that, merging a PR is the
 whole process.
 
+> **Shell note.** The commands below are bash. In PowerShell, variable
+> assignment is `$VAR = ...` and a backslash is not an escape character, so
+> inline JSON like `'{\"name\": ...}'` arrives at `az` mangled. Every place
+> this guide passes JSON, there is a PowerShell block beside it that writes the
+> JSON to a file and passes `@file` instead — which is what Azure's own docs
+> recommend when quoting bites.
+
 ## First run
 
 ### 1. Resource group
@@ -46,6 +53,41 @@ az ad app federated-credential create --id "$APP_ID" --parameters "{
   \"subject\": \"${SUBJECT_PREFIX}:environment:production\",
   \"audiences\": [\"api://AzureADTokenExchange\"]
 }"
+
+<details>
+<summary>The same two credentials, in PowerShell</summary>
+
+```powershell
+$APP_ID = az ad app list --display-name "wtla-deploy" --query "[0].appId" -o tsv
+$OWNER_ID = gh api users/scotscottmca --jq .id
+$REPO_ID = gh api repos/scotscottmca/wherethemlogs.app --jq .id
+$PREFIX = "repo:scotscottmca@$OWNER_ID/wherethemlogs.app@$REPO_ID"
+
+# A literal here-string: no interpolation, no escaping, no shell mangling.
+@"
+{
+  "name": "wtla-main",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "${PREFIX}:ref:refs/heads/main",
+  "audiences": ["api://AzureADTokenExchange"]
+}
+"@ | Set-Content fic-main.json -Encoding utf8
+
+@"
+{
+  "name": "wtla-env-production",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "${PREFIX}:environment:production",
+  "audiences": ["api://AzureADTokenExchange"]
+}
+"@ | Set-Content fic-env.json -Encoding utf8
+
+az ad app federated-credential create --id $APP_ID --parameters "@fic-main.json"
+az ad app federated-credential create --id $APP_ID --parameters "@fic-env.json"
+Remove-Item fic-main.json, fic-env.json
+```
+
+</details>
 
 SP_ID=$(az ad sp list --display-name "wtla-deploy" --query "[0].id" -o tsv)
 RG_ID=$(az group show --name rg-wtla-prod --query id -o tsv)
