@@ -21,19 +21,31 @@ az ad app create --display-name "wtla-deploy"
 APP_ID=$(az ad app list --display-name "wtla-deploy" --query "[0].appId" -o tsv)
 az ad sp create --id "$APP_ID"
 
-az ad app federated-credential create --id "$APP_ID" --parameters '{
-  "name": "wtla-main",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:scotscottmca/wherethemlogs.app:ref:refs/heads/main",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
+# GitHub issues OIDC subjects with immutable numeric IDs for the owner and the
+# repository, so the subject is NOT the "repo:owner/name:..." string most
+# guides show. Derive it rather than typing it.
+OWNER=scotscottmca
+REPO=wherethemlogs.app
+OWNER_ID=$(gh api "users/$OWNER" --jq .id)
+REPO_ID=$(gh api "repos/$OWNER/$REPO" --jq .id)
+SUBJECT_PREFIX="repo:${OWNER}@${OWNER_ID}/${REPO}@${REPO_ID}"
 
-az ad app federated-credential create --id "$APP_ID" --parameters '{
-  "name": "wtla-env-production",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:scotscottmca/wherethemlogs.app:environment:production",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
+# One for the jobs that run on a branch, one for the jobs that run in the
+# "production" GitHub environment. Both are needed: deploy-infra's lint job has
+# no environment and its deploy job does.
+az ad app federated-credential create --id "$APP_ID" --parameters "{
+  \"name\": \"wtla-main\",
+  \"issuer\": \"https://token.actions.githubusercontent.com\",
+  \"subject\": \"${SUBJECT_PREFIX}:ref:refs/heads/main\",
+  \"audiences\": [\"api://AzureADTokenExchange\"]
+}"
+
+az ad app federated-credential create --id "$APP_ID" --parameters "{
+  \"name\": \"wtla-env-production\",
+  \"issuer\": \"https://token.actions.githubusercontent.com\",
+  \"subject\": \"${SUBJECT_PREFIX}:environment:production\",
+  \"audiences\": [\"api://AzureADTokenExchange\"]
+}"
 
 SP_ID=$(az ad sp list --display-name "wtla-deploy" --query "[0].id" -o tsv)
 RG_ID=$(az group show --name rg-wtla-prod --query id -o tsv)
@@ -43,9 +55,19 @@ az role assignment create --assignee-object-id "$SP_ID" --assignee-principal-typ
   --role "User Access Administrator" --scope "$RG_ID"
 ```
 
-Both federated credentials matter: the deploy jobs run in a GitHub environment
-called `production`, so the subject is the environment, not the branch. Missing
-one of these is what produced `Not all values are present` on the first attempt.
+**If sign-in fails with `AADSTS700213: No matching federated identity record
+found`**, the credential's subject does not match what GitHub actually sent.
+Do not guess it — the failing run prints it. Open the run, expand *Sign in to
+Azure*, and read the line beginning `subject claim -`. Create a credential whose
+`subject` is that string exactly.
+
+```bash
+az ad app federated-credential list --id "$APP_ID" --query "[].{name:name,subject:subject}" -o table
+```
+
+Both credentials matter: `deploy-infra`'s lint job runs on the branch and its
+deploy job runs in the `production` environment, so they present different
+subjects.
 
 `User Access Administrator` is needed because the Bicep creates role
 assignments — the container's access to Cosmos, Blob and the registry.
