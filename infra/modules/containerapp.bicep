@@ -47,16 +47,6 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   }
 }
 
-/**
- * The container app is created before its image exists, on a placeholder from
- * MCR. That placeholder serves plain HTTP on port 80 and has no /api/live, so
- * the real port and the real probes would fail it into a revision that never
- * becomes healthy — which surfaces as "Operation expired", not as anything
- * that names the probe. Both switch on once a real image is supplied.
- */
-var isPlaceholder = startsWith(containerImage, 'mcr.microsoft.com/')
-var appPort = isPlaceholder ? 80 : 3000
-
 var appProbes = [
   {
     // Liveness and readiness both use /api/live, which never touches Cosmos.
@@ -99,7 +89,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     configuration: {
       ingress: {
         external: true
-        targetPort: appPort
+        targetPort: 3000
         transport: 'auto'
         allowInsecure: false
         traffic: [
@@ -139,7 +129,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             // user-assigned identity is ambiguous and the SDK picks nothing.
             { name: 'AZURE_CLIENT_ID', value: identityClientId }
           ]
-          probes: isPlaceholder ? [] : appProbes
+          probes: appProbes
         }
       ]
       scale: {

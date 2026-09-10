@@ -76,25 +76,31 @@ jobs:
 
       - name: Roll out a new revision
         id: deploy
-        env:
-          APP: ${{ vars.AZURE_CONTAINERAPP_NAME }}
-          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
         run: |
           set -euo pipefail
-          az containerapp update \
-            --name "$APP" \
-            --resource-group "$RG" \
-            --image "${{ steps.image.outputs.image }}" \
-            --output none
 
-          fqdn=$(az containerapp show --name "$APP" --resource-group "$RG" \
-            --query properties.configuration.ingress.fqdn -o tsv)
-          echo "url=https://$fqdn" >> "$GITHUB_OUTPUT"
-          echo "Deployed ${{ steps.image.outputs.image }} to https://$fqdn" >> "$GITHUB_STEP_SUMMARY"
+          # Deploying the template rather than "az containerapp update --image"
+          # on purpose: the image is not the only thing that has to be right.
+          # Ingress port, probes, env and identity all live in the template, and
+          # an image-only update leaves them at whatever they were — which is
+          # how ingress ended up pointed at a port nothing served.
+          az deployment group create \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --name "app-$GITHUB_RUN_ID" \
+            --template-file infra/main.bicep \
+            --parameters infra/main.parameters.json \
+            --parameters "containerImage=${{ steps.image.outputs.image }}" \
+            --query properties.outputs -o json | tee outputs.json
+
+          url=$(node -p "require('./outputs.json').siteUrl.value")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed \`${{ steps.image.outputs.image }}\` to $url" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Smoke test
         env:
           URL: ${{ steps.deploy.outputs.url }}
+          APP: ${{ vars.AZURE_CONTAINERAPP_NAME }}
+          RG: ${{ vars.AZURE_RESOURCE_GROUP }}
         run: |
           set -euo pipefail
           # /api/live proves the revision is serving; /api/health proves it can

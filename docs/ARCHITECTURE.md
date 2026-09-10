@@ -191,16 +191,19 @@ For a staging environment, set it to 0.
 
 ## Known constraints
 
-- **The container app is created with a placeholder image**
-  (`mcr.microsoft.com/k8se/quickstart`), because the real image does not exist
-  until `deploy-app` has run once. That placeholder serves plain HTTP on port 80
-  and has no `/api/live`, so the template switches both the ingress port and the
-  probes off until a real image is supplied — otherwise the revision never
-  becomes healthy and the deployment fails with `Operation expired`, which names
-  nothing useful. `deploy-infra` reads the currently deployed image and passes it
-  back in, so re-running infrastructure never rolls the application back. Worth
-  knowing before running `az deployment group create` by hand: pass
-  `containerImage=` yourself, or the next request serves the quickstart page.
+- **The container app is not created until an image exists.** `containerImage`
+  defaults to empty and the app module is conditional on it, so the first
+  infrastructure deployment builds everything except the app and `deploy-app`
+  creates it once it has pushed an image. There is deliberately no placeholder
+  image: one listens on its own port and answers none of our health paths, so
+  the app would have to be created with a different ingress port and no probes —
+  and `az containerapp update --image` changes neither, which leaves ingress
+  pointed at a port nothing serves.
+- **`deploy-app` deploys the template, not just the image.** The image is not
+  the only thing that has to be right; ingress port, probes, env and identity all
+  live in the template, and an image-only update leaves them wherever they were.
+  `deploy-infra` reads the currently deployed image back in, so an
+  infrastructure-only change never rolls the application back.
 - **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything —
   the app, the seed script, local development — authenticates with Entra ID.
 - **Serverless caps a container at 5,000 RU/s and 1 TB.** Both are orders of

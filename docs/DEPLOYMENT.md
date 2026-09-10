@@ -135,17 +135,13 @@ az deployment group create \
 Keep the outputs — `containerAppName`, `registryName`, `cosmosAccountName`,
 `siteUrl`.
 
-The container app comes up on a placeholder image, because the real one does not
-exist yet. Its ingress port and health probes stay off until step 5 supplies a
-real image — the placeholder serves port 80 and has no `/api/live`, and probing
-it would fail the revision. That is expected.
+**The container app is not created by this step**, and `containerAppName` and
+`siteUrl` come back empty. That is expected: the image does not exist yet, and
+there is no placeholder. Step 5 creates the app and fills both in.
 
-If a deployment has already failed and left the app in a terminal state, delete
-it before re-running; there is nothing in it to preserve:
-
-```bash
-az containerapp delete -n ca-wtla-prod -g rg-wtla-prod --yes
-```
+Everything else — registry, Cosmos, storage, monitoring, and the managed
+identity with its role assignments — is created here, which is what step 5
+needs.
 
 > **Cosmos is serverless and free tier is off.** Both are set in
 > `infra/main.parameters.json`, and both are decided at account creation —
@@ -171,8 +167,13 @@ federated credential in step 2 line up.
 ### 5. Ship the first image
 
 Run **Deploy app** manually (Actions → Deploy app → Run workflow), or push any
-change under `app/`. It builds in ACR, rolls a new revision, and polls
-`/api/health` until the revision answers.
+change under `app/`. It builds the image in ACR, deploys the template with that
+image — which creates the container app the first time — and polls `/api/health`
+until the revision answers.
+
+`/api/health` returns 200 with counts of zero on an empty catalogue, so this
+passes before seeding. A failure here means the app cannot reach Cosmos, not
+that the catalogue is empty.
 
 ### 6. Seed the catalogue
 

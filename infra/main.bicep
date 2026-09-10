@@ -32,12 +32,18 @@ param cosmosMode string = 'serverless'
 param cosmosThroughput int = 400
 
 @description('''
-The image the container runs. Left at the quickstart placeholder on a first
-deploy, because the app image does not exist until the app workflow has run
-once. The infrastructure workflow reads the currently deployed image and passes
-it back in, so re-running infra never reverts the app.
+The image the container runs.
+
+Empty means "do not create the container app yet". The image cannot exist until
+the registry does, so the first infrastructure deployment builds everything
+except the app, and `deploy-app` creates it once it has pushed an image.
+
+There is deliberately no placeholder image: a placeholder listens on its own
+port and answers none of our health paths, so the app would have to be created
+with a different ingress port and no probes — and `az containerapp update
+--image` changes neither, leaving ingress pointed at a port nothing serves.
 ''')
-param containerImage string = 'mcr.microsoft.com/k8se/quickstart:latest'
+param containerImage string = ''
 
 @description('0 scales to zero and costs almost nothing, at the price of a cold start. 1 keeps a tool people reach for mid-incident instant.')
 @minValue(0)
@@ -148,7 +154,7 @@ module blobAccess 'modules/blob-role.bicep' = {
   dependsOn: [storage]
 }
 
-module web 'modules/containerapp.bicep' = {
+module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
   name: 'web'
   params: {
     location: location
@@ -187,9 +193,9 @@ module developerCosmosAccess 'modules/cosmos-role.bicep' = [
   }
 ]
 
-output containerAppName string = web.outputs.name
+output containerAppName string = web.?outputs.name ?? ''
 output identityClientId string = identity.outputs.clientId
-output siteUrl string = 'https://${web.outputs.fqdn}'
+output siteUrl string = empty(web.?outputs.fqdn ?? '') ? '' : 'https://${web!.outputs.fqdn}'
 output registryName string = registry.outputs.name
 output registryLoginServer string = registry.outputs.loginServer
 output cosmosAccountName string = data.outputs.accountName
