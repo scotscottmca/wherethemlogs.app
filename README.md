@@ -8,16 +8,35 @@ Built for the people who need the path mid-incident: IT and endpoint administrat
 application packagers, and anyone else who has lost twenty minutes to a forum thread of
 unknown vintage.
 
+## Layout
+
+```
+app/  components/  lib/    the site — Next.js, static export
+api/                       the API — Azure Functions, Node 20
+infra/                     Azure resources — Bicep
+scripts/                   seed data and the seeder
+docs/                      architecture, API reference, deployment
+```
+
+Three deployables, three workflows, path-filtered. Changing the site does not
+redeploy the API, and vice versa.
+
 ## Run it
+
+Two terminals. The site needs the API for every byte of data.
+
+```bash
+cd api && cp local.settings.json.example local.settings.json && npm install && npm start
+```
 
 ```bash
 npm install
-npm run dev     # http://localhost:3777
+NEXT_PUBLIC_API_BASE=http://localhost:7071 npm run dev   # http://localhost:3777
 ```
 
-```bash
-npm run build && npm start   # production, http://localhost:3777
-```
+Needs [Azure Functions Core Tools v4](https://learn.microsoft.com/azure/azure-functions/functions-run-local)
+and `az login`. Full setup, including the admin bypass for local work, is in
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## What's here
 
@@ -26,28 +45,28 @@ npm run build && npm start   # production, http://localhost:3777
 | `/` | Aisle sign, scanner field with live type-ahead, recent additions, recent searches, zone filter |
 | `/search` | Full results, filterable by platform, installer, architecture and scope |
 | `/privacy` | Privacy and cookie notice |
-| `/api/search` | Server-side search — `?q=`, `?platform=`, `?type=` (repeatable), `?limit=` |
+| `/admin` | Not built yet. The API behind it is — see [docs/API.md](docs/API.md). |
 
 Keyboard: `/` focuses the scanner from anywhere, arrows walk the type-ahead, `Enter`
 commits to the full results, `Shift+Enter` copies the highlighted plate's first path.
 
 ## The catalogue
 
-`lib/catalog.ts` currently holds **seed data** — 46 real, verifiable entries, labelled as a
-demonstration set in the footer and on the privacy page. It stands in for the database the
-product ships with.
+`Vendor > App > LogPath`. One vendor has many apps; one app has many log paths,
+embedded on the app document. Every vendor carries an icon and every app may
+override it — `App.iconUrl: null` means *inherit the vendor's*, resolved on read.
 
-`searchCatalog()` is the seam. Replace its body with the DB query; the signature should not
-need to change:
+Currently **seed data**: 24 vendors, 33 apps, 86 log paths in
+`scripts/seed-data.json`, all real and verifiable, labelled as a demonstration
+set in the footer and on the privacy page.
 
-```ts
-searchCatalog({ q, platform, types, limit }): Entry[]
+```bash
+npm run seed -- --endpoint https://<account>.documents.azure.com:443/
 ```
 
-The admin UI and the database itself are not built yet.
-
-Paths preserve environment variables verbatim — `%LOCALAPPDATA%`, `~/Library/Logs`,
-`$XDG_STATE_HOME` are never expanded, because the machine being fixed is not this one.
+Paths are stored byte for byte — `%LOCALAPPDATA%`, `~/Library/Logs`,
+`$XDG_STATE_HOME` are never expanded, because the machine being fixed is not
+this one.
 
 ## Contributing an entry
 
@@ -59,10 +78,19 @@ names into one.
 
 ## Before this goes live
 
+- [ ] **Lock down the Function App.** It has a public hostname; until Entra ID auth is on it, the in-code admin check is defence in depth, not the lock. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
 - [ ] Choose the analytics provider. The consent bar and `/privacy` both state plainly that
       one has not been chosen and that nothing is loaded either way — update both when it is.
 - [ ] Replace the seed catalogue with the real index.
-- [ ] Build the admin UI and wire `searchCatalog()` to the database.
+- [ ] Build the admin UI on top of the CRUD API.
+- [ ] Decide whether the repo goes public — every "request an app" link points at its issue tracker.
+
+## Infrastructure
+
+Azure Static Web Apps (Standard) serves the site and proxies `/api/*` to a
+separately deployed Function App, which reaches Cosmos DB (free tier) and Blob
+Storage by managed identity. Why each of those, and what it costs, is in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Design
 

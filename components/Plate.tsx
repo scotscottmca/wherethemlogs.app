@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconCopy, IconCheck, IconFlag } from "./Icons";
-import type { Entry } from "@/lib/catalog";
+import type { LogPath, Plate as PlateData, Platform } from "@/lib/api";
 import { correctionUrl } from "@/lib/site";
 
 const ARCH = new Set(["x86", "x64", "arm64"]);
 const SCOPE = new Set(["per-user", "per-machine", "system"]);
 
-const ZONE_CODE: Record<Entry["platform"], string> = {
+const ZONE_CODE: Record<Platform, string> = {
   windows: "WIN",
   macos: "MAC",
   linux: "LNX",
@@ -19,18 +19,20 @@ const ZONE_CODE: Record<Entry["platform"], string> = {
  * stacked against one vertical rule, qualifiers printed as tags along the foot.
  */
 export function Plate({
-  entry,
+  plate,
   index = 0,
   animate = false,
   selected = false,
   id,
 }: {
-  entry: Entry;
+  plate: PlateData;
   index?: number;
   animate?: boolean;
   selected?: boolean;
   id?: string;
 }) {
+  const { app, platform, variant, logPaths } = plate;
+
   // Scan to confirm: the whole plate inverts, the way a scanned label lights up.
   const [confirmed, setConfirmed] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,6 +45,10 @@ export function Plate({
     timer.current = setTimeout(() => setConfirmed(null), 1800);
   }, []);
 
+  // Qualifiers are per path; the foot prints the union across this platform.
+  const types = [...new Set(logPaths.flatMap((p) => p.types))];
+  const scopes = [...new Set(logPaths.map((p) => p.scope))];
+
   return (
     <article
       id={id}
@@ -51,15 +57,27 @@ export function Plate({
       }`}
       style={animate ? ({ ["--i" as string]: index } as React.CSSProperties) : undefined}
     >
-      <div className="plate__zone" data-zone={entry.platform}>
-        <span className="plate__zoneCode">{ZONE_CODE[entry.platform]}</span>
+      <div className="plate__zone" data-zone={platform}>
+        <span className="plate__zoneCode">{ZONE_CODE[platform]}</span>
       </div>
 
       <div className="plate__body">
         <div className="plate__top">
-          <h3 className="plate__name">{entry.app}</h3>
-          {entry.variant && <span className="tag mono plate__variant">{entry.variant}</span>}
-          <span className="tag mono plate__vendor">{entry.vendor}</span>
+          {app.resolvedIconUrl && (
+            // Asset tag: the app's own icon, or the vendor's when it has none.
+            <img
+              className="plate__icon"
+              src={app.resolvedIconUrl}
+              alt=""
+              width={22}
+              height={22}
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          <h3 className="plate__name">{app.name}</h3>
+          {variant && <span className="tag mono plate__variant">{variant}</span>}
+          <span className="tag mono plate__vendor">{app.vendor.name}</span>
           {confirmed && (
             <span className="plate__confirm mono" role="status">
               <IconCheck size={14} />
@@ -69,33 +87,27 @@ export function Plate({
         </div>
 
         <div className="plate__paths">
-          {entry.paths.map((p) => (
-            <PathRow
-              key={p.path}
-              label={p.label}
-              path={p.path}
-              note={p.note}
-              onConfirm={confirm}
-            />
+          {logPaths.map((p) => (
+            <PathRow key={p.id} logPath={p} onConfirm={confirm} />
           ))}
         </div>
 
         <div className="plate__foot">
           <div className="chips">
-            {entry.types.map((t) => (
-              <span
-                key={t}
-                className={`chip tag mono${ARCH.has(t) ? " chip--arch" : ""}${
-                  SCOPE.has(t) ? " chip--scope" : ""
-                }`}
-              >
+            {types.map((t) => (
+              <span key={t} className={`chip tag mono${ARCH.has(t) ? " chip--arch" : ""}`}>
                 {t}
+              </span>
+            ))}
+            {scopes.filter((s) => SCOPE.has(s)).map((s) => (
+              <span key={s} className="chip tag mono chip--scope">
+                {s}
               </span>
             ))}
           </div>
           <a
             className="plate__flag tag mono"
-            href={correctionUrl(entry.app, ZONE_CODE[entry.platform])}
+            href={correctionUrl(app.name, ZONE_CODE[platform])}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -108,18 +120,14 @@ export function Plate({
   );
 }
 
-/** Scan to confirm: the row inverts to solid high-vis, path still black on yellow. */
 function PathRow({
-  label,
-  path,
-  note,
+  logPath,
   onConfirm,
 }: {
-  label: string;
-  path: string;
-  note?: string;
+  logPath: LogPath;
   onConfirm: (label: string) => void;
 }) {
+  const { label, path, note } = logPath;
   const [failed, setFailed] = useState(false);
 
   const copy = useCallback(async () => {

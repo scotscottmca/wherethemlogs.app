@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { IconCorner } from "./Icons";
 import { clearRecent, readRecent, type RecentSearch } from "@/lib/recent";
-import type { Platform } from "@/lib/catalog";
+import type { Platform } from "@/lib/api";
 
 /** The pick list: what this browser looked up, held in this browser. */
 export function RecentSearches({ platform }: { platform: Platform | "all" }) {

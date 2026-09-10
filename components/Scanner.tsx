@@ -7,7 +7,7 @@ import { IconScan, IconClose, IconArrow } from "./Icons";
 import { Plate } from "./Plate";
 import { pushRecent } from "@/lib/recent";
 import { requestAppUrl } from "@/lib/site";
-import type { Entry, Platform } from "@/lib/catalog";
+import { searchApps, toPlates, type Plate as PlateData, type Platform } from "@/lib/api";
 
 type State = "idle" | "loading" | "ready" | "error";
 
@@ -33,7 +33,7 @@ export function Scanner({
   // On the results page the field arrives pre-filled; opening the rack there
   // would mirror the pick list directly beneath it.
   const [touched, setTouched] = useState(false);
-  const [hits, setHits] = useState<Entry[]>([]);
+  const [hits, setHits] = useState<PlateData[]>([]);
   const [state, setState] = useState<State>("idle");
   const [cursor, setCursor] = useState(0);
 
@@ -62,11 +62,9 @@ export function Scanner({
     const ctl = new AbortController();
     setState("loading");
     const t = setTimeout(() => {
-      const url = `/api/search?q=${encodeURIComponent(term)}&platform=${platform}&limit=5`;
-      fetch(url, { signal: ctl.signal })
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-        .then((data: { results: Entry[] }) => {
-          setHits(data.results);
+      searchApps({ q: term, platform, limit: 5 }, { signal: ctl.signal })
+        .then((data) => {
+          setHits(toPlates(data.results).slice(0, 5));
           setCursor(0);
           setState("ready");
         })
@@ -95,12 +93,12 @@ export function Scanner({
   // Shift+Enter drops the highlighted plate's first path straight on the
   // clipboard, so a lookup can finish without the mouse ever moving.
   const [flash, setFlash] = useState<string | null>(null);
-  const copyFirstPath = useCallback((entry: Entry) => {
-    const path = entry.paths[0]?.path;
+  const copyFirstPath = useCallback((plate: PlateData) => {
+    const path = plate.logPaths[0]?.path;
     if (!path) return;
     navigator.clipboard
       .writeText(path)
-      .then(() => setFlash(`${entry.app} — ${path} copied`))
+      .then(() => setFlash(`${plate.app.name} — ${path} copied`))
       .catch(() => setFlash("Clipboard unavailable — select the path and copy it"));
     setTimeout(() => setFlash(null), 2600);
   }, []);
@@ -184,7 +182,7 @@ export function Scanner({
                   {state === "idle" && "Ready"}
                   {state === "ready" &&
                     (hits.length
-                      ? `${hits.length} shown · highlighted: ${hits[cursor]?.app ?? ""} · shift+↵ copies`
+                      ? `${hits.length} shown · highlighted: ${hits[cursor]?.app.name ?? ""} · shift+↵ copies`
                       : "No plate on this rack")}
                 </>
               )}
@@ -217,11 +215,11 @@ export function Scanner({
             </div>
           )}
 
-          {hits.map((e, i) => (
+          {hits.map((plate, i) => (
             <Plate
-              key={e.id}
+              key={plate.key}
               id={`${listId}-opt-${i}`}
-              entry={e}
+              plate={plate}
               index={i}
               animate
               selected={i === cursor}

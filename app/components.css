@@ -1109,3 +1109,19 @@ body:has(.consent) {
   }
 
 }
+
+/* The asset tag: an app's own icon, or the vendor's when it has none. */
+.plate__icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  background: var(--ink-raised);
+  border: var(--rule) solid var(--ink-rule);
+  padding: 2px;
+  align-self: center;
+  flex: 0 0 auto;
+}
+.plate--done .plate__icon {
+  background: var(--bone);
+  border-color: rgba(17, 19, 17, 0.32);
+}

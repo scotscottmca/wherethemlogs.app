@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Mark, IconExternal } from "./Icons";
-import { PLATFORMS, type Platform } from "@/lib/catalog";
+import { PLATFORM_META, type Platform } from "@/lib/api";
 import { requestAppUrl } from "@/lib/site";
 
 export function Header() {
@@ -48,7 +48,7 @@ export function ZoneTabs({
 }) {
   const zones: { id: Platform | "all"; code: string; name: string }[] = [
     { id: "all", code: "ALL", name: "All zones" },
-    ...PLATFORMS,
+    ...PLATFORM_META,
   ];
 
   return (
@@ -110,7 +110,7 @@ export function ZoneSwatch({ zone, size = 11 }: { zone: Platform | "all"; size?:
   );
 }
 
-export function Footer({ entryCount }: { entryCount: number }) {
+export function Footer({ entryCount }: { entryCount: number | null }) {
   return (
     <footer className="foot no-print">
       <div className="hazard" role="presentation" />
@@ -123,7 +123,7 @@ export function Footer({ entryCount }: { entryCount: number }) {
           </a>
         </nav>
         <p className="tag mono" style={{ margin: 0 }}>
-          {entryCount} entries · Seed catalogue
+          {entryCount === null ? "Catalogue" : `${entryCount} entries`} · Seed catalogue
         </p>
       </div>
       <p className="foot__seed">

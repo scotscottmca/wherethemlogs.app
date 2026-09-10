@@ -1,27 +1,67 @@
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Header, Footer, ZoneTabs } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { IconArrow } from "@/components/Icons";
-import { PLATFORMS, recentAdditions, searchCatalog, totalEntries, type Platform } from "@/lib/catalog";
+import { getSummary, toPlates, PLATFORM_META, type Platform, type SummaryResponse } from "@/lib/api";
 import { requestAppUrl } from "@/lib/site";
 
-const ZONES = new Set<string>(PLATFORMS.map((p) => p.id));
+const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 
-export default async function Home({
-  searchParams,
+export default function HomePage() {
+  return (
+    <Suspense fallback={<Shell platform="all" />}>
+      <Home />
+    </Suspense>
+  );
+}
+
+function Home() {
+  const params = useSearchParams();
+  const raw = params.get("platform") ?? "all";
+  const platform: Platform | "all" = ZONES.has(raw) ? (raw as Platform) : "all";
+
+  const [summary, setSummary] = useState<SummaryResponse | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const ctl = new AbortController();
+    getSummary({ signal: ctl.signal })
+      .then(setSummary)
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setFailed(true);
+      });
+    return () => ctl.abort();
+  }, []);
+
+  return <Shell platform={platform} summary={summary} failed={failed} />;
+}
+
+function Shell({
+  platform,
+  summary,
+  failed = false,
 }: {
-  searchParams: Promise<{ platform?: string }>;
+  platform: Platform | "all";
+  summary?: SummaryResponse | null;
+  failed?: boolean;
 }) {
-  const sp = await searchParams;
-  const platform: Platform | "all" = ZONES.has(sp.platform ?? "") ? (sp.platform as Platform) : "all";
+  const counts: Record<string, number> = {
+    all: summary?.apps ?? 0,
+    ...(summary?.byPlatform ?? { windows: 0, macos: 0, linux: 0 }),
+  };
 
-  const counts: Record<string, number> = { all: totalEntries() };
-  for (const p of PLATFORMS) counts[p.id] = searchCatalog({ q: "", platform: p.id }).length;
 
-  const additions = recentAdditions(6).filter((e) => platform === "all" || e.platform === platform);
+  const recent = summary
+    ? toPlates(summary.recent).filter((p) => platform === "all" || p.platform === platform)
+    : [];
 
   return (
     <>
@@ -42,8 +82,10 @@ export default async function Home({
               machine writes it.
             </p>
             <p className="sign__count">
-              <span className="sign__countNum">{String(totalEntries()).padStart(3, "0")}</span>
-              <span className="tag mono">entries racked · seed catalogue</span>
+              <span className="sign__countNum">
+                {summary ? String(summary.apps).padStart(3, "0") : "———"}
+              </span>
+              <span className="tag mono">apps racked · seed catalogue</span>
             </p>
           </div>
         </div>
@@ -57,7 +99,7 @@ export default async function Home({
                 Recent additions
               </h2>
               <Link
-                href={platform === "all" ? "/search" : `/search?platform=${platform}`}
+                href={platform === "all" ? "/search/" : `/search/?platform=${platform}`}
                 className="ahead__all tag mono"
               >
                 Browse the whole index
@@ -65,10 +107,21 @@ export default async function Home({
               </Link>
             </div>
 
-            {additions.length ? (
-              additions.map((e) => <Plate key={e.id} entry={e} />)
+            {failed ? (
+              <div className="rackNote">
+                <p style={{ margin: 0 }}>
+                  The catalogue is not answering. The index is still there — reload in a
+                  moment, or search anyway and the scanner will retry.
+                </p>
+              </div>
+            ) : !summary ? (
+              <div className="rackNote">
+                <p style={{ margin: 0 }}>Reading the rack&hellip;</p>
+              </div>
+            ) : recent.length ? (
+              recent.map((plate) => <Plate key={plate.key} plate={plate} />)
             ) : (
-              <div className="rackNote mono">
+              <div className="rackNote">
                 <p style={{ margin: 0 }}>
                   Nothing added to this zone yet. Switch the zone filter above, or request
                   the application you were looking for.
@@ -94,7 +147,7 @@ export default async function Home({
         </p>
       </main>
 
-      <Footer entryCount={totalEntries()} />
+      <Footer entryCount={summary?.apps ?? null} />
       <Consent />
     </>
   );

@@ -1,0 +1,91 @@
+name: Deploy infrastructure
+
+# Bicep only. Run this before the first web or API deploy, and whenever the
+# templates change. It is safe to re-run: the deployment is incremental.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/deploy-infra.yml"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to do
+        required: true
+        default: whatif
+        type: choice
+        options: [whatif, deploy]
+
+concurrency:
+  group: infra-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Lint and preview
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint Bicep
+        run: az bicep build --file infra/main.bicep --stdout > /dev/null
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-if
+        run: |
+          az deployment group what-if \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --template-file infra/main.bicep \
+            --parameters infra/main.parameters.json
+
+  deploy:
+    needs: validate
+    # A push to main deploys; a manual run only deploys when asked to.
+    if: github.event_name == 'push' || inputs.mode == 'deploy'
+    runs-on: ubuntu-latest
+    name: Deploy
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Bicep
+        id: bicep
+        run: |
+          az deployment group create \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --name "infra-$GITHUB_RUN_ID" \
+            --template-file infra/main.bicep \
+            --parameters infra/main.parameters.json \
+            --query properties.outputs -o json | tee outputs.json
+
+      - name: Summarise
+        run: |
+          {
+            echo '### Deployed'
+            echo ''
+            echo '| Output | Value |'
+            echo '| --- | --- |'
+            node -e '
+              const o = require("./outputs.json");
+              for (const [k, v] of Object.entries(o)) console.log(`| ${k} | \`${v.value}\` |`);
+            '
+          } >> "$GITHUB_STEP_SUMMARY"

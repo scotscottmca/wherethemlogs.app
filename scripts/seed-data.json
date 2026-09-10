@@ -1,0 +1,1719 @@
+{
+  "vendors": [
+    {
+      "id": "7bca22b4-027d-4f38-9960-17ee61e6ebed",
+      "slug": "google",
+      "name": "Google",
+      "iconUrl": null
+    },
+    {
+      "id": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "microsoft",
+      "name": "Microsoft",
+      "iconUrl": null
+    },
+    {
+      "id": "24b66c52-9951-4e52-bfd1-8f6cb13f6166",
+      "slug": "slack-technologies",
+      "name": "Slack Technologies",
+      "iconUrl": null
+    },
+    {
+      "id": "f4281ac0-7541-4061-910b-4ccdb0a49ff1",
+      "slug": "docker",
+      "name": "Docker",
+      "iconUrl": null
+    },
+    {
+      "id": "b6f2f4a7-4994-4edb-855e-b06c087f70db",
+      "slug": "zoom",
+      "name": "Zoom",
+      "iconUrl": null
+    },
+    {
+      "id": "674a9d06-34e0-457b-a929-dc98e22bad8b",
+      "slug": "mozilla",
+      "name": "Mozilla",
+      "iconUrl": null
+    },
+    {
+      "id": "3870ebe6-47e5-452f-b767-be728ece99fb",
+      "slug": "jamf",
+      "name": "Jamf",
+      "iconUrl": null
+    },
+    {
+      "id": "37403b92-d040-4add-b831-c180181ffe05",
+      "slug": "apple",
+      "name": "Apple",
+      "iconUrl": null
+    },
+    {
+      "id": "55c70cdc-426f-4d19-ad85-67f11b9e1729",
+      "slug": "munki-project",
+      "name": "Munki Project",
+      "iconUrl": null
+    },
+    {
+      "id": "e7726d0d-4b69-4010-b936-85b98b495c5b",
+      "slug": "homebrew",
+      "name": "Homebrew",
+      "iconUrl": null
+    },
+    {
+      "id": "28b6cdb3-45e2-4d4e-a9bf-f98ca1f86a76",
+      "slug": "f5-nginx",
+      "name": "F5 / nginx",
+      "iconUrl": null
+    },
+    {
+      "id": "3a0e1331-9dfd-4b00-a7c4-358585cf56da",
+      "slug": "apache-foundation",
+      "name": "Apache Foundation",
+      "iconUrl": null
+    },
+    {
+      "id": "7eec9cac-2c3b-40b2-b781-845740a107bd",
+      "slug": "postgresql-global-development-group",
+      "name": "PostgreSQL Global Development Group",
+      "iconUrl": null
+    },
+    {
+      "id": "a3e749ea-e279-4477-bbc7-e3413e86849c",
+      "slug": "debian",
+      "name": "Debian",
+      "iconUrl": null
+    },
+    {
+      "id": "b6d1ac3b-642b-48ac-b709-960f3fd2768f",
+      "slug": "fedora-red-hat",
+      "name": "Fedora / Red Hat",
+      "iconUrl": null
+    },
+    {
+      "id": "fc09616c-ca86-4da7-8b99-3694d56a39d1",
+      "slug": "openbsd",
+      "name": "OpenBSD",
+      "iconUrl": null
+    },
+    {
+      "id": "97d0fa93-b57d-48c1-9868-d4227ce53a69",
+      "slug": "citrix",
+      "name": "Citrix",
+      "iconUrl": null
+    },
+    {
+      "id": "bae955a6-95e4-4882-827a-c2667a94891f",
+      "slug": "chocolatey-software",
+      "name": "Chocolatey Software",
+      "iconUrl": null
+    },
+    {
+      "id": "1a43bd08-4f80-4315-9d35-f9904d688357",
+      "slug": "adobe",
+      "name": "Adobe",
+      "iconUrl": null
+    },
+    {
+      "id": "beac6417-814e-4cd9-89a4-21321c82fa5c",
+      "slug": "npm-inc",
+      "name": "npm, Inc.",
+      "iconUrl": null
+    },
+    {
+      "id": "8725ed4c-5652-4cb9-8cb7-ed97ecb544dd",
+      "slug": "systemd",
+      "name": "systemd",
+      "iconUrl": null
+    },
+    {
+      "id": "f5c3a606-dd8f-4ea7-bb63-09b299cb27d2",
+      "slug": "canonical",
+      "name": "Canonical",
+      "iconUrl": null
+    },
+    {
+      "id": "b61a9213-7ecd-43a5-9db9-159aa99340c2",
+      "slug": "dropbox",
+      "name": "Dropbox",
+      "iconUrl": null
+    },
+    {
+      "id": "24bf199e-8cfd-409b-bafa-3ee9355f5c48",
+      "slug": "valve",
+      "name": "Valve",
+      "iconUrl": null
+    }
+  ],
+  "apps": [
+    {
+      "id": "7738ceee-875d-41b0-b82a-ca181380e8f9",
+      "vendorId": "7bca22b4-027d-4f38-9960-17ee61e6ebed",
+      "slug": "google-chrome",
+      "name": "Google Chrome",
+      "aliases": [
+        "chrome",
+        "gchrome",
+        "google-chrome"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "80f85787-a5d9-466e-a3ac-68d04637357c",
+          "platform": "windows",
+          "label": "Debug log",
+          "path": "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\chrome_debug.log",
+          "note": "Only written when Chrome is started with --enable-logging",
+          "types": [
+            "msi",
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "9cb32207-6ea7-4f93-a659-eb2be27544d7",
+          "platform": "windows",
+          "label": "Crash reports",
+          "path": "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Crashpad\\reports\\",
+          "types": [
+            "msi",
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "85b939c1-140e-425e-866d-ff77f148ef4f",
+          "platform": "macos",
+          "label": "Debug log",
+          "path": "~/Library/Application Support/Google/Chrome/chrome_debug.log",
+          "note": "Requires --enable-logging --v=1",
+          "types": [
+            "dmg",
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "5261aa3f-0e82-4510-9ced-09388d675784",
+          "platform": "macos",
+          "label": "Crash reports",
+          "path": "~/Library/Application Support/Google/Chrome/Crashpad/completed/",
+          "types": [
+            "dmg",
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "f37e571e-0367-4950-a082-3bd55c1fa696",
+          "platform": "linux",
+          "label": "Debug log",
+          "path": "~/.config/google-chrome/chrome_debug.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "3ac03a8d-6bee-464d-9846-c1ae9063b4db",
+          "platform": "linux",
+          "label": "Crash dumps",
+          "path": "~/.config/google-chrome/Crash Reports/",
+          "types": [
+            "deb",
+            "rpm",
+            "x64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-09-02T00:00:00.000Z"
+    },
+    {
+      "id": "c2c07944-eb6f-4709-824e-eff73a9fbca7",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "microsoft-teams",
+      "name": "Microsoft Teams",
+      "aliases": [
+        "teams",
+        "msteams",
+        "teams 2.0"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "47b5e01e-ab65-4adb-b514-fd75c6676644",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "%LOCALAPPDATA%\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\Logs\\",
+          "variant": "New Teams (MSIX)",
+          "types": [
+            "msix",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "9198bedd-4fd0-40b2-9698-413b8155fdfd",
+          "platform": "windows",
+          "label": "Diagnostic bundle",
+          "path": "%USERPROFILE%\\Downloads\\MSTeams Diagnostics Log <date>.txt",
+          "note": "Written by Ctrl+Alt+Shift+1",
+          "variant": "New Teams (MSIX)",
+          "types": [
+            "msix",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "cb88202e-42b6-4feb-807d-c9cb2177a132",
+          "platform": "windows",
+          "label": "Desktop log",
+          "path": "%APPDATA%\\Microsoft\\Teams\\logs.txt",
+          "variant": "Classic (v1)",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "271b23c6-eef5-49c8-89e7-2a1043ad8708",
+          "platform": "windows",
+          "label": "Media stack log",
+          "path": "%APPDATA%\\Microsoft\\Teams\\media-stack\\",
+          "variant": "Classic (v1)",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "02964745-3429-4d6e-a4a5-ddb8efea16fb",
+          "platform": "macos",
+          "label": "Client logs",
+          "path": "~/Library/Containers/com.microsoft.teams2/Data/Library/Application Support/Microsoft/MSTeams/Logs/",
+          "variant": "New Teams",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-09-05T00:00:00.000Z"
+    },
+    {
+      "id": "782c406b-760f-4d2f-aada-e45691605238",
+      "vendorId": "24b66c52-9951-4e52-bfd1-8f6cb13f6166",
+      "slug": "slack",
+      "name": "Slack",
+      "aliases": [
+        "slack"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "de5187b5-b7f3-4470-9837-b435067703ce",
+          "platform": "windows",
+          "label": "Application logs",
+          "path": "%APPDATA%\\Slack\\logs\\",
+          "types": [
+            "msi",
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "64653888-5e57-43e0-993e-6bd168cebbcf",
+          "platform": "windows",
+          "label": "Renderer console",
+          "path": "%APPDATA%\\Slack\\logs\\browser.log",
+          "types": [
+            "msi",
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "1f2ce81c-a82e-4509-af0f-a26086011619",
+          "platform": "macos",
+          "label": "Application logs",
+          "path": "~/Library/Application Support/Slack/logs/",
+          "types": [
+            "dmg",
+            "mas",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "34ec3e29-cf48-4056-92a2-bba69de9520b",
+          "platform": "linux",
+          "label": "Application logs",
+          "path": "~/.config/Slack/logs/",
+          "types": [
+            "deb",
+            "rpm",
+            "snap",
+            "x64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-28T00:00:00.000Z"
+    },
+    {
+      "id": "00738bea-362b-4256-a4a0-9fd751eee6d9",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "visual-studio-code",
+      "name": "Visual Studio Code",
+      "aliases": [
+        "vscode",
+        "code",
+        "vs code"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "dbd39cd4-12b3-42d9-9f0e-f99e7e80b26d",
+          "platform": "windows",
+          "label": "Session logs",
+          "path": "%APPDATA%\\Code\\logs\\",
+          "note": "One folder per session, newest last",
+          "types": [
+            "exe",
+            "msi",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "f105195d-2505-4b8f-b4da-f575745c265b",
+          "platform": "windows",
+          "label": "Crash dumps",
+          "path": "%APPDATA%\\Code\\Crashpad\\reports\\",
+          "types": [
+            "exe",
+            "msi",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "cede5faf-371d-43ac-ae79-69fa8d7efd69",
+          "platform": "macos",
+          "label": "Session logs",
+          "path": "~/Library/Application Support/Code/logs/",
+          "types": [
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "bc9912a4-b124-4e1c-a6ad-15e4ff367f1c",
+          "platform": "linux",
+          "label": "Session logs",
+          "path": "~/.config/Code/logs/",
+          "types": [
+            "deb",
+            "rpm",
+            "snap",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-09-01T00:00:00.000Z"
+    },
+    {
+      "id": "ec04e575-a0d7-4864-a1ce-ed573a7ac93a",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "intune-management-extension",
+      "name": "Intune Management Extension",
+      "aliases": [
+        "intune",
+        "ime",
+        "sidecar"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "9d4c2c32-aa0b-47e1-b12a-448c8365c6e9",
+          "platform": "windows",
+          "label": "Agent logs",
+          "path": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs\\",
+          "types": [
+            "msi",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "1db21d17-85f1-4191-9d72-5342a3c25df0",
+          "platform": "windows",
+          "label": "Win32 app log",
+          "path": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs\\IntuneManagementExtension.log",
+          "types": [
+            "msi",
+            "x64"
+          ],
+          "scope": "per-machine"
+        }
+      ],
+      "updatedAt": "2026-09-08T00:00:00.000Z"
+    },
+    {
+      "id": "cebfe3e9-763d-454c-8843-ea094ad8d98f",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "intune-company-portal",
+      "name": "Intune Company Portal",
+      "aliases": [
+        "intune",
+        "company portal"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "64a4e4b8-ee37-40d7-b308-16178c2ad40b",
+          "platform": "macos",
+          "label": "Agent logs",
+          "path": "/Library/Logs/Microsoft/Intune/",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "c20a8d0c-ed32-4d66-a66a-d7db7803c926",
+          "platform": "macos",
+          "label": "Shell script output",
+          "path": "/Library/Application Support/Microsoft/Intune/SideCar/",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-08T00:00:00.000Z"
+    },
+    {
+      "id": "9444d982-418c-456f-b2b8-8b1014500f2a",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "configuration-manager-client",
+      "name": "Configuration Manager Client",
+      "aliases": [
+        "sccm",
+        "mecm",
+        "ccmexec",
+        "configmgr"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "d11f045d-ba16-46b9-8545-06dced33ad83",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "C:\\Windows\\CCM\\Logs\\",
+          "types": [
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "47807828-ec64-41c5-8f43-f742f2a9d968",
+          "platform": "windows",
+          "label": "Setup logs",
+          "path": "C:\\Windows\\ccmsetup\\Logs\\ccmsetup.log",
+          "types": [
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "ec7fe52a-373a-4a11-950d-b5d6d6618a18",
+          "platform": "windows",
+          "label": "App deployment",
+          "path": "C:\\Windows\\CCM\\Logs\\AppEnforce.log",
+          "types": [
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        }
+      ],
+      "updatedAt": "2026-09-07T00:00:00.000Z"
+    },
+    {
+      "id": "fe2e29e1-95d1-404e-88b9-471375944060",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "windows-installer",
+      "name": "Windows Installer",
+      "aliases": [
+        "msiexec",
+        "msi",
+        "windows installer"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "89cf6823-c8f9-4572-b0ff-b32b4f28294b",
+          "platform": "windows",
+          "label": "Verbose install log",
+          "path": "%TEMP%\\MSI*.LOG",
+          "note": "Requires the Logging policy or msiexec /L*v <path>",
+          "types": [
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "c8dfefd5-59a0-4dd6-a724-cc08013798ef",
+          "platform": "windows",
+          "label": "Event log source",
+          "path": "Application log, source MsiInstaller",
+          "types": [
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-30T00:00:00.000Z"
+    },
+    {
+      "id": "ac3afe78-664d-4810-a101-e3917e81a4e4",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "windows-update",
+      "name": "Windows Update",
+      "aliases": [
+        "wu",
+        "windows update",
+        "usoclient"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "926dfa3e-15b8-4423-8e92-cc5dbbf1c4bc",
+          "platform": "windows",
+          "label": "ETL traces",
+          "path": "C:\\Windows\\Logs\\WindowsUpdate\\",
+          "note": "Convert with Get-WindowsUpdateLog",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "bfcf256c-b1cd-440c-baa0-4f8d5aca8a9c",
+          "platform": "windows",
+          "label": "Reporting events",
+          "path": "C:\\Windows\\SoftwareDistribution\\ReportingEvents.log",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "8193afce-a813-489f-93e5-ee5cc59d0246",
+          "platform": "windows",
+          "label": "Servicing stack",
+          "path": "C:\\Windows\\Logs\\CBS\\CBS.log",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-22T00:00:00.000Z"
+    },
+    {
+      "id": "59f59a73-70dd-424f-a089-6eabb1bb05f4",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "microsoft-defender-antivirus",
+      "name": "Microsoft Defender Antivirus",
+      "aliases": [
+        "defender",
+        "mpcmdrun",
+        "windows defender"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "c7b15c0b-21a6-4af6-ad70-5ec676e7e182",
+          "platform": "windows",
+          "label": "Support logs",
+          "path": "C:\\ProgramData\\Microsoft\\Windows Defender\\Support\\",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "abb3468a-68bd-4d66-89cb-0eddfe8e18b9",
+          "platform": "windows",
+          "label": "Scan results",
+          "path": "C:\\ProgramData\\Microsoft\\Windows Defender\\Support\\MPLog-*.log",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-19T00:00:00.000Z"
+    },
+    {
+      "id": "8a712a5a-b43c-47ec-a385-cce15ea0fd14",
+      "vendorId": "0334ac50-1236-438f-b494-1d095274f897",
+      "slug": "onedrive",
+      "name": "OneDrive",
+      "aliases": [
+        "onedrive",
+        "od4b"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "3ea3f8ff-3f17-49f7-a1aa-adc6517613c7",
+          "platform": "windows",
+          "label": "Sync engine logs",
+          "path": "%LOCALAPPDATA%\\Microsoft\\OneDrive\\logs\\",
+          "types": [
+            "exe",
+            "msi",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "9382741f-8ca0-4541-9cdd-f19fc4d47ffa",
+          "platform": "windows",
+          "label": "Setup log",
+          "path": "%LOCALAPPDATA%\\Microsoft\\OneDrive\\setup\\logs\\",
+          "types": [
+            "exe",
+            "msi",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "f9c751e5-7a09-4375-925a-ce8e18d9b01c",
+          "platform": "macos",
+          "label": "Sync engine logs",
+          "path": "~/Library/Logs/OneDrive/",
+          "types": [
+            "pkg",
+            "mas",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-11T00:00:00.000Z"
+    },
+    {
+      "id": "6279b1a5-16af-464b-b8e3-ecea986ab85e",
+      "vendorId": "f4281ac0-7541-4061-910b-4ccdb0a49ff1",
+      "slug": "docker-desktop",
+      "name": "Docker Desktop",
+      "aliases": [
+        "docker",
+        "docker desktop"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "c0287b15-c7d7-4276-97ec-2c8e00085b94",
+          "platform": "windows",
+          "label": "Desktop logs",
+          "path": "%LOCALAPPDATA%\\Docker\\log\\",
+          "types": [
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "8a685917-0740-4173-8b8b-afa4694b9ba0",
+          "platform": "windows",
+          "label": "VM logs",
+          "path": "%LOCALAPPDATA%\\Docker\\log\\vm\\",
+          "types": [
+            "exe",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "0326190e-4812-45e8-ae80-143a06f7e24e",
+          "platform": "macos",
+          "label": "Desktop logs",
+          "path": "~/Library/Containers/com.docker.docker/Data/log/",
+          "types": [
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "3a5777da-4d48-4d1c-aa61-217b89f70db2",
+          "platform": "macos",
+          "label": "Host log",
+          "path": "~/Library/Containers/com.docker.docker/Data/log/host/",
+          "types": [
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-09-03T00:00:00.000Z"
+    },
+    {
+      "id": "17a914f2-2e07-41ff-bed8-05aedd325848",
+      "vendorId": "f4281ac0-7541-4061-910b-4ccdb0a49ff1",
+      "slug": "docker-engine",
+      "name": "Docker Engine",
+      "aliases": [
+        "docker",
+        "dockerd"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "00dd0c42-09eb-4f96-ade1-4e0510e240da",
+          "platform": "linux",
+          "label": "Daemon journal",
+          "path": "journalctl -u docker.service",
+          "note": "systemd hosts; no flat file by default",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "029a963b-7039-4d79-a4a7-63b503c6575c",
+          "platform": "linux",
+          "label": "Container logs",
+          "path": "/var/lib/docker/containers/<id>/<id>-json.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-03T00:00:00.000Z"
+    },
+    {
+      "id": "e013266a-882f-41ab-b783-ddd8f8b43971",
+      "vendorId": "b6f2f4a7-4994-4edb-855e-b06c087f70db",
+      "slug": "zoom-workplace",
+      "name": "Zoom Workplace",
+      "aliases": [
+        "zoom"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "4827a9ce-32b1-4f4d-9972-c8b218709a03",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "%APPDATA%\\Zoom\\logs\\",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "5997603e-57b1-40a5-ab8c-22879d309a6a",
+          "platform": "macos",
+          "label": "Client logs",
+          "path": "~/Library/Logs/zoom.us/",
+          "types": [
+            "pkg",
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-25T00:00:00.000Z"
+    },
+    {
+      "id": "016b3931-e1c6-4b97-a1eb-cd2604ead4b7",
+      "vendorId": "674a9d06-34e0-457b-a929-dc98e22bad8b",
+      "slug": "mozilla-firefox",
+      "name": "Mozilla Firefox",
+      "aliases": [
+        "firefox",
+        "ff"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "e8c929b0-a8f9-42fd-9e9e-3341ea0702d1",
+          "platform": "windows",
+          "label": "Profile folder",
+          "path": "%APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "2bc1bf2e-b5ec-4245-af0f-34fe2f6dfb41",
+          "platform": "windows",
+          "label": "Crash reports",
+          "path": "%APPDATA%\\Mozilla\\Firefox\\Crash Reports\\",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "b2f93733-a2f3-4823-a3fc-68b0f3774ed2",
+          "platform": "windows",
+          "label": "HTTP log",
+          "path": "%TEMP%\\log.txt",
+          "note": "Enabled from about:logging",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "2a7cbc7c-bcaa-4b9c-8663-2976b4c9d9ed",
+          "platform": "linux",
+          "label": "Profile folder",
+          "path": "~/.mozilla/firefox/<profile>/",
+          "types": [
+            "deb",
+            "rpm",
+            "snap",
+            "flatpak",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "d07c0354-8b7d-4c02-a242-f485dc74c6b2",
+          "platform": "linux",
+          "label": "Crash reports",
+          "path": "~/.mozilla/firefox/Crash Reports/",
+          "types": [
+            "deb",
+            "rpm",
+            "snap",
+            "flatpak",
+            "x64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-08T00:00:00.000Z"
+    },
+    {
+      "id": "48dfd95b-adc1-43e5-b422-015e3cee6170",
+      "vendorId": "3870ebe6-47e5-452f-b767-be728ece99fb",
+      "slug": "jamf-pro-agent",
+      "name": "Jamf Pro Agent",
+      "aliases": [
+        "jamf",
+        "jamf pro",
+        "casper"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "c40f0591-cc64-4bd2-a1b4-25dcb5abd233",
+          "platform": "macos",
+          "label": "Agent log",
+          "path": "/var/log/jamf.log",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "ede11cfb-39a4-4dee-a1c0-82b2d08f56af",
+          "platform": "macos",
+          "label": "Self Service log",
+          "path": "~/Library/Logs/JAMF/",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "96209fa7-ee53-492a-b40e-a07cfd0bdc43",
+      "vendorId": "37403b92-d040-4add-b831-c180181ffe05",
+      "slug": "macos-installer",
+      "name": "macOS Installer",
+      "aliases": [
+        "installer",
+        "install.log",
+        "pkg"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "150bf3c6-0cce-4131-80b3-01a58e871ac8",
+          "platform": "macos",
+          "label": "Install log",
+          "path": "/var/log/install.log",
+          "types": [
+            "pkg",
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "54c32bb6-a1ea-4312-aacb-5be9d005944c",
+          "platform": "macos",
+          "label": "System log stream",
+          "path": "log show --predicate 'process == \"installd\"' --last 1h",
+          "types": [
+            "pkg",
+            "dmg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-31T00:00:00.000Z"
+    },
+    {
+      "id": "ec78d023-87df-4172-b7fa-6e096ddd2bd0",
+      "vendorId": "55c70cdc-426f-4d19-ad85-67f11b9e1729",
+      "slug": "munki",
+      "name": "Munki",
+      "aliases": [
+        "munki",
+        "managedsoftwareupdate"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "78ef1a7b-bac6-4694-86b3-dc82c0d45d3e",
+          "platform": "macos",
+          "label": "Managed installs log",
+          "path": "/Library/Managed Installs/Logs/ManagedSoftwareUpdate.log",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "217f4e9e-ddeb-4744-ba62-2ddd8a550707",
+          "platform": "macos",
+          "label": "Install history",
+          "path": "/Library/Managed Installs/InstallInfo.plist",
+          "types": [
+            "pkg",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-17T00:00:00.000Z"
+    },
+    {
+      "id": "e950dddd-8dee-4b6c-9582-45f094fcd30f",
+      "vendorId": "e7726d0d-4b69-4010-b936-85b98b495c5b",
+      "slug": "homebrew",
+      "name": "Homebrew",
+      "aliases": [
+        "brew",
+        "homebrew"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "9d23a02b-9055-41c3-a4e5-ab6214795ce2",
+          "platform": "macos",
+          "label": "Build logs",
+          "path": "~/Library/Logs/Homebrew/<formula>/",
+          "types": [
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-05T00:00:00.000Z"
+    },
+    {
+      "id": "c2ca01b8-d53d-4df9-b39b-f39d020b635a",
+      "vendorId": "28b6cdb3-45e2-4d4e-a9bf-f98ca1f86a76",
+      "slug": "nginx",
+      "name": "nginx",
+      "aliases": [
+        "nginx"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "849e7b8e-990e-4b78-bcc4-7a1b2aa27671",
+          "platform": "linux",
+          "label": "Access log",
+          "path": "/var/log/nginx/access.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "c2f8e4dc-cfdb-4782-afd4-dbb70885ca95",
+          "platform": "linux",
+          "label": "Error log",
+          "path": "/var/log/nginx/error.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-04T00:00:00.000Z"
+    },
+    {
+      "id": "3249885a-723e-48c0-814e-368754cc3f84",
+      "vendorId": "3a0e1331-9dfd-4b00-a7c4-358585cf56da",
+      "slug": "apache-http-server",
+      "name": "Apache HTTP Server",
+      "aliases": [
+        "apache",
+        "httpd",
+        "apache2"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "d72e2bc9-31d2-40d5-8a91-80a722eeb325",
+          "platform": "linux",
+          "label": "Debian / Ubuntu",
+          "path": "/var/log/apache2/error.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "09e27d26-cdb1-4e83-8bf3-3d248ab93f3d",
+          "platform": "linux",
+          "label": "RHEL / Fedora",
+          "path": "/var/log/httpd/error_log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-04T00:00:00.000Z"
+    },
+    {
+      "id": "16228142-6daf-43d1-9959-72c0d8beb834",
+      "vendorId": "7eec9cac-2c3b-40b2-b781-845740a107bd",
+      "slug": "postgresql",
+      "name": "PostgreSQL",
+      "aliases": [
+        "postgres",
+        "postgresql",
+        "psql"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "29a9e880-5c9f-4b53-98ee-1b85fd0d0bb5",
+          "platform": "linux",
+          "label": "Debian / Ubuntu",
+          "path": "/var/log/postgresql/postgresql-<version>-main.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "e64f6682-0aba-4232-b403-f4f59e0693c9",
+          "platform": "linux",
+          "label": "Data directory",
+          "path": "/var/lib/pgsql/data/log/",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-21T00:00:00.000Z"
+    },
+    {
+      "id": "d86c42b3-385f-4ec8-944d-7a5710cb1ba7",
+      "vendorId": "a3e749ea-e279-4477-bbc7-e3413e86849c",
+      "slug": "apt",
+      "name": "APT",
+      "aliases": [
+        "apt",
+        "apt-get",
+        "dpkg"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "2d7076ba-1f2d-457a-8ac8-c545a57e9b3f",
+          "platform": "linux",
+          "label": "Transaction history",
+          "path": "/var/log/apt/history.log",
+          "types": [
+            "deb",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "bec1cd59-5825-491f-aea5-770ca2640753",
+          "platform": "linux",
+          "label": "Terminal capture",
+          "path": "/var/log/apt/term.log",
+          "types": [
+            "deb",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "87de8513-b942-4b81-8716-f1947bc80caa",
+          "platform": "linux",
+          "label": "Package operations",
+          "path": "/var/log/dpkg.log",
+          "types": [
+            "deb",
+            "x86",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-15T00:00:00.000Z"
+    },
+    {
+      "id": "48c76a3e-6e12-4790-9659-b88b49bb7d05",
+      "vendorId": "b6d1ac3b-642b-48ac-b709-960f3fd2768f",
+      "slug": "dnf",
+      "name": "DNF",
+      "aliases": [
+        "dnf",
+        "yum"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "7ed93a9f-0c2b-4a09-9b8a-a4a101d62940",
+          "platform": "linux",
+          "label": "Transaction log",
+          "path": "/var/log/dnf.log",
+          "types": [
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "fabd8f5b-df78-4b66-91bf-7d0307fea09e",
+          "platform": "linux",
+          "label": "RPM transactions",
+          "path": "/var/log/dnf.rpm.log",
+          "types": [
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-15T00:00:00.000Z"
+    },
+    {
+      "id": "44c34647-0da1-4cbb-b620-99c49074e3eb",
+      "vendorId": "fc09616c-ca86-4da7-8b99-3694d56a39d1",
+      "slug": "openssh-server",
+      "name": "OpenSSH Server",
+      "aliases": [
+        "sshd",
+        "ssh",
+        "openssh"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "e5153725-5206-4930-9710-a4610ca08092",
+          "platform": "linux",
+          "label": "Debian / Ubuntu",
+          "path": "/var/log/auth.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "20eef366-8abf-44bb-9b22-6378b5665ea9",
+          "platform": "linux",
+          "label": "RHEL / Fedora",
+          "path": "/var/log/secure",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "1cd132ab-ed35-4309-9c21-2c5a2671a89e",
+          "platform": "linux",
+          "label": "systemd journal",
+          "path": "journalctl -u sshd",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-08-12T00:00:00.000Z"
+    },
+    {
+      "id": "94b70290-ec8c-4d8f-bb1a-b46c5c97a1f9",
+      "vendorId": "97d0fa93-b57d-48c1-9868-d4227ce53a69",
+      "slug": "citrix-workspace-app",
+      "name": "Citrix Workspace App",
+      "aliases": [
+        "citrix",
+        "receiver",
+        "workspace app",
+        "cwa"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "ef889f4c-5b4b-4bbd-8982-138a347f2079",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "%LOCALAPPDATA%\\Citrix\\CitrixWorkspaceApp\\Logs\\",
+          "types": [
+            "exe",
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "ecef2d69-4904-44e4-8004-b7ebb209e2ba",
+          "platform": "windows",
+          "label": "Install log",
+          "path": "%TEMP%\\CTXReceiverInstallLogs\\",
+          "types": [
+            "exe",
+            "msi",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-09-09T00:00:00.000Z"
+    },
+    {
+      "id": "f95ccc2d-fb52-47c8-8f2e-a008f7b3a4af",
+      "vendorId": "bae955a6-95e4-4882-827a-c2667a94891f",
+      "slug": "chocolatey",
+      "name": "Chocolatey",
+      "aliases": [
+        "choco",
+        "chocolatey"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "754117b2-1bd7-4457-96bb-91604ae5e1a4",
+          "platform": "windows",
+          "label": "Package log",
+          "path": "C:\\ProgramData\\chocolatey\\logs\\chocolatey.log",
+          "types": [
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "f75f20a9-21e5-49f2-be8a-301b817ff396",
+          "platform": "windows",
+          "label": "Install failures",
+          "path": "C:\\ProgramData\\chocolatey\\logs\\choco.summary.log",
+          "types": [
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        }
+      ],
+      "updatedAt": "2026-08-26T00:00:00.000Z"
+    },
+    {
+      "id": "d3da8bcd-5900-4f3d-83bf-8d3ae69108da",
+      "vendorId": "1a43bd08-4f80-4315-9d35-f9904d688357",
+      "slug": "adobe-acrobat",
+      "name": "Adobe Acrobat",
+      "aliases": [
+        "acrobat",
+        "adobe reader",
+        "acrobat dc"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "5166dd6e-98f0-4fba-8137-50b394ac4c08",
+          "platform": "windows",
+          "label": "Application logs",
+          "path": "%LOCALAPPDATA%\\Adobe\\Acrobat\\DC\\",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "823f9f95-9565-4e6a-8261-91a52c3ea94c",
+          "platform": "windows",
+          "label": "Installer logs",
+          "path": "%TEMP%\\Acrobat*.log",
+          "types": [
+            "msi",
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        }
+      ],
+      "updatedAt": "2026-08-07T00:00:00.000Z"
+    },
+    {
+      "id": "21978787-8a64-4278-803f-5ed5eb392b4d",
+      "vendorId": "beac6417-814e-4cd9-89a4-21321c82fa5c",
+      "slug": "npm",
+      "name": "npm",
+      "aliases": [
+        "npm",
+        "node package manager"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "5496d8cc-9885-46fd-a6a2-263b65413499",
+          "platform": "windows",
+          "label": "Debug logs",
+          "path": "%LOCALAPPDATA%\\npm-cache\\_logs\\",
+          "types": [
+            "msi",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        },
+        {
+          "id": "a9626991-bff2-4cb1-8c53-c85c5f747874",
+          "platform": "linux",
+          "label": "Debug logs",
+          "path": "${XDG_CACHE_HOME:-~/.cache}/npm/_logs/",
+          "types": [
+            "deb",
+            "rpm",
+            "snap",
+            "x64",
+            "arm64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-08-03T00:00:00.000Z"
+    },
+    {
+      "id": "5bc59c27-122a-4fdf-9d9d-8ec3d46a1617",
+      "vendorId": "8725ed4c-5652-4cb9-8cb7-ed97ecb544dd",
+      "slug": "systemd-journal",
+      "name": "systemd journal",
+      "aliases": [
+        "journalctl",
+        "systemd",
+        "journal"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "2d783bbe-e2b3-4dbb-be65-11ec0030a3f0",
+          "platform": "linux",
+          "label": "Persistent journal",
+          "path": "/var/log/journal/",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "d2c2b6ee-0f62-4c85-8265-6a9fa3e93e52",
+          "platform": "linux",
+          "label": "Volatile journal",
+          "path": "/run/log/journal/",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "9b44bb7d-ffb9-439f-b8cc-26d1a064f625",
+          "platform": "linux",
+          "label": "Per-unit read",
+          "path": "journalctl -u <unit> --since today",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "id": "30ca3474-80ec-4a53-9e4a-8ab223b74b1a",
+      "vendorId": "f5c3a606-dd8f-4ea7-bb63-09b299cb27d2",
+      "slug": "cloud-init",
+      "name": "cloud-init",
+      "aliases": [
+        "cloud-init",
+        "cloudinit"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "d64298c8-8487-4a8a-b5a6-f20ce515a26f",
+          "platform": "linux",
+          "label": "Main log",
+          "path": "/var/log/cloud-init.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        },
+        {
+          "id": "45362243-ef04-4bce-a747-0ae21069c8ef",
+          "platform": "linux",
+          "label": "Boot output",
+          "path": "/var/log/cloud-init-output.log",
+          "types": [
+            "deb",
+            "rpm",
+            "x64",
+            "arm64"
+          ],
+          "scope": "system"
+        }
+      ],
+      "updatedAt": "2026-09-10T00:00:00.000Z"
+    },
+    {
+      "id": "3f3a61d3-3acf-4c62-9fd9-9db8c6f77ac5",
+      "vendorId": "b61a9213-7ecd-43a5-9db9-159aa99340c2",
+      "slug": "dropbox",
+      "name": "Dropbox",
+      "aliases": [
+        "dropbox"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "5edfcce9-c188-457a-a389-c0a0b41b3c03",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "%LOCALAPPDATA%\\Dropbox\\logs\\",
+          "types": [
+            "exe",
+            "msi",
+            "x64"
+          ],
+          "scope": "per-user"
+        }
+      ],
+      "updatedAt": "2026-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "859b3a89-f789-4eb1-8d45-3471eb306cd2",
+      "vendorId": "24bf199e-8cfd-409b-bafa-3ee9355f5c48",
+      "slug": "steam",
+      "name": "Steam",
+      "aliases": [
+        "steam"
+      ],
+      "iconUrl": null,
+      "logPaths": [
+        {
+          "id": "aae67ab1-db0d-4b96-a3a2-9d9e03d71942",
+          "platform": "windows",
+          "label": "Client logs",
+          "path": "C:\\Program Files (x86)\\Steam\\logs\\",
+          "types": [
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        },
+        {
+          "id": "4e685d54-cfed-46dd-87e6-37930a432808",
+          "platform": "windows",
+          "label": "Content log",
+          "path": "C:\\Program Files (x86)\\Steam\\logs\\content_log.txt",
+          "types": [
+            "exe",
+            "x86",
+            "x64"
+          ],
+          "scope": "per-machine"
+        }
+      ],
+      "updatedAt": "2026-07-24T00:00:00.000Z"
+    }
+  ]
+}

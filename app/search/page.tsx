@@ -1,37 +1,24 @@
+"use client";
+
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { useSearchParams } from "next/navigation";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { IconArrow, IconClose } from "@/components/Icons";
 import {
-  PLATFORMS,
+  PLATFORM_META,
   TYPE_GROUPS,
-  availableTypes,
-  searchCatalog,
-  totalEntries,
+  searchApps,
+  toPlates,
   type Platform,
-} from "@/lib/catalog";
+  type SearchResponse,
+} from "@/lib/api";
 import { requestAppUrl } from "@/lib/site";
 
-const ZONES = new Set<string>(PLATFORMS.map((p) => p.id));
-
-type SP = { q?: string; platform?: string; type?: string | string[] };
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<SP>;
-}): Promise<Metadata> {
-  const { q } = await searchParams;
-  return { title: q ? `“${q}” — results` : "Browse the index" };
-}
-
-function asTypes(t: SP["type"]): string[] {
-  if (!t) return [];
-  return (Array.isArray(t) ? t : [t]).flatMap((v) => v.split(",")).filter(Boolean);
-}
+const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 
 function buildHref(base: { q: string; platform: Platform | "all"; types: string[] }) {
   const p = new URLSearchParams();
@@ -39,34 +26,107 @@ function buildHref(base: { q: string; platform: Platform | "all"; types: string[
   if (base.platform !== "all") p.set("platform", base.platform);
   base.types.forEach((t) => p.append("type", t));
   const s = p.toString();
-  return s ? `/search?${s}` : "/search";
+  return s ? `/search/?${s}` : "/search/";
 }
 
-export default async function Results({ searchParams }: { searchParams: Promise<SP> }) {
-  const sp = await searchParams;
-  const q = (sp.q ?? "").slice(0, 120);
-  const platform: Platform | "all" = ZONES.has(sp.platform ?? "") ? (sp.platform as Platform) : "all";
-  const types = asTypes(sp.type);
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<Frame />}>
+      <Results />
+    </Suspense>
+  );
+}
 
-  // Unfiltered pool for the query, so the rail can show what is on offer and
-  // the zone tabs can carry honest counts for this query.
-  const pool = searchCatalog({ q, platform: "all" });
-  const results = searchCatalog({ q, platform, types });
+function Results() {
+  const params = useSearchParams();
+  const q = (params.get("q") ?? "").slice(0, 120);
+  const rawPlatform = params.get("platform") ?? "all";
+  const platform: Platform | "all" = ZONES.has(rawPlatform) ? (rawPlatform as Platform) : "all";
+  const types = useMemo(
+    () => params.getAll("type").flatMap((t) => t.split(",")).filter(Boolean),
+    [params],
+  );
 
-  const counts: Record<string, number> = { all: pool.length };
-  for (const p of PLATFORMS) counts[p.id] = pool.filter((e) => e.platform === p.id).length;
+  // Two calls: the unfiltered pool drives the honest zone counts and the
+  // "N of M matching" line; the filtered call drives the rack.
+  const [pool, setPool] = useState<SearchResponse | null>(null);
+  const [filtered, setFiltered] = useState<SearchResponse | null>(null);
+  const [failed, setFailed] = useState(false);
 
-  const offered = new Set(availableTypes(searchCatalog({ q, platform })));
+  useEffect(() => {
+    const ctl = new AbortController();
+    setFailed(false);
+    Promise.all([
+      searchApps({ q, platform: "all" }, { signal: ctl.signal }),
+      searchApps({ q, platform, types }, { signal: ctl.signal }),
+    ])
+      .then(([all, narrow]) => {
+        setPool(all);
+        setFiltered(narrow);
+      })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setFailed(true);
+      });
+    return () => ctl.abort();
+  }, [q, platform, types]);
+
+  const plates = filtered ? toPlates(filtered.results) : [];
+
+  // The tabs count what the rack shows — plates, not apps — so "WIN 2" and
+  // "2 plates on the pick list" can never disagree.
+  const poolPlates = pool ? toPlates(pool.results) : [];
+  const counts: Record<string, number> = { all: poolPlates.length };
+  for (const meta of PLATFORM_META) {
+    counts[meta.id] = poolPlates.filter((p) => p.platform === meta.id).length;
+  }
+
+  const offered = new Set(filtered ? filtered.results.flatMap((a) => a.types) : []);
   const hasFilters = platform !== "all" || types.length > 0;
 
   return (
+    <Frame
+      q={q}
+      platform={platform}
+      types={types}
+      counts={counts}
+      hasFilters={hasFilters}
+      offered={offered}
+      plates={plates}
+      poolCount={poolPlates.length}
+      loading={!filtered && !failed}
+      failed={failed}
+    />
+  );
+}
+
+function Frame({
+  q = "",
+  platform = "all",
+  types = [],
+  counts = { all: 0, windows: 0, macos: 0, linux: 0 },
+  hasFilters = false,
+  offered = new Set<string>(),
+  plates = [],
+  poolCount = 0,
+  loading = true,
+  failed = false,
+}: {
+  q?: string;
+  platform?: Platform | "all";
+  types?: string[];
+  counts?: Record<string, number>;
+  hasFilters?: boolean;
+  offered?: Set<string>;
+  plates?: ReturnType<typeof toPlates>;
+  poolCount?: number;
+  loading?: boolean;
+  failed?: boolean;
+} = {}) {
+  return (
     <>
       <Header />
-      <ZoneTabs
-        active={platform}
-        counts={counts}
-        hrefFor={(p) => buildHref({ q, platform: p, types })}
-      />
+      <ZoneTabs active={platform} counts={counts} hrefFor={(p) => buildHref({ q, platform: p, types })} />
 
       <main className="rack">
         <div className="picklist">
@@ -74,15 +134,23 @@ export default async function Results({ searchParams }: { searchParams: Promise<
             {q ? (
               <h1 className="picklist__q mono">{q}</h1>
             ) : (
-              <h1 className="picklist__q mono" style={{ fontFamily: "inherit", fontStretch: "68%", fontWeight: 900, textTransform: "uppercase" }}>
+              <h1
+                className="picklist__q mono"
+                style={{ fontFamily: "inherit", fontStretch: "68%", fontWeight: 900, textTransform: "uppercase" }}
+              >
                 The whole index
               </h1>
             )}
           </div>
           <div>
             <p className="tag mono" style={{ margin: 0 }}>
-              {results.length} {results.length === 1 ? "plate" : "plates"} on the pick list
-              {hasFilters ? ` · ${pool.length} match the query` : ""}
+              {loading
+                ? "Reading the rack…"
+                : failed
+                  ? "The catalogue is not answering"
+                  : `${plates.length} ${plates.length === 1 ? "plate" : "plates"} on the pick list${
+                      hasFilters ? ` · ${poolCount} match the query` : ""
+                    }`}
             </p>
             <a className="picklist__refine tag mono" href="#refine">
               Jump to refine
@@ -98,18 +166,16 @@ export default async function Results({ searchParams }: { searchParams: Promise<
             <summary className="rackHead filters__summary">
               <span className="tag mono">
                 Refine
-                {hasFilters ? ` · ${1 + types.length} active` : ""}
+                {hasFilters ? ` · ${(platform === "all" ? 0 : 1) + types.length} active` : ""}
               </span>
               <span className="tag mono filters__chevron" aria-hidden>
                 Open / close
               </span>
             </summary>
+
             {hasFilters && (
               <div className="filters__group">
-                <Link
-                  className="filters__clear tag mono"
-                  href={buildHref({ q, platform: "all", types: [] })}
-                >
+                <Link className="filters__clear tag mono" href={buildHref({ q, platform: "all", types: [] })}>
                   <IconClose size={12} />
                   Clear every filter
                 </Link>
@@ -121,7 +187,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                 Zone
               </p>
               <div className="filters__set">
-                {[{ id: "all" as const, code: "All" }, ...PLATFORMS.map((p) => ({ id: p.id, code: p.name }))].map(
+                {[{ id: "all" as const, code: "All" }, ...PLATFORM_META.map((p) => ({ id: p.id, code: p.name }))].map(
                   (z) => (
                     <Link
                       key={z.id}
@@ -178,23 +244,35 @@ export default async function Results({ searchParams }: { searchParams: Promise<
           </details>
 
           <div className="resultsBody">
-            {results.length ? (
-              results.map((e, i) => <Plate key={e.id} entry={e} index={i} animate />)
+            {loading ? (
+              <div className="void">
+                <p className="void__p">Reading the rack&hellip;</p>
+              </div>
+            ) : failed ? (
+              <div className="void">
+                <h2 className="void__h">The catalogue is not answering</h2>
+                <p className="void__p">
+                  The index is still there — this is the API, not your query. Reload in a
+                  moment.
+                </p>
+              </div>
+            ) : plates.length ? (
+              plates.map((plate, i) => <Plate key={plate.key} plate={plate} index={i} animate />)
             ) : (
               <div className="void">
                 <h2 className="void__h">
-                  {pool.length
+                  {poolCount
                     ? "Every match was filtered out"
                     : q
                       ? `Nothing racked under “${q}”`
                       : "The index is empty for this zone"}
                 </h2>
                 <p className="void__p">
-                  {pool.length
-                    ? `“${q}” matches ${pool.length} ${pool.length === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
+                  {poolCount
+                    ? `“${q}” matches ${poolCount} ${poolCount === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
                     : "Check the spelling, try the vendor name, or open a request — the catalogue grows from them."}
                 </p>
-                {pool.length ? (
+                {poolCount ? (
                   <Link className="btn tag mono" href={buildHref({ q, platform: "all", types: [] })}>
                     Clear the filters
                     <IconArrow size={15} />
@@ -216,7 +294,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
         </div>
       </main>
 
-      <Footer entryCount={totalEntries()} />
+      <Footer entryCount={null} />
       <Consent />
     </>
   );

@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
-import { totalEntries } from "@/lib/catalog";
 import { GITHUB_ISSUES } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -34,9 +33,7 @@ export default function Privacy() {
 
             <div className="sheet__stamp">
               <span className="tag mono">Notice WTLA-PR-01 · Seed build</span>
-              <span className="tag mono">
-                Catalogue: {totalEntries()} entries · Demonstration data
-              </span>
+              <span className="tag mono">Catalogue: demonstration data</span>
             </div>
           </div>
 
@@ -154,7 +151,7 @@ export default function Privacy() {
           </div>
         </div>
       </main>
-      <Footer entryCount={totalEntries()} />
+      <Footer entryCount={null} />
       <Consent />
     </>
   );
