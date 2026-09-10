@@ -50,11 +50,18 @@ param containerImage string = ''
 @maxValue(5)
 param minReplicas int = 1
 
-@description('Entra ID app registration client id for admin sign-in. Empty deploys without authentication configured.')
+@description('Which provider signs admins in. "none" leaves /admin unreachable by anyone.')
+@allowed(['none', 'github', 'aad'])
+param authProvider string = 'none'
+
+@description('OAuth client id for the chosen provider.')
 param authClientId string = ''
 
-@description('Entra ID tenant id. Only read when authClientId is set.')
+@description('Entra ID tenant id. Only read when authProvider is "aad".')
 param authTenantId string = ''
+
+@description('Comma separated GitHub logins allowed to administer the catalogue. Empty means nobody is.')
+param adminGithubLogins string = ''
 
 @description('Entra ID object IDs that should get Cosmos data-plane access for local development and seeding. Leave empty in CI.')
 param developerPrincipalIds array = []
@@ -174,8 +181,10 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     iconsContainerUrl: storage.outputs.iconsContainerUrl
     appInsightsConnectionString: monitoring.outputs.connectionString
     minReplicas: minReplicas
+    authProvider: authProvider
     authClientId: authClientId
     authTenantId: authTenantId
+    adminGithubLogins: adminGithubLogins
   }
   // The image pull happens as the app starts, so the grant has to be done.
   dependsOn: [acrPull, cosmosAccess, blobAccess]

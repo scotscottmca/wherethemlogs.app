@@ -150,21 +150,35 @@ invalidation - not a shorter TTL.
 | `/admin/*` (portal, not yet built) | `admin` role | `middleware.ts` |
 | `/api/admin/*` | `admin` role | `middleware.ts`, **and** `requireAdmin()` in each handler |
 
-Container Apps' built-in authentication signs the visitor in with Entra ID and
-injects the principal as `x-ms-client-principal`. The platform strips any
-client-supplied copy of that header, so what the app reads is what the platform
-wrote - unlike the previous design, where the Function App's own public
-hostname made the header forgeable. That whole class of hardening problem is
-gone with the second service.
+Container Apps' built-in authentication signs the visitor in and injects the
+principal as `x-ms-client-principal`. The platform strips any client-supplied
+copy of that header, so what the app reads is what the platform wrote.
 
 `unauthenticatedClientAction` is `AllowAnonymous`, because the catalogue is
 public. The middleware decides what the admin surface needs: a signed-in
-non-admin gets the `/403` page with a 403; anyone else is redirected to
-`/.auth/login/aad`.
+non-admin gets the `/403` page with a 403; anyone else is redirected to the
+configured provider's login.
 
-**Admin membership is an Entra ID app role.** Assign users or groups to the
-`admin` app role on the app registration and it arrives in the token's `roles`
-claim. There is no invitation list to keep in sync.
+**Authentication and authorization are separate here, and the second one is
+where the design lives.**
+
+| Provider | Authenticates | Authorizes via |
+| --- | --- | --- |
+| GitHub | Any GitHub account | `ADMIN_GITHUB_LOGINS`, an allowlist of logins or numeric ids |
+| Entra ID | Anyone in the tenant | An `admin` app role in the token's `roles` claim |
+
+GitHub is the default because it needs no tenant admin and no directory: a
+two-minute OAuth app registration. Its cost is that anyone with a GitHub account
+can *sign in*, so the allowlist is not a convenience, it is the lock. An empty
+allowlist refuses everyone, including the person who set it up - which is the
+right failure direction, and is covered by a test case rather than assumed.
+
+Claim types differ by provider and by how the platform maps them, so
+`getPrincipal` matches a set rather than betting on one, and never returns null
+just because it recognised none of them. `/api/me` prints the caller's own
+claims verbatim, which is how an allowlist gets built from evidence instead of a
+guess. That endpoint is deliberately not under `/api/admin`: an endpoint whose
+job is to answer "are you an admin?" cannot be gated on being one.
 
 `requireAdmin()` in each handler is defence in depth - a route added under
 `/api/admin/` that someone forgets to match in middleware still fails closed.

@@ -28,7 +28,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL("/403", request.url), { status: 403 });
   }
 
-  const login = new URL("/.auth/login/aad", request.url);
+  // Which provider to send people to. Container Apps exposes one path per
+  // configured provider, so this follows the Bicep rather than being guessed.
+  const provider = process.env.AUTH_PROVIDER === "aad" ? "aad" : "github";
+  const login = new URL(`/.auth/login/${provider}`, request.url);
   login.searchParams.set("post_login_redirect_uri", request.nextUrl.pathname);
   return NextResponse.redirect(login);
 }

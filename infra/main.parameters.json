@@ -2,14 +2,40 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "workloadName": { "value": "wtla" },
-    "environmentName": { "value": "prod" },
-    "cosmosFreeTier": { "value": false },
-    "cosmosMode": { "value": "serverless" },
-    "cosmosThroughput": { "value": 400 },
-    "minReplicas": { "value": 1 },
-    "authClientId": { "value": "" },
-    "authTenantId": { "value": "" },
-    "developerPrincipalIds": { "value": [] }
+    "workloadName": {
+      "value": "wtla"
+    },
+    "environmentName": {
+      "value": "prod"
+    },
+    "cosmosFreeTier": {
+      "value": false
+    },
+    "cosmosMode": {
+      "value": "serverless"
+    },
+    "cosmosThroughput": {
+      "value": 400
+    },
+    "minReplicas": {
+      "value": 1
+    },
+    "developerPrincipalIds": {
+      "value": [
+        "bbf825e9-abab-4a09-bd8b-2fe1528bf402"
+      ]
+    },
+    "authProvider": {
+      "value": "github"
+    },
+    "authClientId": {
+      "value": ""
+    },
+    "authTenantId": {
+      "value": ""
+    },
+    "adminGithubLogins": {
+      "value": "scotscottmca"
+    }
   }
 }

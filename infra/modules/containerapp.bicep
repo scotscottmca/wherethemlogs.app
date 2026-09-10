@@ -25,11 +25,29 @@ param minReplicas int = 1
 @maxValue(10)
 param maxReplicas int = 5
 
-@description('Entra ID app registration client id for the admin sign-in. Leave empty to deploy without authentication configured.')
+@description('''
+Which provider signs admins in. "github" needs a GitHub OAuth app, which any
+account can create in two minutes; "aad" needs an Entra app registration and a
+tenant admin. "none" deploys with no sign-in at all, which leaves /admin
+unreachable by anyone.
+''')
+@allowed(['none', 'github', 'aad'])
+param authProvider string = 'none'
+
+@description('OAuth client id for the chosen provider.')
 param authClientId string = ''
 
-@description('Entra ID tenant id. Only read when authClientId is set.')
+@description('Entra ID tenant id. Only read when authProvider is "aad".')
 param authTenantId string = ''
+
+@description('''
+Comma separated GitHub logins allowed to administer the catalogue.
+
+GitHub authenticates but carries no roles, so this is the authorization list.
+Empty means nobody is an admin, which is the safe default: signing in is never
+sufficient on its own.
+''')
+param adminGithubLogins string = ''
 
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
@@ -128,6 +146,8 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             // Tells DefaultAzureCredential which identity to use. Without it a
             // user-assigned identity is ambiguous and the SDK picks nothing.
             { name: 'AZURE_CLIENT_ID', value: identityClientId }
+            { name: 'AUTH_PROVIDER', value: authProvider }
+            { name: 'ADMIN_GITHUB_LOGINS', value: adminGithubLogins }
           ]
           probes: appProbes
         }
@@ -147,9 +167,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 }
 
 // Built-in authentication. Anonymous traffic is allowed through because the
-// catalogue is public; the app's middleware and route handlers decide what the
-// admin surface needs. Skipped entirely until an app registration exists.
-resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (!empty(authClientId)) {
+// catalogue itself is public; the app's middleware and route handlers decide
+// what the admin surface needs. Skipped entirely while authProvider is 'none',
+// which leaves /admin unreachable rather than open.
+resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (authProvider != 'none') {
   parent: containerApp
   name: 'current'
   properties: {
@@ -157,19 +178,36 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (!
     globalValidation: {
       unauthenticatedClientAction: 'AllowAnonymous'
     }
-    identityProviders: {
-      azureActiveDirectory: {
-        enabled: true
-        registration: {
-          openIdIssuer: '${az.environment().authentication.loginEndpoint}${authTenantId}/v2.0'
-          clientId: authClientId
-          clientSecretSettingName: 'aad-client-secret'
+    identityProviders: authProvider == 'github'
+      ? {
+          gitHub: {
+            enabled: true
+            registration: {
+              clientId: authClientId
+              // The secret is set on the container app separately, so it never
+              // passes through a template or a parameters file.
+              clientSecretSettingName: 'github-client-secret'
+            }
+            login: {
+              // Enough to read the login and numeric id, and nothing else. The
+              // app never touches a repository on the visitor's behalf.
+              scopes: [ 'read:user' ]
+            }
+          }
         }
-        validation: {
-          allowedAudiences: [ 'api://${authClientId}' ]
+      : {
+          azureActiveDirectory: {
+            enabled: true
+            registration: {
+              openIdIssuer: '${az.environment().authentication.loginEndpoint}${authTenantId}/v2.0'
+              clientId: authClientId
+              clientSecretSettingName: 'aad-client-secret'
+            }
+            validation: {
+              allowedAudiences: [ 'api://${authClientId}' ]
+            }
+          }
         }
-      }
-    }
     login: {
       preserveUrlFragmentsForLogins: false
       tokenStore: { enabled: true }
