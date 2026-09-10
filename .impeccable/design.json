@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-10T00:00:00Z",
+  "title": "Design System: Where Them Logs App",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "neutral", "displayName": "Painted Steel", "canonical": "#111311", "tonalRamp": ["#0a0b0a", "#111311", "#1b1e1b", "#2e322d", "#4a4f47", "#6d7266", "#9aa093", "#d2d6cd"] },
+      "ink-raised": { "role": "neutral", "displayName": "Raised Steel", "canonical": "#1b1e1b", "tonalRamp": ["#0a0b0a", "#111311", "#1b1e1b", "#2e322d", "#4a4f47", "#6d7266", "#9aa093", "#d2d6cd"] },
+      "ink-rule": { "role": "neutral", "displayName": "Rule Steel", "canonical": "#2e322d", "tonalRamp": ["#0a0b0a", "#161915", "#22261f", "#2e322d", "#454a41", "#5f6559", "#8a9081", "#c4c9bc"] },
+      "hivis": { "role": "primary", "displayName": "Signal Cyan", "canonical": "#22d3ee", "tonalRamp": ["#062a31", "#0a4a55", "#0e7c90", "#12a3bd", "#22d3ee", "#5ce0f4", "#95ecf8", "#cff7fc"] },
+      "hivis-deep": { "role": "primary", "displayName": "Deep Cyan", "canonical": "#0e7c90", "tonalRamp": ["#062a31", "#0a4a55", "#0e7c90", "#12a3bd", "#22d3ee", "#5ce0f4", "#95ecf8", "#cff7fc"] },
+      "hivis-ink": { "role": "primary", "displayName": "Cyan Ink", "canonical": "#0a4a55", "tonalRamp": ["#041d22", "#073640", "#0a4a55", "#0e7c90", "#12a3bd", "#22d3ee", "#7ce6f6", "#d5f8fd"] },
+      "bone": { "role": "neutral", "displayName": "Label Stock", "canonical": "#e8e4da", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
+      "bone-dim": { "role": "neutral", "displayName": "Dim Stock", "canonical": "#a8a496", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
+      "bone-faint": { "role": "neutral", "displayName": "Faint Stock", "canonical": "#8a8779", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
+      "zone-win": { "role": "tertiary", "displayName": "Cobalt (WIN zone)", "canonical": "#2952cc", "tonalRamp": ["#0a1433", "#132466", "#1c3899", "#2952cc", "#4f75e0", "#7d9aeb", "#adc0f3", "#dde5fa"] },
+      "zone-mac": { "role": "tertiary", "displayName": "Bone (MAC zone)", "canonical": "#e8e4da", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
+      "zone-lnx": { "role": "tertiary", "displayName": "Hazard Red (LNX zone)", "canonical": "#d8442f", "tonalRamp": ["#33100b", "#5c1d14", "#8a2b1e", "#b23726", "#d8442f", "#e57460", "#f0a396", "#f9d6cf"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Aisle Sign", "purpose": "The one shouted line per page, Archivo 900 at width 62%, uppercase, hard to the left margin." },
+      "headline": { "displayName": "Empty-State Headline", "purpose": "No-results and empty-rack headings, Archivo 900 at width 70%." },
+      "title": { "displayName": "Plate Name", "purpose": "App names on a label plate and section headings, Archivo 800 at width 78%, uppercase." },
+      "body": { "displayName": "Body", "purpose": "Prose only, Archivo regular, capped 62-68ch." },
+      "path": { "displayName": "Path", "purpose": "Log paths in Spline Sans Mono 500, break-anywhere wrapping, user-select: all." },
+      "label": { "displayName": "Stencil Tag", "purpose": "The .tag role — mono 600, 0.16em tracking, uppercase. Section labels, zone codes, chips, toggles, counts." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-rack", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The system's only easing — exponential ease-out for the rack-in wipe." },
+      { "name": "rack-in", "value": "rack-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 42ms)", "purpose": "The one authored motion moment: clip-path inset(0 100% 0 0) wipe plus 6px rise, staggered per item, on the plate stack at query change. Reused at 320ms for the confirm reading." },
+      { "name": "state-swap", "value": "120ms linear", "purpose": "Background and colour swaps on hover/press. A state change, not motion." },
+      { "name": "confirm-hold", "value": "1800ms", "purpose": "How long a scanned plate holds its inverted cyan CONFIRMED state before returning." }
+    ],
+    "breakpoints": [
+      { "name": "narrow", "value": "720px" },
+      { "name": "hint-drop", "value": "860px" },
+      { "name": "sheet-stack", "value": "1000px" },
+      { "name": "rail-stack", "value": "1080px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Scanner Field",
+      "kind": "input",
+      "refersTo": "scanner-bar",
+      "description": "The primary action: a full-width solid cyan bar with a borderless mono input and near-black caret.",
+      "html": "<div class=\"ds-scan\"><svg class=\"ds-scan-ico\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5\"/><path d=\"M2 12h20\" stroke-width=\"2.5\"/></svg><input class=\"ds-scan-in\" type=\"search\" placeholder=\"Scan an app name — teams, vscode, nginx…\"><span class=\"ds-scan-hint\">PRESS <kbd class=\"ds-scan-key\">/</kbd> TO SCAN</span></div>",
+      "css": ".ds-scan { display: flex; align-items: center; gap: 0.85rem; background: var(--hivis, #22d3ee); color: var(--ink, #111311); padding-inline: 1.25rem; min-height: 86px; } .ds-scan:focus-within { outline: 3px solid var(--bone, #e8e4da); outline-offset: -3px; } .ds-scan-in { flex: 1 1 auto; min-width: 0; background: transparent; border: 0; outline: 0; font-family: \"Spline Sans Mono\", ui-monospace, monospace; font-weight: 500; font-size: 1.6rem; color: var(--ink, #111311); caret-color: var(--ink, #111311); padding-block: 0.5rem; } .ds-scan-in::placeholder { color: #0a4a55; opacity: 1; } .ds-scan-in::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; } .ds-scan-hint { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #0a4a55; } .ds-scan-key { border: 1.5px solid var(--ink, #111311); padding: 0.15rem 0.4rem; line-height: 1; color: var(--ink, #111311); }"
+    },
+    {
+      "name": "Label Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "The container primitive: zone band down the left edge, app name, path stack on one shared rule, type chips.",
+      "html": "<article class=\"ds-plate\"><div class=\"ds-plate-zone\" data-zone=\"windows\"><span class=\"ds-plate-code\">WIN</span></div><div class=\"ds-plate-body\"><div class=\"ds-plate-top\"><h3 class=\"ds-plate-name\">Citrix Workspace App</h3><span class=\"ds-tag ds-plate-vendor\">Citrix</span></div><div class=\"ds-plate-paths\"><div class=\"ds-prow\"><span class=\"ds-tag\">Client logs</span><p class=\"ds-prow-path\">%LOCALAPPDATA%\\Citrix\\CitrixWorkspaceApp\\Logs\\</p><button class=\"ds-prow-copy\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M9 9h11v11H9z\"/><path d=\"M15 5H4v11h3\"/></svg><span class=\"ds-tag\">Scan</span></button></div></div><div class=\"ds-chips\"><span class=\"ds-chip ds-tag\">MSI</span><span class=\"ds-chip ds-chip-arch ds-tag\">X64</span><span class=\"ds-chip ds-chip-scope ds-tag\">PER-MACHINE</span></div></div></article>",
+      "css": ".ds-plate { display: grid; grid-template-columns: 46px minmax(0, 1fr); background: var(--ink, #111311); color: var(--bone, #e8e4da); border-bottom: 1px solid var(--ink-rule, #2e322d); } .ds-plate:hover { background: var(--ink-raised, #1b1e1b); } .ds-plate-zone { display: grid; place-items: center; padding-block: 0.9rem; border-right: 1px solid var(--ink-rule, #2e322d); background: var(--zone-win, #2952cc); color: var(--bone, #e8e4da); } .ds-plate-code { font-family: \"Spline Sans Mono\", monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); } .ds-plate-body { min-width: 0; padding: 0.85rem 1.25rem 0.7rem; display: grid; gap: 0.7rem; } .ds-plate-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.55rem 0.75rem; } .ds-plate-name { margin: 0; font-family: Archivo, sans-serif; font-stretch: 78%; font-weight: 800; font-size: 1.3rem; line-height: 1.1; text-transform: uppercase; color: var(--bone, #e8e4da); } .ds-tag { font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-dim, #a8a496); } .ds-plate-vendor { color: var(--bone-faint, #8a8779); } .ds-plate-paths { display: grid; gap: 0; border-left: 1px solid var(--ink-rule, #2e322d); } .ds-prow { display: grid; grid-template-columns: 116px minmax(0, 1fr) auto; align-items: start; gap: 0 0.9rem; padding: 0.5rem 0.55rem 0.5rem 0.75rem; } .ds-prow-path { margin: 0; font-family: \"Spline Sans Mono\", monospace; font-weight: 500; font-size: 0.97rem; line-height: 1.45; color: var(--bone, #e8e4da); overflow-wrap: anywhere; user-select: all; } .ds-prow-copy { display: flex; align-items: center; gap: 0.45rem; align-self: stretch; background: transparent; border: 0; border-left: 1px solid var(--ink-rule, #2e322d); color: var(--bone-dim, #a8a496); padding: 0.28rem 0.2rem 0.28rem 0.85rem; cursor: pointer; transition: color 120ms linear; } .ds-prow-copy:hover { color: var(--hivis, #22d3ee); } .ds-prow-copy:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; } .ds-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; } .ds-chip { border: 1px solid var(--ink-rule, #2e322d); padding: 0.14rem 0.4rem; line-height: 1.35; } .ds-chip-arch { background: var(--bone-dim, #a8a496); border-color: var(--bone-dim, #a8a496); color: var(--ink, #111311); font-weight: 700; } .ds-chip-scope { border-style: dashed; }"
+    },
+    {
+      "name": "Confirmed Plate (scan-to-confirm)",
+      "kind": "custom",
+      "refersTo": "plate-confirmed",
+      "description": "The signature interaction: the whole plate inverts to solid cyan for 1.8s with the path still legible in black and a stencilled reading in the header line.",
+      "html": "<article class=\"ds-plate-done\"><div class=\"ds-done-zone\"><span class=\"ds-done-code\">WIN</span></div><div class=\"ds-done-body\"><div class=\"ds-done-top\"><h3 class=\"ds-done-name\">Citrix Workspace App</h3><span class=\"ds-done-confirm\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.75\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M4 12.5 9.5 18 20 6\"/></svg>Client logs on the clipboard</span></div><div class=\"ds-done-paths\"><p class=\"ds-done-path\">%LOCALAPPDATA%\\Citrix\\CitrixWorkspaceApp\\Logs\\</p></div></div></article>",
+      "css": "@keyframes ds-rack-in { from { clip-path: inset(0 100% 0 0); transform: translateY(6px); } to { clip-path: inset(0 0 0 0); transform: translateY(0); } } .ds-plate-done { display: grid; grid-template-columns: 46px minmax(0, 1fr); background: var(--hivis, #22d3ee); color: var(--ink, #111311); } .ds-done-zone { display: grid; place-items: center; padding-block: 0.9rem; border-right: 1px solid var(--ink, #111311); background: var(--zone-win, #2952cc); color: var(--bone, #e8e4da); } .ds-done-code { font-family: \"Spline Sans Mono\", monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); } .ds-done-body { min-width: 0; padding: 0.85rem 1.25rem 0.7rem; display: grid; gap: 0.7rem; } .ds-done-top { display: flex; align-items: baseline; gap: 0.75rem; } .ds-done-name { margin: 0; font-family: Archivo, sans-serif; font-stretch: 78%; font-weight: 800; font-size: 1.3rem; text-transform: uppercase; color: var(--ink, #111311); } .ds-done-confirm { display: inline-flex; align-items: center; gap: 0.4rem; margin-left: auto; background: var(--ink, #111311); color: var(--hivis, #22d3ee); padding: 0.2rem 0.55rem; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; animation: ds-rack-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both; } .ds-done-paths { border-left: 1px solid rgba(17, 19, 17, 0.32); padding: 0.5rem 0.75rem; } .ds-done-path { margin: 0; font-family: \"Spline Sans Mono\", monospace; font-weight: 500; font-size: 0.97rem; line-height: 1.45; color: var(--ink, #111311); overflow-wrap: anywhere; }"
+    },
+    {
+      "name": "Zone Banding",
+      "kind": "nav",
+      "refersTo": "zone-tab",
+      "description": "Platform filter as floor-tape banding. Each zone carries a colour, a distinct fill pattern, and a three-letter code.",
+      "html": "<nav class=\"ds-zones\"><a class=\"ds-zone\" href=\"#\" aria-current=\"true\" data-zone=\"all\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 12 12\" aria-hidden=\"true\"><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"var(--hivis, #22d3ee)\"/><g stroke=\"var(--ink, #111311)\" stroke-width=\"1.4\"><path d=\"M6 0v12M0 6h12\"/></g><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"none\" stroke=\"var(--ink-rule, #2e322d)\" stroke-width=\"1.5\"/></svg><span class=\"ds-tag\">ALL</span><span class=\"ds-tag ds-zone-n\">46</span></a><a class=\"ds-zone\" href=\"#\" data-zone=\"windows\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 12 12\" aria-hidden=\"true\"><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"var(--zone-win, #2952cc)\"/><g stroke=\"var(--ink, #111311)\" stroke-width=\"1.4\"><path d=\"M0 6h12\"/></g><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"none\" stroke=\"var(--ink-rule, #2e322d)\" stroke-width=\"1.5\"/></svg><span class=\"ds-tag\">WIN</span><span class=\"ds-tag ds-zone-n\">20</span></a><a class=\"ds-zone\" href=\"#\" data-zone=\"linux\"><svg width=\"11\" height=\"11\" viewBox=\"0 0 12 12\" aria-hidden=\"true\"><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"var(--zone-lnx, #d8442f)\"/><g stroke=\"var(--ink, #111311)\" stroke-width=\"1.4\"><path d=\"M0 3h12M0 9h12\"/></g><rect x=\"0.75\" y=\"0.75\" width=\"10.5\" height=\"10.5\" fill=\"none\" stroke=\"var(--ink-rule, #2e322d)\" stroke-width=\"1.5\"/></svg><span class=\"ds-tag\">LNX</span><span class=\"ds-tag ds-zone-n\">14</span></a></nav>",
+      "css": ".ds-zones { display: flex; align-items: stretch; border-bottom: 2px solid var(--ink-rule, #2e322d); background: var(--ink, #111311); } .ds-zone { display: flex; align-items: center; gap: 0.55rem; padding: 0.7rem 1.15rem; border-right: 1px solid var(--ink-rule, #2e322d); text-decoration: none; white-space: nowrap; background: transparent; color: var(--bone-dim, #a8a496); transition: background 120ms linear, color 120ms linear; } .ds-zone:hover { background: var(--ink-raised, #1b1e1b); color: var(--bone, #e8e4da); } .ds-zone:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: -3px; } .ds-zone[aria-current=\"true\"] { background: var(--hivis, #22d3ee); color: var(--ink, #111311); font-weight: 700; } .ds-zone[aria-current=\"true\"] .ds-tag { color: inherit; } .ds-tag { font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; font-variant-numeric: tabular-nums; } .ds-zone-n { opacity: 0.72; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid cyan plate with a mono stencil label. One per empty state; colour swap on hover, nothing lifts.",
+      "html": "<button class=\"ds-btn\">Scan the whole index<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M3 12h17M14 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 0.55rem; background: var(--hivis, #22d3ee); color: var(--ink, #111311); border: 0; border-radius: 0; padding: 0.65rem 1rem; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; transition: background 120ms linear; } .ds-btn:hover { background: var(--bone, #e8e4da); } .ds-btn:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; } .ds-btn:active { background: var(--bone, #e8e4da); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: transparent with a 2px rule box.",
+      "html": "<button class=\"ds-btn-ghost\">Clear all filters</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.55rem; background: transparent; color: var(--bone, #e8e4da); border: 2px solid var(--ink-rule, #2e322d); border-radius: 0; padding: 0.65rem 1rem; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; transition: background 120ms linear, border-color 120ms linear; } .ds-btn-ghost:hover { background: var(--ink-raised, #1b1e1b); border-color: var(--bone-dim, #a8a496); } .ds-btn-ghost:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Toggle",
+      "kind": "chip",
+      "refersTo": "toggle",
+      "description": "Installer-type and architecture filters in the results rail. Pressed state fills solid cyan.",
+      "html": "<div class=\"ds-set\"><a class=\"ds-tog\" href=\"#\">MSI</a><a class=\"ds-tog\" href=\"#\" aria-pressed=\"true\">X64</a><a class=\"ds-tog\" href=\"#\">PER-USER</a></div>",
+      "css": ".ds-set { display: flex; flex-wrap: wrap; gap: 0.35rem; } .ds-tog { border: 1px solid var(--ink-rule, #2e322d); border-radius: 0; padding: 0.24rem 0.5rem; text-decoration: none; color: var(--bone-dim, #a8a496); line-height: 1.35; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; } .ds-tog:hover { border-color: var(--bone-dim, #a8a496); color: var(--bone, #e8e4da); } .ds-tog:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; } .ds-tog[aria-pressed=\"true\"] { background: var(--hivis, #22d3ee); border-color: var(--hivis, #22d3ee); color: var(--ink, #111311); font-weight: 700; }"
+    },
+    {
+      "name": "Header with Hazard Band",
+      "kind": "nav",
+      "refersTo": "zone-tab",
+      "description": "Full-bleed hazard stripe, bin-plate mark, stacked condensed wordmark, and nav cells divided by hairlines with no gap.",
+      "html": "<header class=\"ds-hdr-wrap\"><div class=\"ds-hazard\"></div><div class=\"ds-hdr\"><a class=\"ds-hdr-id\" href=\"#\"><svg width=\"30\" height=\"30\" viewBox=\"0 0 34 34\" aria-hidden=\"true\"><rect x=\"0\" y=\"0\" width=\"34\" height=\"34\" fill=\"var(--bone, #e8e4da)\"/><rect x=\"0\" y=\"11\" width=\"34\" height=\"12\" fill=\"var(--hivis, #22d3ee)\"/><g fill=\"var(--ink, #111311)\"><rect x=\"3\" y=\"3\" width=\"3\" height=\"6\"/><rect x=\"8\" y=\"3\" width=\"2\" height=\"6\"/><rect x=\"12\" y=\"3\" width=\"4\" height=\"6\"/><rect x=\"18\" y=\"3\" width=\"2\" height=\"6\"/><rect x=\"22\" y=\"3\" width=\"3\" height=\"6\"/><rect x=\"27\" y=\"3\" width=\"4\" height=\"6\"/><rect x=\"3\" y=\"25\" width=\"4\" height=\"6\"/><rect x=\"9\" y=\"25\" width=\"2\" height=\"6\"/><rect x=\"13\" y=\"25\" width=\"3\" height=\"6\"/><rect x=\"18\" y=\"25\" width=\"4\" height=\"6\"/><rect x=\"24\" y=\"25\" width=\"2\" height=\"6\"/><rect x=\"28\" y=\"25\" width=\"3\" height=\"6\"/></g><path d=\"M0 11h34M0 23h34\" stroke=\"var(--ink, #111311)\" stroke-width=\"1.5\"/></svg><span class=\"ds-hdr-word\">Where Them<br>Logs App</span><span class=\"ds-tag ds-hdr-bay\">Bay WTLA·01</span></a><nav class=\"ds-hdr-nav\"><a class=\"ds-hdr-link ds-tag\" href=\"#\">Privacy</a><a class=\"ds-hdr-link ds-hdr-req\" href=\"#\"><span class=\"ds-tag\">Request an app</span><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M13 4h7v7\"/><path d=\"M20 4 10 14\"/><path d=\"M18 15v5H4V6h5\"/></svg></a></nav></div></header>",
+      "css": ".ds-hdr-wrap { background: var(--ink, #111311); color: var(--bone, #e8e4da); } .ds-hazard { height: 10px; background: repeating-linear-gradient(-45deg, var(--hivis, #22d3ee) 0 12px, var(--ink, #111311) 12px 24px); } .ds-hdr { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 58px; padding-inline: 1.5rem; border-bottom: 1px solid var(--ink-rule, #2e322d); } .ds-hdr-id { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; padding-block: 0.5rem; } .ds-hdr-word { font-family: Archivo, sans-serif; font-stretch: 78%; font-weight: 800; font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.1; } .ds-tag { font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-dim, #a8a496); } .ds-hdr-bay { border-left: 1px solid var(--ink-rule, #2e322d); padding-left: 0.75rem; margin-left: 0.25rem; } .ds-hdr-nav { display: flex; align-items: stretch; gap: 0; } .ds-hdr-link { display: flex; align-items: center; padding: 0.55rem 0.9rem; text-decoration: none; color: var(--bone-dim, #a8a496); border-left: 1px solid var(--ink-rule, #2e322d); transition: background 120ms linear, color 120ms linear; } .ds-hdr-link:hover { background: var(--ink-raised, #1b1e1b); color: var(--bone, #e8e4da); } .ds-hdr-link:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: -3px; } .ds-hdr-req { background: var(--hivis, #22d3ee); color: var(--ink, #111311); gap: 0.5rem; border-left: none; font-weight: 700; } .ds-hdr-req .ds-tag { color: #073640; } .ds-hdr-req:hover { background: var(--bone, #e8e4da); color: var(--ink, #111311); } .ds-hdr-req:hover .ds-tag { color: var(--ink, #111311); }"
+    },
+    {
+      "name": "Consent Bar",
+      "kind": "custom",
+      "refersTo": "button-consent",
+      "description": "Docked to the bottom edge, full-bleed. Both actions are identical bone plates — equal weight by construction.",
+      "html": "<div class=\"ds-consent\"><div class=\"ds-consent-row\"><div class=\"ds-consent-copy\"><h2 class=\"ds-consent-h\">Usage cookies</h2><p class=\"ds-consent-p\">We would like to set a usage-tracking cookie. Decline and the site works exactly the same.</p></div><div class=\"ds-consent-acts\"><button class=\"ds-consent-btn\">Decline</button><button class=\"ds-consent-btn\">Allow</button></div></div></div>",
+      "css": ".ds-consent { background: var(--ink-raised, #1b1e1b); border-top: 1px solid var(--ink-rule, #2e322d); color: var(--bone, #e8e4da); } .ds-consent-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.5rem 1.15rem; } .ds-consent-copy { max-width: 68ch; display: grid; gap: 0.35rem; } .ds-consent-h { margin: 0; font-family: Archivo, sans-serif; font-stretch: 76%; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.02em; text-transform: uppercase; } .ds-consent-p { margin: 0; font-family: Archivo, sans-serif; font-size: 0.85rem; line-height: 1.5; color: var(--bone-dim, #a8a496); } .ds-consent-acts { display: flex; gap: 0.5rem; } .ds-consent-btn { background: var(--bone, #e8e4da); color: var(--ink, #111311); border: 0; border-radius: 0; padding: 0.6rem 1.4rem; min-width: 132px; font-family: Archivo, sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: background 120ms linear; } .ds-consent-btn:hover { background: var(--hivis, #22d3ee); } .ds-consent-btn:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Location Code",
+    "overview": "A log path is a location code, so the site is a wall of warehouse racking rather than a documentation page. Painted-steel near-black ground, bone label stock, high-vis signal cyan owning whole regions, and hazard tape banding the top and bottom edges. Structure comes from stencilled hairlines and banding hard against a shared grid — never from a card floating on a background. Density is the material: content runs edge to edge, the aisle sign shouts at a scale the web rarely permits, and nothing is padded to look calm.\n\nThe surfaces are printed, not rendered. There are no gradients anywhere except the 45° repeating hard-stop stripe that draws hazard tape, no shadows of any kind, no radii, no translucency, no blur. Every colour is a flat fill of one value. This is what keeps signal cyan reading as printed vinyl instead of neon: it is a solid field with dead-black type on it, never a light source.\n\nTwo voices carry everything, strictly assigned. Archivo (self-hosted variable, weight 100–900, width 62–125%) is the human voice — headings, prose, app names, button words. Spline Sans Mono (self-hosted variable, weight 300–700) is the machine voice — paths, codes, counts, filter values, and every stencilled label. The build ships this assignment without exception, and it is what makes a path look like a fact rather than a sentence.",
+    "keyCharacteristics": [
+      "Flat printed surfaces: zero gradients (except hazard stripes), zero shadows, zero radii",
+      "Signal cyan owns whole regions — a bar, a tab, a plate — never a hairline highlight",
+      "Structure is 1px/2px stencilled rules and full-bleed banding, never bordered cards",
+      "Two typefaces, hard-assigned to human vs machine content",
+      "Every signal carries colour, shape, and text together",
+      "One authored motion moment; nothing else animates"
+    ],
+    "rules": [
+      { "name": "The Whole Region Rule", "body": "Signal cyan is committed at region scale — a full-width bar, a whole tab, an entire plate — or not used at all. It never appears as a 1px accent line, a dot, a gradient stop, or a glow.", "section": "colors" },
+      { "name": "The Flat Print Rule", "body": "Near-black on cyan is printed vinyl, not a light source. No box-shadow, no text-shadow, no filter: drop-shadow, no colour-matched glow, no gradient on any cyan surface. The palette invites neon; the world refuses it.", "section": "colors" },
+      { "name": "The Path Stays Bone Rule", "body": "Colour never touches path text. A path is bone at full contrast on the dark ground, or ink on the confirmed cyan plate. Never cyan, never a zone colour, never dimmed, never syntax-highlighted.", "section": "colors" },
+      { "name": "The Zone-Never-Speaks Rule", "body": "zone-win and zone-lnx are block-and-band colours only and must never carry body text. Zone colour appears as a filled band with a code printed on it in bone or ink.", "section": "colors" },
+      { "name": "The Three-Part Signal Rule", "body": "Colour never carries a signal alone. Every platform zone ships a colour, a distinct SVG fill pattern in ZoneSwatch (WIN one horizontal bar, MAC two diagonals, LNX two horizontal bars, ALL a cross), and a three-letter text code. The pattern is part of the token, not decoration.", "section": "colors" },
+      { "name": "The Two Voices Rule", "body": "Archivo for anything human — headings, prose, app names, button words. Spline Sans Mono for anything machine-true — paths, codes, counts, filter values, entry totals, and every .tag stencil label. There is no third face, and no piece of content gets to choose.", "section": "typography" },
+      { "name": "The Tabular Figures Rule", "body": "Every number the machine produced — entry counts, zone counts, the 046 bay figure — is set in mono with tabular-nums, so figures do not shift width when they change.", "section": "typography" },
+      { "name": "The No Gap Rule", "body": "Repeated elements share a rule, they do not share a gap. Plates, path rows, pick-list rows, rack columns, and header nav cells are all gap: 0 with a 1px divider. Whitespace between siblings is a defect in this world.", "section": "layout" },
+      { "name": "The No Shadow Rule", "body": "box-shadow, text-shadow, drop-shadow, and backdrop-filter do not appear in this system at any elevation, on any state, in any world variant. If something needs to separate, give it a rule or a tonal step.", "section": "elevation" },
+      { "name": "The Docked Overlay Rule", "body": "Anything that appears over the page docks to an edge and spans it. No centred modal, no floating popover, no ⌘K dialog, no toast.", "section": "elevation" },
+      { "name": "The Square Corner Rule", "body": "Radius is 0. There is no sm/md/lg scale to reach for; adding one breaks the world.", "section": "shapes" },
+      { "name": "The One Motion Rule", "body": "The system has exactly one authored motion moment: rack-in — a clip-path: inset(0 100% 0 0) wipe plus a 6px rise over 460ms on cubic-bezier(0.16, 1, 0.3, 1), staggered 42ms per item via --i, applied to the plate stack on query change from an already-visible default. The confirm reading reuses the same keyframe at 320ms. Nothing else animates. Colour/background transitions are 120ms linear state swaps, not motion. Adding scattered hover lifts, scale, fade-ins, or scroll reveals breaks the system.", "section": "components" }
+    ],
+    "dos": [
+      "Do commit signal cyan (#22d3ee) at region scale — a whole bar, tab, plate, or button — with near-black type on it.",
+      "Do print every path in bone (or ink on the confirmed cyan plate) at full contrast, in Spline Sans Mono.",
+      "Do give every zone all three signals: colour, its ZoneSwatch fill pattern, and its three-letter code.",
+      "Do separate repeated elements with a 1px ink-rule hairline (2px for a structural break) and gap: 0.",
+      "Do set anything machine-true — paths, codes, counts, filter values, .tag labels — in Spline Sans Mono with tabular figures, and anything human in Archivo.",
+      "Do keep every text role at or above bone-faint (#8a8779), which is the 4.5:1 floor on ink.",
+      "Do dock overlays to an edge and span it full-bleed, the way the type-ahead rack and consent bar do.",
+      "Do reuse rack-in if a new list needs entrance motion, staggered by --i."
+    ],
+    "donts": [
+      "Don't restore the safety yellow. The cyan is a user pin made mid-build with the layout explicitly unchanged.",
+      "Don't add glow, gradient, text-shadow, or box-shadow to a cyan surface — or to anything else. The palette invites neon and the world refuses it.",
+      "Don't tint, dim, or syntax-highlight path text, or let a zone colour touch any body text.",
+      "Don't introduce a corner radius. Radius is 0 system-wide.",
+      "Don't float a card, centre a modal, or open a ⌘K dialog; nothing detaches from the grid.",
+      "Don't add a third typeface, or set a path in Archivo, or set prose in mono.",
+      "Don't add hover lifts, scale transforms, fade-ins, or scroll-triggered reveals. One authored motion moment is the whole grammar.",
+      "Don't announce state with a toast or a temporary button label. State prints in place, as label text, in the system's own voice.",
+      "Don't make the consent decline visually lighter than the accept; they are identical plates by construction."
+    ]
+  }
+}
