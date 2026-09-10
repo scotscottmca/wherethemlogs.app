@@ -57,7 +57,7 @@ export default async function AppPage({ params }: Ctx) {
             <>
               {app.slug} · {String(app.logPaths.length).padStart(2, "0")} log path
               {app.logPaths.length === 1 ? "" : "s"} · updated{" "}
-              {app.updatedAt ? app.updatedAt.slice(0, 10) : "—"}
+              {app.updatedAt ? app.updatedAt.slice(0, 10) : "-"}
             </>
           }
           actions={<ZoneTags platforms={platforms} />}

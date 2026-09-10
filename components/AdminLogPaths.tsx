@@ -59,7 +59,7 @@ const comparable = (form: Form) => ({
  * read-modify-write of the whole app document and every response hands back a
  * new tag for the next one. The stack holds that tag, which is why an edit to
  * one path can be refused because a colleague touched a different path on the
- * same app — that is the record moving underneath, and the surface says so.
+ * same app - that is the record moving underneath, and the surface says so.
  */
 export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) {
   const router = useRouter();
@@ -79,7 +79,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
           Log paths · {String(app.logPaths.length).padStart(2, "0")}
         </span>
         <span className="tag mono admRecord__hint">
-          Stored byte for byte — variables are never expanded
+          Stored byte for byte - variables are never expanded
         </span>
       </div>
 
@@ -111,7 +111,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
           <h3 className="void__h">This bay is empty</h3>
           <p className="void__p">
             {app.name} is racked but carries no log paths, so it never appears in a result.
-            Add the first one — platform, what the file is, and the path exactly as the
+            Add the first one - platform, what the file is, and the path exactly as the
             machine writes it.
           </p>
         </div>
@@ -165,7 +165,7 @@ function LogPathRow({
           <div className="prow admPath__row">
             <code className="prow__path">
               {logPath.path}
-              {logPath.note && <span className="prow__note">— {logPath.note}</span>}
+              {logPath.note && <span className="prow__note">- {logPath.note}</span>}
             </code>
           </div>
         </div>
@@ -189,7 +189,7 @@ function LogPathRow({
 /**
  * The same plate, before it is printed. The zone band tracks the platform being
  * chosen, and the path prints itself back beneath the field at full contrast so
- * a curator can read exactly what will be stored — including the trailing space
+ * a curator can read exactly what will be stored - including the trailing space
  * the validator is about to remove.
  */
 function LogPathEditor({
@@ -340,7 +340,7 @@ function LogPathEditor({
             error={write.fields.variant}
             maxLength={80}
             placeholder="Classic (v1)"
-            hint="Optional. Splits this path onto its own plate — the same path twice on one platform is a duplicate, not a variant."
+            hint="Optional. Splits this path onto its own plate - the same path twice on one platform is a duplicate, not a variant."
           />
 
           {TYPE_GROUPS.map((group) => (

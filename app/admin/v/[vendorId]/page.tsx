@@ -92,7 +92,7 @@ export default async function VendorPage({ params }: Ctx) {
               <div className="void" style={{ paddingInline: "clamp(0.9rem, 1.6vw, 1.25rem)" }}>
                 <h3 className="void__h">This aisle is empty</h3>
                 <p className="void__p">
-                  {vendor.name} is racked but owns no apps yet. Add the first one — it
+                  {vendor.name} is racked but owns no apps yet. Add the first one - it
                   arrives with no log paths, which you type onto its own record.
                 </p>
               </div>

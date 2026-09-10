@@ -8,7 +8,7 @@ import { PLATFORM_META } from "@/lib/api";
  * The curator's chrome.
  *
  * The band under the header sits where the zone banding sits on the public
- * pages and is built from the same parts — hairline-divided cells with no gap,
+ * pages and is built from the same parts - hairline-divided cells with no gap,
  * a 2px rule underneath, the current cell filled. It carries the trail instead
  * of the platform filter, because on this surface the aisle you are standing in
  * is the vendor, not the operating system.
@@ -81,7 +81,7 @@ export function BayHead({
 /**
  * The two-column rack: the aisle you are in on the left, the record on the
  * right. Below 1080px the record comes first and the rail follows it, the same
- * inversion the results page makes — the thing you came to work on is never
+ * inversion the results page makes - the thing you came to work on is never
  * pushed under its own index.
  */
 export function Aisle({ rail, children }: { rail: React.ReactNode; children: React.ReactNode }) {
@@ -133,7 +133,7 @@ export function RailRow({
   );
 }
 
-/** Which platforms a record covers — colour, fill pattern and a three-letter code. */
+/** Which platforms a record covers - colour, fill pattern and a three-letter code. */
 export function ZoneTags({ platforms }: { platforms: Platform[] }) {
   if (!platforms.length) return <span className="tag mono">No paths</span>;
   return (

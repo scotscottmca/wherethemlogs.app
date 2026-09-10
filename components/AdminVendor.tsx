@@ -31,7 +31,7 @@ const formOf = (vendor: Vendor | null): Form => ({
 
 /**
  * The vendor record. On this surface a vendor is an aisle, so creating one and
- * editing one are the same object in two states — the fields are open from the
+ * editing one are the same object in two states - the fields are open from the
  * moment the page renders, because a curator who navigated here came to type.
  */
 export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
@@ -155,7 +155,7 @@ export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
             ? etag
               ? "Written against the version you loaded. A change underneath is refused, never merged."
               : "This record carries no version tag, so the write applies to whatever is current."
-            : "Creating a vendor racks an empty aisle — add its apps next."}
+            : "Creating a vendor racks an empty aisle - add its apps next."}
         </p>
       </div>
     </section>
@@ -202,7 +202,7 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
           <div className="admNotice__body">
             <p className="admNotice__p">
               {vendor.name} still owns {blocking.length} app{blocking.length === 1 ? "" : "s"}.
-              Move each one to another vendor, or delete the vendor and take them with it —
+              Move each one to another vendor, or delete the vendor and take them with it -
               log paths are embedded, so their paths go too. Nothing has been deleted yet.
             </p>
             <ul className="admManifest">

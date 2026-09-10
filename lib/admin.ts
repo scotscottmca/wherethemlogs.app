@@ -77,7 +77,7 @@ async function fail(response: Response): Promise<never> {
       : response.status === 403
         ? "This account no longer carries the admin role. Nothing was written."
         : response.status >= 500
-          ? "The store is not answering. Nothing was written — try again in a moment."
+          ? "The store is not answering. Nothing was written - try again in a moment."
           : `The request was refused (${response.status}).`;
 
   throw new AdminError(
@@ -204,14 +204,14 @@ export async function uploadIcon(file: File): Promise<{ url: string; bytes: numb
     throw new AdminError(
       400,
       "bad_request",
-      `"iconUrl" — an icon must be SVG, PNG, WebP or JPEG. That file is ${file.type || "of no declared type"}.`,
+      `"iconUrl" - an icon must be SVG, PNG, WebP or JPEG. That file is ${file.type || "of no declared type"}.`,
     );
   }
   if (file.size > ICON_MAX_BYTES) {
     throw new AdminError(
       400,
       "bad_request",
-      `"iconUrl" — icons are limited to 512 KB. That file is ${Math.ceil(file.size / 1024)} KB.`,
+      `"iconUrl" - icons are limited to 512 KB. That file is ${Math.ceil(file.size / 1024)} KB.`,
     );
   }
 

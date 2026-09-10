@@ -13,6 +13,26 @@ import { forbidden, unauthorized } from "./errors";
 
 export const ADMIN_ROLE = "admin";
 
+/**
+ * Local development only, and only when explicitly switched on. No deployed
+ * configuration sets it: the Bicep never emits it, and the container image
+ * carries no default for it.
+ *
+ * Both the middleware and the route handlers consult this. They have to agree,
+ * or /admin is unreachable locally while the API behind it is wide open, which
+ * is the worst of both.
+ */
+function localBypass(): boolean {
+  return process.env.LOCAL_ADMIN_BYPASS === "true";
+}
+
+const LOCAL_PRINCIPAL: ClientPrincipal = {
+  identityProvider: "local",
+  userId: "local-dev",
+  userDetails: "local development",
+  roles: [ADMIN_ROLE],
+};
+
 interface RawPrincipal {
   auth_typ?: string;
   name_typ?: string;
@@ -70,21 +90,13 @@ export function getPrincipal(request: Request): ClientPrincipal | null {
 }
 
 export function isAdmin(request: Request): boolean {
+  if (localBypass()) return true;
   return getPrincipal(request)?.roles.includes(ADMIN_ROLE) ?? false;
 }
 
 /** Throws unless the caller holds the admin role. Returns who they are. */
 export function requireAdmin(request: Request): ClientPrincipal {
-  // Local development only, and only when explicitly switched on. No deployed
-  // configuration sets it - the Bicep never emits it.
-  if (process.env.LOCAL_ADMIN_BYPASS === "true") {
-    return {
-      identityProvider: "local",
-      userId: "local-dev",
-      userDetails: "local development",
-      roles: [ADMIN_ROLE],
-    };
-  }
+  if (localBypass()) return LOCAL_PRINCIPAL;
 
   const principal = getPrincipal(request);
   if (!principal) throw unauthorized();

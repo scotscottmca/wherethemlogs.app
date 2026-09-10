@@ -50,7 +50,7 @@ export default async function StockControl() {
           <div className="void">
             <h2 className="void__h">The catalogue is not answering</h2>
             <p className="void__p">
-              Nothing is wrong with what you were about to do — this is the store. Reload in
+              Nothing is wrong with what you were about to do - this is the store. Reload in
               a moment. No write has been attempted.
             </p>
           </div>
@@ -63,7 +63,7 @@ export default async function StockControl() {
             <h2 className="void__h">Nothing racked yet</h2>
             <p className="void__p">
               The catalogue is empty. A path belongs to an app and an app belongs to a
-              vendor, so the first thing to rack is the vendor — then its apps, then the
+              vendor, so the first thing to rack is the vendor - then its apps, then the
               paths on each one.
             </p>
             <Link className="btn tag mono" href="/admin/v/new">

@@ -34,7 +34,7 @@ const splitAliases = (value: string) =>
   value.split(",").map((a) => a.trim()).filter(Boolean);
 
 /**
- * The app record — a bay in the vendor's aisle.
+ * The app record - a bay in the vendor's aisle.
  *
  * The icon control is the piece that refuses to flatten: `iconUrl: null` is not
  * an empty field, it is the instruction to inherit the vendor's icon, so the
@@ -143,7 +143,7 @@ export function AppEditor({
           onChange={(v) => set("aliases", v)}
           error={write.fields.aliases}
           placeholder="teams, msteams"
-          hint="Comma separated. What someone might type instead of the name — the search matches on these too."
+          hint="Comma separated. What someone might type instead of the name - the search matches on these too."
         />
         <IconField
           value={form.iconUrl}
@@ -153,7 +153,7 @@ export function AppEditor({
             label: `Inherit ${vendor.name}`,
             note: vendor.iconUrl
               ? `Stored as null. The plate shows ${vendor.name}'s icon, and follows it if the vendor's changes.`
-              : `Stored as null. ${vendor.name} carries no icon either, so the plate shows none — give the vendor one and this app picks it up.`,
+              : `Stored as null. ${vendor.name} carries no icon either, so the plate shows none - give the vendor one and this app picks it up.`,
             preview: vendor.iconUrl,
           }}
         />
@@ -198,7 +198,7 @@ export function AppEditor({
         </button>
         <p className="tag mono admCommit__note">
           {app
-            ? "Log paths are written separately — this saves the record, not the paths beneath it."
+            ? "Log paths are written separately - this saves the record, not the paths beneath it."
             : "The app is racked with no log paths. You add those on its own record, next."}
         </p>
       </div>

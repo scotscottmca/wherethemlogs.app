@@ -87,7 +87,7 @@ export async function appRecord(
  * Who is at the bench.
  *
  * The same principal `/api/me` reports, read straight off the request instead
- * of fetched back out of our own process — a server component never calls this
+ * of fetched back out of our own process - a server component never calls this
  * app's API. `requireAdmin` is reused so the local development bypass behaves
  * identically here and in the route handlers.
  */

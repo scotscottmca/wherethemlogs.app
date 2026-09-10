@@ -28,7 +28,7 @@ export default async function NewVendor() {
       <main className="rack">
         <BayHead
           name="New vendor"
-          facts="A vendor is an aisle — its apps and their icons hang off it"
+          facts="A vendor is an aisle - its apps and their icons hang off it"
           back={{ label: "Stock control", href: "/admin" }}
         />
         <Aisle rail={<VendorRail vendors={vendors} />}>

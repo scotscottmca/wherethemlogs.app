@@ -10,7 +10,7 @@ import { AdminError, ICON_MAX_BYTES, ICON_TYPES, reread, uploadIcon } from "@/li
  * A form here is a label plate that has not been printed yet, so a field row is
  * the path row with an input where the path goes: stencilled label cell on the
  * left, value on the right, one shared vertical rule down the stack. The cell
- * takes the focus ring the way the scanner bar does — the input itself never
+ * takes the focus ring the way the scanner bar does - the input itself never
  * draws a box, because nothing in this world does.
  */
 
@@ -68,7 +68,7 @@ export function Text({
   onChange: (next: string) => void;
   hint?: React.ReactNode;
   error?: string;
-  /** Machine-true content — slugs, ids, paths, urls — is set in the mono voice. */
+  /** Machine-true content - slugs, ids, paths, urls - is set in the mono voice. */
   mono?: boolean;
   placeholder?: string;
   maxLength?: number;
@@ -170,7 +170,7 @@ export function Reading({ children }: { children: React.ReactNode }) {
 
 /**
  * Label stock over painted steel: the surface's attention state. Cyan means
- * confirmed, bone means read this — colour never carries it alone, the block
+ * confirmed, bone means read this - colour never carries it alone, the block
  * always prints a word.
  */
 export function Notice({
@@ -222,7 +222,7 @@ const stamp = () =>
 
 /**
  * One write, its outcome, and where the outcome prints. Shared by all three
- * editors because the recovery — a named field, a 412, a 409 manifest — is the
+ * editors because the recovery - a named field, a 412, a 409 manifest - is the
  * same shape whatever record is being written.
  */
 export function useWrite() {
@@ -265,7 +265,7 @@ export function useWrite() {
         }
         setState({
           ...BLANK,
-          notice: "The write did not reach the store. Nothing was saved — check the connection and press again.",
+          notice: "The write did not reach the store. Nothing was saved - check the connection and press again.",
         });
       }
     },
@@ -279,7 +279,7 @@ export function useWrite() {
 
 /**
  * Someone else wrote this record between the load and the save. Cosmos refused
- * the write, so nothing was clobbered — but the editor is now holding a version
+ * the write, so nothing was clobbered - but the editor is now holding a version
  * that no longer exists. Rather than swallow that, the surface re-reads, names
  * the fields that moved, and lets the curator decide whose value survives. Their
  * typing is never thrown away without being shown first.
@@ -337,7 +337,7 @@ export function Superseded<T extends Record<string, unknown>>({
   if (!theirs) {
     return (
       <Notice code="Superseded">
-        This record changed since you loaded it, so the write was refused — nothing was
+        This record changed since you loaded it, so the write was refused - nothing was
         clobbered. Reading the current version…
       </Notice>
     );
@@ -354,7 +354,7 @@ export function Superseded<T extends Record<string, unknown>>({
         }
       >
         Someone deleted this record while you had it open, so there was nothing left to
-        write to. Your typing is still here — writing it back re-creates the record as you
+        write to. Your typing is still here - writing it back re-creates the record as you
         have it.
       </Notice>
     );
@@ -368,7 +368,7 @@ export function Superseded<T extends Record<string, unknown>>({
       <p className="admNotice__code tag mono">Superseded</p>
       <div className="admNotice__body">
         <p className="admNotice__p">
-          Someone else wrote this record after you loaded it, so Cosmos refused your write —
+          Someone else wrote this record after you loaded it, so Cosmos refused your write -
           nothing was clobbered and nothing was lost. Here is where the two versions differ.
         </p>
 
@@ -385,15 +385,15 @@ export function Superseded<T extends Record<string, unknown>>({
               {moved.map(({ key, label }) => (
                 <tr key={key}>
                   <th scope="row">{label}</th>
-                  <td>{String(record[key] ?? "") || "—"}</td>
-                  <td>{String(mine[key] ?? "") || "—"}</td>
+                  <td>{String(record[key] ?? "") || "-"}</td>
+                  <td>{String(mine[key] ?? "") || "-"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
           <p className="admNotice__p">
-            None of the fields you can edit here differ — the other write touched something
+            None of the fields you can edit here differ - the other write touched something
             else on the record. Taking the current version is safe.
           </p>
         )}
@@ -420,7 +420,7 @@ export function Superseded<T extends Record<string, unknown>>({
 
 /**
  * Two presses, in place. The first arms the control and prints what the second
- * one will do; it disarms itself after eight seconds. No dialog — nothing in
+ * one will do; it disarms itself after eight seconds. No dialog - nothing in
  * this world floats over the page.
  */
 export function DeletePress({
@@ -481,7 +481,7 @@ export function DeletePress({
 /**
  * An icon has two states that must never collapse into one another: a record
  * carries its own icon, or it does not. On an app, "does not" is not an empty
- * field — it is the instruction to inherit the vendor's, which is what
+ * field - it is the instruction to inherit the vendor's, which is what
  * `iconUrl: null` means in the store. So the source is chosen first and the URL
  * only exists inside one of the two answers.
  */
@@ -511,7 +511,7 @@ export function IconField({
     } catch (err) {
       setUploadError(
         err instanceof AdminError
-          ? err.message.replace(/^"iconUrl" — /, "")
+          ? err.message.replace(/^"iconUrl" - /, "")
           : "The upload did not reach the store. Try again.",
       );
     } finally {
@@ -542,7 +542,7 @@ export function IconField({
         </div>
         <p className="frow__hint mono">
           {own
-            ? "Stored on this record. Replacing an icon uploads a new blob and repoints — the old one is not collected."
+            ? "Stored on this record. Replacing an icon uploads a new blob and repoints - the old one is not collected."
             : inherit.note}
         </p>
       </Field>

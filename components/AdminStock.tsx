@@ -10,7 +10,7 @@ import type { StockRow } from "@/lib/admin";
  * Stock control: every app in the catalogue, filtered as you type.
  *
  * The whole index is 33 apps and it is already in the HTML, so this filters in
- * the browser rather than asking the store again — a curator who knows the app
+ * the browser rather than asking the store again - a curator who knows the app
  * name is inside the record in two presses. The field is the scanner bar, the
  * same object it is on the public pages, pointed at a different rack.
  */
