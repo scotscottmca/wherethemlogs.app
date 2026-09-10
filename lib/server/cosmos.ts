@@ -3,7 +3,7 @@ import { DefaultAzureCredential } from "@azure/identity";
 
 /**
  * One client per process. Cosmos is reached with the Function App's managed
- * identity — the account has local (key) auth disabled, so there is no
+ * identity - the account has local (key) auth disabled, so there is no
  * connection string anywhere in configuration.
  *
  * Locally, DefaultAzureCredential picks up `az login`; the developer needs the

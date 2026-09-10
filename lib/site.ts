@@ -11,7 +11,7 @@ export const GITHUB_ISSUES = `${GITHUB_ISSUES_REPO}/issues`;
 
 /**
  * The tracker uses GitHub issue forms, so prefilled values are keyed by each
- * field's `id` in .github/ISSUE_TEMPLATE/*.yml — not by a `body` blob. Change a
+ * field's `id` in .github/ISSUE_TEMPLATE/*.yml - not by a `body` blob. Change a
  * field id there and the prefill here goes silently ignored, which is the one
  * sharp edge of forms over markdown templates.
  */

@@ -82,7 +82,7 @@ jobs:
           # Deploying the template rather than "az containerapp update --image"
           # on purpose: the image is not the only thing that has to be right.
           # Ingress port, probes, env and identity all live in the template, and
-          # an image-only update leaves them at whatever they were — which is
+          # an image-only update leaves them at whatever they were - which is
           # how ingress ended up pointed at a port nothing served.
           az deployment group create \
             --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \

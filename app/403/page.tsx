@@ -21,7 +21,7 @@ export default function Forbidden() {
           <h1 className="void__h">Not your bay</h1>
           <p className="void__p">
             You are signed in, but this account does not carry the admin role. Ask whoever
-            runs the catalogue to grant it, then reload — the index itself needs no sign-in
+            runs the catalogue to grant it, then reload - the index itself needs no sign-in
             at all.
           </p>
           <Link className="btn tag mono" href="/">

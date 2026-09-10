@@ -9,7 +9,7 @@ const PLATFORM_SET = new Set<string>(PLATFORMS);
 
 /**
  * The browser's type-ahead calls this on every keystroke. Server-rendered
- * pages do not — they call `search()` directly, with no HTTP hop.
+ * pages do not - they call `search()` directly, with no HTTP hop.
  */
 export async function GET(request: NextRequest) {
   try {

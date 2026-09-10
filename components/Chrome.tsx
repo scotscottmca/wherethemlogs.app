@@ -8,7 +8,7 @@ export function Header() {
     <header>
       <div className="hazard" role="presentation" />
       <div className="hdr">
-        <Link href="/" className="hdr__id" aria-label="Where Them Logs App — home">
+        <Link href="/" className="hdr__id" aria-label="Where Them Logs App - home">
           <Mark size={30} />
           <span className="hdr__word">
             Where Them
@@ -123,15 +123,9 @@ export function Footer({ entryCount }: { entryCount: number | null }) {
           </a>
         </nav>
         <p className="tag mono" style={{ margin: 0 }}>
-          {entryCount === null ? "Catalogue" : `${entryCount} entries`} · Seed catalogue
+          {entryCount === null ? "Catalogue" : `${entryCount} entries`}
         </p>
       </div>
-      <p className="foot__seed">
-        Seed catalogue. Every path listed is real and verifiable, but this build ships a
-        demonstration set, not the full index. Paths are printed exactly as the operating
-        system resolves them — environment variables are never expanded for you, because the
-        machine you are fixing is not this one.
-      </p>
     </footer>
   );
 }

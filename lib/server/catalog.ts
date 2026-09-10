@@ -8,7 +8,7 @@ import { resolveApp, type App, type Platform, type ResolvedApp, type Vendor } fr
  *
  * `ponytail: process-local cache, no cross-instance invalidation. If editors
  * need writes to appear instantly on every instance, put Cosmos change feed
- * behind an event and drop the TTL — not before.`
+ * behind an event and drop the TTL - not before.`
  */
 const TTL_MS = 60_000;
 

@@ -53,15 +53,15 @@ export default async function Home({
           <h1 className="sign__h">Where them logs at</h1>
           <div className="sign__row">
             <p className="sign__sub">
-              The log file location for any application, on Windows, macOS or Linux — every
+              The log file location for any application, on Windows, macOS or Linux - every
               path qualified by installer type and architecture, printed exactly as the
               machine writes it.
             </p>
             <p className="sign__count">
               <span className="sign__countNum">
-                {data ? String(data.apps).padStart(3, "0") : "———"}
+                {data ? String(data.apps).padStart(3, "0") : "---"}
               </span>
-              <span className="tag mono">apps racked · seed catalogue</span>
+              <span className="tag mono">apps racked</span>
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default async function Home({
             {!data ? (
               <div className="rackNote">
                 <p style={{ margin: 0 }}>
-                  The catalogue is not answering. The index is still there — reload in a
+                  The catalogue is not answering. The index is still there - reload in a
                   moment, or search anyway and the scanner will retry.
                 </p>
               </div>
@@ -122,7 +122,7 @@ export default async function Home({
         </div>
 
         <p className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
-          Missing something? Requests are tracked as GitHub issues — one issue per
+          Missing something? Requests are tracked as GitHub issues - one issue per
           application, with the platform and installer type in the title.{" "}
           <a
             href={requestAppUrl()}

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 /**
  * Icon upload. The blob container is public-read, so the URL this returns can
  * be written straight onto a vendor or app record and served to the browser.
- * Writes go through the container's managed identity — no storage key is ever
+ * Writes go through the container's managed identity - no storage key is ever
  * handed to a client.
  */
 

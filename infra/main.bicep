@@ -40,7 +40,7 @@ except the app, and `deploy-app` creates it once it has pushed an image.
 
 There is deliberately no placeholder image: a placeholder listens on its own
 port and answers none of our health paths, so the app would have to be created
-with a different ingress port and no probes — and `az containerapp update
+with a different ingress port and no probes - and `az containerapp update
 --image` changes neither, leaving ingress pointed at a port nothing serves.
 ''')
 param containerImage string = ''

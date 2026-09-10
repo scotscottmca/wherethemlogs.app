@@ -54,7 +54,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
 
-      # `next build` happily compiles route trees that crash at runtime — two
+      # `next build` happily compiles route trees that crash at runtime - two
       # different slug names on one path segment, for instance. Booting the
       # image is the only thing that catches those.
       - name: Build the image

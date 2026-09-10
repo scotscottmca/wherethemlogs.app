@@ -6,7 +6,7 @@ param throughput int
 
 @description('''
 How throughput is bought. Immutable after the account is created, so this is a
-one-way door — choose before the first deployment.
+one-way door - choose before the first deployment.
 
 serverless:  pay per request unit consumed. Right for a small catalogue that is
              cached in-process, where actual database traffic is a couple of
@@ -95,8 +95,8 @@ resource vendors 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@
   }
 }
 
-// Apps are partitioned by vendor so "every app for this vendor" — the admin
-// portal's main query — stays inside one partition. Log paths are embedded on
+// Apps are partitioned by vendor so "every app for this vendor" - the admin
+// portal's main query - stays inside one partition. Log paths are embedded on
 // the app document: they are always read with it, always written with it, and
 // bounded in number.
 resource apps 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2024-11-15' = {
@@ -121,7 +121,7 @@ resource apps 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@202
         automatic: true
         includedPaths: [{ path: '/*' }]
         excludedPaths: [{ path: '/"_etag"/?' }]
-        // Serves "every app for this vendor, by name" — the admin portal's main
+        // Serves "every app for this vendor, by name" - the admin portal's main
         // query. Single-property ordering is served by the default range index
         // and needs nothing here.
         compositeIndexes: [

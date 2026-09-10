@@ -43,7 +43,7 @@ export default function Privacy() {
             <li>No account, no sign-in, no advertising, and nothing sold or shared.</li>
             <li>
               One optional analytics cookie, set only if you press <strong>Accept</strong>.
-              Decline and the site behaves identically — no reduced features, no repeated
+              Decline and the site behaves identically - no reduced features, no repeated
               asking on every page.
             </li>
             <li>
@@ -122,7 +122,7 @@ export default function Privacy() {
           <h2>Changing your mind</h2>
           <p>
             Clear this site&rsquo;s data in your browser and the consent question is asked
-            again from scratch. Declining is remembered the same way accepting is — we do not
+            again from scratch. Declining is remembered the same way accepting is - we do not
             treat a decline as an invitation to ask again tomorrow.
           </p>
 
@@ -130,7 +130,7 @@ export default function Privacy() {
           <p>
             Corrections and new entries are handled as public issues on GitHub, under
             GitHub&rsquo;s own privacy terms rather than ours. Anything you write in an issue
-            is public — do not paste real hostnames, usernames, tenant identifiers or
+            is public - do not paste real hostnames, usernames, tenant identifiers or
             customer names into one.{" "}
             <a href={GITHUB_ISSUES} target="_blank" rel="noopener noreferrer">
               The issue tracker is here

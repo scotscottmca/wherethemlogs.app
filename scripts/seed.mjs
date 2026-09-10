@@ -3,7 +3,7 @@
  * Seeds Cosmos from scripts/seed-data.json.
  *
  * Idempotent: records are upserted by id, so re-running replaces rather than
- * duplicates. It never deletes — a record removed from the JSON stays in the
+ * duplicates. It never deletes - a record removed from the JSON stays in the
  * database, because this is a seeder, not a sync.
  *
  *   node scripts/seed.mjs --endpoint https://<account>.documents.azure.com:443/
@@ -54,7 +54,7 @@ const db = client.database(databaseName);
  * Cosmos data-plane access is separate from Azure RBAC, so being Owner on the
  * subscription grants nothing here. A 403 almost always means the signed-in
  * principal has no data-plane role assignment, and the message says which
- * principal was refused — so say what to do about it rather than printing a
+ * principal was refused - so say what to do about it rather than printing a
  * stack trace at someone who just wants their data in.
  */
 function explain(err) {

@@ -22,7 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { q } = await searchParams;
   return {
-    title: q ? `“${q}” — results` : "Browse the index",
+    title: q ? `“${q}” - results` : "Browse the index",
     description: q
       ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
       : undefined,
@@ -68,7 +68,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
     failed = true;
   }
 
-  // The tabs count what the rack shows — plates, not apps — so "WIN 2" and
+  // The tabs count what the rack shows - plates, not apps - so "WIN 2" and
   // "2 plates on the pick list" can never disagree.
   const counts: Record<string, number> = { all: poolPlates.length };
   for (const meta of PLATFORM_META) {
@@ -200,7 +200,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
               <div className="void">
                 <h2 className="void__h">The catalogue is not answering</h2>
                 <p className="void__p">
-                  The index is still there — this is the store, not your query. Reload in a
+                  The index is still there - this is the store, not your query. Reload in a
                   moment.
                 </p>
               </div>
@@ -218,7 +218,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                 <p className="void__p">
                   {poolPlates.length
                     ? `“${q}” matches ${poolPlates.length} ${poolPlates.length === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
-                    : "Check the spelling, try the vendor name, or open a request — the catalogue grows from them."}
+                    : "Check the spelling, try the vendor name, or open a request - the catalogue grows from them."}
                 </p>
                 {poolPlates.length ? (
                   <Link className="btn tag mono" href={buildHref({ q, platform: "all", types: [] })}>

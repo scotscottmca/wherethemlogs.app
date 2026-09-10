@@ -23,11 +23,11 @@
       "title": { "displayName": "Plate Name", "purpose": "App names on a label plate and section headings, Archivo 800 at width 78%, uppercase." },
       "body": { "displayName": "Body", "purpose": "Prose only, Archivo regular, capped 62-68ch." },
       "path": { "displayName": "Path", "purpose": "Log paths in Spline Sans Mono 500, break-anywhere wrapping, user-select: all." },
-      "label": { "displayName": "Stencil Tag", "purpose": "The .tag role — mono 600, 0.16em tracking, uppercase. Section labels, zone codes, chips, toggles, counts." }
+      "label": { "displayName": "Stencil Tag", "purpose": "The .tag role - mono 600, 0.16em tracking, uppercase. Section labels, zone codes, chips, toggles, counts." }
     },
     "shadows": [],
     "motion": [
-      { "name": "ease-rack", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The system's only easing — exponential ease-out for the rack-in wipe." },
+      { "name": "ease-rack", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The system's only easing - exponential ease-out for the rack-in wipe." },
       { "name": "rack-in", "value": "rack-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 42ms)", "purpose": "The one authored motion moment: clip-path inset(0 100% 0 0) wipe plus 6px rise, staggered per item, on the plate stack at query change. Reused at 320ms for the confirm reading." },
       { "name": "state-swap", "value": "120ms linear", "purpose": "Background and colour swaps on hover/press. A state change, not motion." },
       { "name": "confirm-hold", "value": "1800ms", "purpose": "How long a scanned plate holds its inverted cyan CONFIRMED state before returning." }
@@ -45,7 +45,7 @@
       "kind": "input",
       "refersTo": "scanner-bar",
       "description": "The primary action: a full-width solid cyan bar with a borderless mono input and near-black caret.",
-      "html": "<div class=\"ds-scan\"><svg class=\"ds-scan-ico\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5\"/><path d=\"M2 12h20\" stroke-width=\"2.5\"/></svg><input class=\"ds-scan-in\" type=\"search\" placeholder=\"Scan an app name — teams, vscode, nginx…\"><span class=\"ds-scan-hint\">PRESS <kbd class=\"ds-scan-key\">/</kbd> TO SCAN</span></div>",
+      "html": "<div class=\"ds-scan\"><svg class=\"ds-scan-ico\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" aria-hidden=\"true\"><path d=\"M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5\"/><path d=\"M2 12h20\" stroke-width=\"2.5\"/></svg><input class=\"ds-scan-in\" type=\"search\" placeholder=\"Scan an app name - teams, vscode, nginx…\"><span class=\"ds-scan-hint\">PRESS <kbd class=\"ds-scan-key\">/</kbd> TO SCAN</span></div>",
       "css": ".ds-scan { display: flex; align-items: center; gap: 0.85rem; background: var(--hivis, #22d3ee); color: var(--ink, #111311); padding-inline: 1.25rem; min-height: 86px; } .ds-scan:focus-within { outline: 3px solid var(--bone, #e8e4da); outline-offset: -3px; } .ds-scan-in { flex: 1 1 auto; min-width: 0; background: transparent; border: 0; outline: 0; font-family: \"Spline Sans Mono\", ui-monospace, monospace; font-weight: 500; font-size: 1.6rem; color: var(--ink, #111311); caret-color: var(--ink, #111311); padding-block: 0.5rem; } .ds-scan-in::placeholder { color: #0a4a55; opacity: 1; } .ds-scan-in::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; } .ds-scan-hint { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; font-family: \"Spline Sans Mono\", monospace; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #0a4a55; } .ds-scan-key { border: 1.5px solid var(--ink, #111311); padding: 0.15rem 0.4rem; line-height: 1; color: var(--ink, #111311); }"
     },
     {
@@ -108,49 +108,49 @@
       "name": "Consent Bar",
       "kind": "custom",
       "refersTo": "button-consent",
-      "description": "Docked to the bottom edge, full-bleed. Both actions are identical bone plates — equal weight by construction.",
+      "description": "Docked to the bottom edge, full-bleed. Both actions are identical bone plates - equal weight by construction.",
       "html": "<div class=\"ds-consent\"><div class=\"ds-consent-row\"><div class=\"ds-consent-copy\"><h2 class=\"ds-consent-h\">Usage cookies</h2><p class=\"ds-consent-p\">We would like to set a usage-tracking cookie. Decline and the site works exactly the same.</p></div><div class=\"ds-consent-acts\"><button class=\"ds-consent-btn\">Decline</button><button class=\"ds-consent-btn\">Allow</button></div></div></div>",
       "css": ".ds-consent { background: var(--ink-raised, #1b1e1b); border-top: 1px solid var(--ink-rule, #2e322d); color: var(--bone, #e8e4da); } .ds-consent-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.5rem 1.15rem; } .ds-consent-copy { max-width: 68ch; display: grid; gap: 0.35rem; } .ds-consent-h { margin: 0; font-family: Archivo, sans-serif; font-stretch: 76%; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.02em; text-transform: uppercase; } .ds-consent-p { margin: 0; font-family: Archivo, sans-serif; font-size: 0.85rem; line-height: 1.5; color: var(--bone-dim, #a8a496); } .ds-consent-acts { display: flex; gap: 0.5rem; } .ds-consent-btn { background: var(--bone, #e8e4da); color: var(--ink, #111311); border: 0; border-radius: 0; padding: 0.6rem 1.4rem; min-width: 132px; font-family: Archivo, sans-serif; font-weight: 700; cursor: pointer; text-align: center; transition: background 120ms linear; } .ds-consent-btn:hover { background: var(--hivis, #22d3ee); } .ds-consent-btn:focus-visible { outline: 3px solid var(--hivis, #22d3ee); outline-offset: 2px; }"
     }
   ],
   "narrative": {
     "northStar": "The Location Code",
-    "overview": "A log path is a location code, so the site is a wall of warehouse racking rather than a documentation page. Painted-steel near-black ground, bone label stock, high-vis signal cyan owning whole regions, and hazard tape banding the top and bottom edges. Structure comes from stencilled hairlines and banding hard against a shared grid — never from a card floating on a background. Density is the material: content runs edge to edge, the aisle sign shouts at a scale the web rarely permits, and nothing is padded to look calm.\n\nThe surfaces are printed, not rendered. There are no gradients anywhere except the 45° repeating hard-stop stripe that draws hazard tape, no shadows of any kind, no radii, no translucency, no blur. Every colour is a flat fill of one value. This is what keeps signal cyan reading as printed vinyl instead of neon: it is a solid field with dead-black type on it, never a light source.\n\nTwo voices carry everything, strictly assigned. Archivo (self-hosted variable, weight 100–900, width 62–125%) is the human voice — headings, prose, app names, button words. Spline Sans Mono (self-hosted variable, weight 300–700) is the machine voice — paths, codes, counts, filter values, and every stencilled label. The build ships this assignment without exception, and it is what makes a path look like a fact rather than a sentence.",
+    "overview": "A log path is a location code, so the site is a wall of warehouse racking rather than a documentation page. Painted-steel near-black ground, bone label stock, high-vis signal cyan owning whole regions, and hazard tape banding the top and bottom edges. Structure comes from stencilled hairlines and banding hard against a shared grid - never from a card floating on a background. Density is the material: content runs edge to edge, the aisle sign shouts at a scale the web rarely permits, and nothing is padded to look calm.\n\nThe surfaces are printed, not rendered. There are no gradients anywhere except the 45° repeating hard-stop stripe that draws hazard tape, no shadows of any kind, no radii, no translucency, no blur. Every colour is a flat fill of one value. This is what keeps signal cyan reading as printed vinyl instead of neon: it is a solid field with dead-black type on it, never a light source.\n\nTwo voices carry everything, strictly assigned. Archivo (self-hosted variable, weight 100-900, width 62-125%) is the human voice - headings, prose, app names, button words. Spline Sans Mono (self-hosted variable, weight 300-700) is the machine voice - paths, codes, counts, filter values, and every stencilled label. The build ships this assignment without exception, and it is what makes a path look like a fact rather than a sentence.",
     "keyCharacteristics": [
       "Flat printed surfaces: zero gradients (except hazard stripes), zero shadows, zero radii",
-      "Signal cyan owns whole regions — a bar, a tab, a plate — never a hairline highlight",
+      "Signal cyan owns whole regions - a bar, a tab, a plate - never a hairline highlight",
       "Structure is 1px/2px stencilled rules and full-bleed banding, never bordered cards",
       "Two typefaces, hard-assigned to human vs machine content",
       "Every signal carries colour, shape, and text together",
       "One authored motion moment; nothing else animates"
     ],
     "rules": [
-      { "name": "The Whole Region Rule", "body": "Signal cyan is committed at region scale — a full-width bar, a whole tab, an entire plate — or not used at all. It never appears as a 1px accent line, a dot, a gradient stop, or a glow.", "section": "colors" },
+      { "name": "The Whole Region Rule", "body": "Signal cyan is committed at region scale - a full-width bar, a whole tab, an entire plate - or not used at all. It never appears as a 1px accent line, a dot, a gradient stop, or a glow.", "section": "colors" },
       { "name": "The Flat Print Rule", "body": "Near-black on cyan is printed vinyl, not a light source. No box-shadow, no text-shadow, no filter: drop-shadow, no colour-matched glow, no gradient on any cyan surface. The palette invites neon; the world refuses it.", "section": "colors" },
       { "name": "The Path Stays Bone Rule", "body": "Colour never touches path text. A path is bone at full contrast on the dark ground, or ink on the confirmed cyan plate. Never cyan, never a zone colour, never dimmed, never syntax-highlighted.", "section": "colors" },
       { "name": "The Zone-Never-Speaks Rule", "body": "zone-win and zone-lnx are block-and-band colours only and must never carry body text. Zone colour appears as a filled band with a code printed on it in bone or ink.", "section": "colors" },
       { "name": "The Three-Part Signal Rule", "body": "Colour never carries a signal alone. Every platform zone ships a colour, a distinct SVG fill pattern in ZoneSwatch (WIN one horizontal bar, MAC two diagonals, LNX two horizontal bars, ALL a cross), and a three-letter text code. The pattern is part of the token, not decoration.", "section": "colors" },
-      { "name": "The Two Voices Rule", "body": "Archivo for anything human — headings, prose, app names, button words. Spline Sans Mono for anything machine-true — paths, codes, counts, filter values, entry totals, and every .tag stencil label. There is no third face, and no piece of content gets to choose.", "section": "typography" },
-      { "name": "The Tabular Figures Rule", "body": "Every number the machine produced — entry counts, zone counts, the 046 bay figure — is set in mono with tabular-nums, so figures do not shift width when they change.", "section": "typography" },
+      { "name": "The Two Voices Rule", "body": "Archivo for anything human - headings, prose, app names, button words. Spline Sans Mono for anything machine-true - paths, codes, counts, filter values, entry totals, and every .tag stencil label. There is no third face, and no piece of content gets to choose.", "section": "typography" },
+      { "name": "The Tabular Figures Rule", "body": "Every number the machine produced - entry counts, zone counts, the 046 bay figure - is set in mono with tabular-nums, so figures do not shift width when they change.", "section": "typography" },
       { "name": "The No Gap Rule", "body": "Repeated elements share a rule, they do not share a gap. Plates, path rows, pick-list rows, rack columns, and header nav cells are all gap: 0 with a 1px divider. Whitespace between siblings is a defect in this world.", "section": "layout" },
       { "name": "The No Shadow Rule", "body": "box-shadow, text-shadow, drop-shadow, and backdrop-filter do not appear in this system at any elevation, on any state, in any world variant. If something needs to separate, give it a rule or a tonal step.", "section": "elevation" },
       { "name": "The Docked Overlay Rule", "body": "Anything that appears over the page docks to an edge and spans it. No centred modal, no floating popover, no ⌘K dialog, no toast.", "section": "elevation" },
       { "name": "The Square Corner Rule", "body": "Radius is 0. There is no sm/md/lg scale to reach for; adding one breaks the world.", "section": "shapes" },
-      { "name": "The One Motion Rule", "body": "The system has exactly one authored motion moment: rack-in — a clip-path: inset(0 100% 0 0) wipe plus a 6px rise over 460ms on cubic-bezier(0.16, 1, 0.3, 1), staggered 42ms per item via --i, applied to the plate stack on query change from an already-visible default. The confirm reading reuses the same keyframe at 320ms. Nothing else animates. Colour/background transitions are 120ms linear state swaps, not motion. Adding scattered hover lifts, scale, fade-ins, or scroll reveals breaks the system.", "section": "components" }
+      { "name": "The One Motion Rule", "body": "The system has exactly one authored motion moment: rack-in - a clip-path: inset(0 100% 0 0) wipe plus a 6px rise over 460ms on cubic-bezier(0.16, 1, 0.3, 1), staggered 42ms per item via --i, applied to the plate stack on query change from an already-visible default. The confirm reading reuses the same keyframe at 320ms. Nothing else animates. Colour/background transitions are 120ms linear state swaps, not motion. Adding scattered hover lifts, scale, fade-ins, or scroll reveals breaks the system.", "section": "components" }
     ],
     "dos": [
-      "Do commit signal cyan (#22d3ee) at region scale — a whole bar, tab, plate, or button — with near-black type on it.",
+      "Do commit signal cyan (#22d3ee) at region scale - a whole bar, tab, plate, or button - with near-black type on it.",
       "Do print every path in bone (or ink on the confirmed cyan plate) at full contrast, in Spline Sans Mono.",
       "Do give every zone all three signals: colour, its ZoneSwatch fill pattern, and its three-letter code.",
       "Do separate repeated elements with a 1px ink-rule hairline (2px for a structural break) and gap: 0.",
-      "Do set anything machine-true — paths, codes, counts, filter values, .tag labels — in Spline Sans Mono with tabular figures, and anything human in Archivo.",
+      "Do set anything machine-true - paths, codes, counts, filter values, .tag labels - in Spline Sans Mono with tabular figures, and anything human in Archivo.",
       "Do keep every text role at or above bone-faint (#8a8779), which is the 4.5:1 floor on ink.",
       "Do dock overlays to an edge and span it full-bleed, the way the type-ahead rack and consent bar do.",
       "Do reuse rack-in if a new list needs entrance motion, staggered by --i."
     ],
     "donts": [
       "Don't restore the safety yellow. The cyan is a user pin made mid-build with the layout explicitly unchanged.",
-      "Don't add glow, gradient, text-shadow, or box-shadow to a cyan surface — or to anything else. The palette invites neon and the world refuses it.",
+      "Don't add glow, gradient, text-shadow, or box-shadow to a cyan surface - or to anything else. The palette invites neon and the world refuses it.",
       "Don't tint, dim, or syntax-highlight path text, or let a zone colour touch any body text.",
       "Don't introduce a corner radius. Radius is 0 system-wide.",
       "Don't float a card, centre a modal, or open a ⌘K dialog; nothing detaches from the grid.",

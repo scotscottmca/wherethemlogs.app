@@ -2,7 +2,7 @@
  * Shared view types and the browser's API client.
  *
  * Record shapes come straight from `lib/model.ts`, which the route handlers
- * use too — one definition, checked by the compiler. That seam used to be a
+ * use too - one definition, checked by the compiler. That seam used to be a
  * hand-maintained contract across an HTTP boundary between two deployables;
  * it is not one any more.
  */
@@ -52,7 +52,7 @@ export class ApiError extends Error {
 
 /**
  * Only the browser uses this. Server components call `search()` and `summary()`
- * in `lib/server/catalog.ts` directly — no HTTP hop to reach our own process.
+ * in `lib/server/catalog.ts` directly - no HTTP hop to reach our own process.
  */
 export async function searchApps(
   args: { q: string; platform: Platform | "all"; types?: string[]; limit?: number },
@@ -87,7 +87,7 @@ export async function searchApps(
  * A label plate's zone band names one platform and its header names one
  * shipping flavour, so Microsoft Teams racks as four plates: New Teams and
  * Classic, on Windows and on macOS. Splitting on variant as well as platform is
- * what keeps the header honest — a plate stamped "Classic (v1)" lists only
+ * what keeps the header honest - a plate stamped "Classic (v1)" lists only
  * Classic paths. The split is presentation; the record underneath is one app
  * with many log paths.
  */

@@ -1,5 +1,5 @@
 /**
- * Authored icon set. One stroke weight (2), butt caps, miter joins — cut vinyl,
+ * Authored icon set. One stroke weight (2), butt caps, miter joins - cut vinyl,
  * not a rounded UI kit. Every icon draws on a 24-unit grid and inherits color.
  */
 type IconProps = { size?: number; className?: string };
@@ -71,6 +71,14 @@ export function IconExternal({ size = 20, className }: IconProps) {
   );
 }
 
+export function IconChevron({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M5 9l7 7 7-7" />
+    </svg>
+  );
+}
+
 export function IconClose({ size = 20, className }: IconProps) {
   return (
     <svg {...base(size, className)}>
@@ -88,36 +96,30 @@ export function IconFlag({ size = 20, className }: IconProps) {
 }
 
 /**
- * The mark: a bin location plate. Black plate, high-vis band, code bars —
- * the thing bolted to the end of a rack upright.
+ * The mark: a rack upright with the picked level pulled out.
+ *
+ * Two dim shelves and one in signal cyan, extended past the others so the eye
+ * lands on it first. That is the product in four rectangles - the log is on a
+ * shelf somewhere, and this is the shelf. Kept to four elements because it has
+ * to survive a 16px favicon, where the earlier barcode plate turned to mud.
+ *
+ * The same artwork lives in app/icon.svg. Change one, change both.
  */
 export function Mark({ size = 34, className }: IconProps) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 34 34"
+      viewBox="0 0 32 32"
       className={className}
       aria-hidden
       focusable="false"
     >
-      <rect x="0" y="0" width="34" height="34" fill="var(--bone)" />
-      <rect x="0" y="11" width="34" height="12" fill="var(--hivis)" />
-      <g fill="var(--ink)">
-        <rect x="3" y="3" width="3" height="6" />
-        <rect x="8" y="3" width="2" height="6" />
-        <rect x="12" y="3" width="4" height="6" />
-        <rect x="18" y="3" width="2" height="6" />
-        <rect x="22" y="3" width="3" height="6" />
-        <rect x="27" y="3" width="4" height="6" />
-        <rect x="3" y="25" width="4" height="6" />
-        <rect x="9" y="25" width="2" height="6" />
-        <rect x="13" y="25" width="3" height="6" />
-        <rect x="18" y="25" width="4" height="6" />
-        <rect x="24" y="25" width="2" height="6" />
-        <rect x="28" y="25" width="3" height="6" />
-      </g>
-      <path d="M0 11h34M0 23h34" stroke="var(--ink)" strokeWidth="1.5" />
+      <rect width="32" height="32" fill="var(--ink)" />
+      <rect x="4" y="3" width="6" height="26" fill="var(--bone)" />
+      <rect x="12" y="5" width="14" height="6" fill="var(--bone-dim)" />
+      <rect x="12" y="13" width="20" height="7" fill="var(--hivis)" />
+      <rect x="12" y="22" width="14" height="6" fill="var(--bone-dim)" />
     </svg>
   );
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Where Them Logs App — The Location Code
+   Where Them Logs App - The Location Code
    Warehouse racking labels, aisle signage, bin location codes.
    Flat printed surfaces. No gradients. No floating cards. Density is the material.
    ========================================================================== */
@@ -53,7 +53,7 @@
   --ink-raised: #1b1e1b;
   --ink-rule: #2e322d;
 
-  /* Signal field — industrial labelling cyan, flat printed, never glowing */
+  /* Signal field - industrial labelling cyan, flat printed, never glowing */
   --hivis: #22d3ee;
   --hivis-deep: #0e7c90;
   /* Label ink for anything set on the signal field. */
@@ -64,7 +64,7 @@
   --bone-dim: #a8a496;
   --bone-faint: #8a8779;
 
-  /* Zone codes — blocks and bands only, never body text */
+  /* Zone codes - blocks and bands only, never body text */
   --zone-win: #2952cc;
   --zone-mac: #e8e4da;
   --zone-lnx: #d8442f;
@@ -157,7 +157,7 @@ input[type="search"]::-webkit-search-decoration {
   font-variant-numeric: tabular-nums;
 }
 
-/* Stencilled section label — the printed tag above a rack section. */
+/* Stencilled section label - the printed tag above a rack section. */
 .tag {
   font-family: "Spline Sans Mono", ui-monospace, monospace;
   font-size: 0.6875rem;

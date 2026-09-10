@@ -1,6 +1,6 @@
 # Deployment
 
-Two deployables — the application image and the Azure resources — with a
+Two deployables - the application image and the Azure resources - with a
 workflow each. Do the first-run steps in order; after that, merging a PR is the
 whole process.
 
@@ -8,7 +8,7 @@ whole process.
 > assignment is `$VAR = ...` and a backslash is not an escape character, so
 > inline JSON like `'{\"name\": ...}'` arrives at `az` mangled. Every place
 > this guide passes JSON, there is a PowerShell block beside it that writes the
-> JSON to a file and passes `@file` instead — which is what Azure's own docs
+> JSON to a file and passes `@file` instead - which is what Azure's own docs
 > recommend when quoting bites.
 
 ## First run
@@ -99,7 +99,7 @@ az role assignment create --assignee-object-id "$SP_ID" --assignee-principal-typ
 
 **If sign-in fails with `AADSTS700213: No matching federated identity record
 found`**, the credential's subject does not match what GitHub actually sent.
-Do not guess it — the failing run prints it. Open the run, expand *Sign in to
+Do not guess it - the failing run prints it. Open the run, expand *Sign in to
 Azure*, and read the line beginning `subject claim -`. Create a credential whose
 `subject` is that string exactly.
 
@@ -112,12 +112,12 @@ deploy job runs in the `production` environment, so they present different
 subjects.
 
 `User Access Administrator` is needed because the Bicep creates role
-assignments — the container's access to Cosmos, Blob and the registry.
+assignments - the container's access to Cosmos, Blob and the registry.
 
 ### 3. Deploy the infrastructure
 
 Add your own object id so you can seed and debug against Cosmos. Cosmos
-data-plane RBAC is a separate system from Azure RBAC — being Owner on the
+data-plane RBAC is a separate system from Azure RBAC - being Owner on the
 subscription grants nothing inside the account, so without this the seed script
 gets a 403.
 
@@ -141,19 +141,19 @@ az deployment group create \
   --query properties.outputs
 ```
 
-Keep the outputs — `containerAppName`, `registryName`, `cosmosAccountName`,
+Keep the outputs - `containerAppName`, `registryName`, `cosmosAccountName`,
 `siteUrl`.
 
 **The container app is not created by this step**, and `containerAppName` and
 `siteUrl` come back empty. That is expected: the image does not exist yet, and
 there is no placeholder. Step 5 creates the app and fills both in.
 
-Everything else — registry, Cosmos, storage, monitoring, and the managed
-identity with its role assignments — is created here, which is what step 5
+Everything else - registry, Cosmos, storage, monitoring, and the managed
+identity with its role assignments - is created here, which is what step 5
 needs.
 
 > **Cosmos is serverless and free tier is off.** Both are set in
-> `infra/main.parameters.json`, and both are decided at account creation —
+> `infra/main.parameters.json`, and both are decided at account creation -
 > switching afterwards means a new account and a data migration. Change
 > `cosmosMode` now or not at all.
 
@@ -177,7 +177,7 @@ federated credential in step 2 line up.
 
 Run **Deploy app** manually (Actions → Deploy app → Run workflow), or push any
 change under `app/`. It builds the image in ACR, deploys the template with that
-image — which creates the container app the first time — and polls `/api/health`
+image - which creates the container app the first time - and polls `/api/health`
 until the revision answers.
 
 `/api/health` returns 200 with counts of zero on an empty catalogue, so this
@@ -191,7 +191,7 @@ npm install
 npm run seed -- --endpoint https://<cosmosAccountName>.documents.azure.com:443/
 ```
 
-24 vendors, 33 apps, 86 log paths. Idempotent — re-running upserts by id. It
+24 vendors, 33 apps, 86 log paths. Idempotent - re-running upserts by id. It
 never deletes, so a record dropped from `scripts/seed-data.json` stays in the
 database.
 
@@ -250,8 +250,8 @@ Merge a PR into `main`. Path filters decide what moves:
 
 Every PR runs CI: typecheck, `next build`, a container build, and a boot check
 that exercises the routes. `next build` will happily compile a route tree that
-crashes at runtime — two different dynamic segment names on one path, for
-example — so the boot check is not ceremony.
+crashes at runtime - two different dynamic segment names on one path, for
+example - so the boot check is not ceremony.
 
 ## Local development
 
@@ -266,7 +266,7 @@ npm run dev            # http://localhost:3777
 Needs `az login` with an account listed in `developerPrincipalIds`.
 
 `LOCAL_ADMIN_BYPASS=true` short-circuits the role check so admin routes are
-reachable without a signed-in principal. No deployed configuration sets it — the
+reachable without a signed-in principal. No deployed configuration sets it - the
 Bicep never emits it.
 
 To exercise the container as it actually ships:
@@ -285,7 +285,7 @@ seeing; it is what a real outage looks like.
 
 ## Rollback
 
-**The application** — revisions, and this is the fast one:
+**The application** - revisions, and this is the fast one:
 
 ```bash
 az containerapp revision list -n <containerAppName> -g rg-wtla-prod -o table
@@ -296,11 +296,11 @@ az containerapp ingress traffic set -n <containerAppName> -g rg-wtla-prod \
 Seconds, and the previous revision is still warm. Reverting the commit is the
 follow-up, not the fix.
 
-**Infrastructure** — Bicep is incremental and declarative: revert the template
+**Infrastructure** - Bicep is incremental and declarative: revert the template
 and redeploy. It will not delete resources the template no longer mentions;
 remove those by hand.
 
-**Data** — Cosmos periodic backup, four-hourly with eight hours of retention.
+**Data** - Cosmos periodic backup, four-hourly with eight hours of retention.
 Restoring means opening a support request. If the catalogue becomes valuable,
 switch `backupPolicy` to `Continuous` for self-service point-in-time restore.
 

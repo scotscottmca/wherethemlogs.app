@@ -98,8 +98,8 @@ export function Scanner({
     if (!path) return;
     navigator.clipboard
       .writeText(path)
-      .then(() => setFlash(`${plate.app.name} — ${path} copied`))
-      .catch(() => setFlash("Clipboard unavailable — select the path and copy it"));
+      .then(() => setFlash(`${plate.app.name} - ${path} copied`))
+      .catch(() => setFlash("Clipboard unavailable - select the path and copy it"));
     setTimeout(() => setFlash(null), 2600);
   }, []);
 
@@ -148,7 +148,7 @@ export function Scanner({
           autoFocus={autoFocus}
           autoComplete="off"
           spellCheck={false}
-          placeholder="Scan an app name — teams, vscode, nginx…"
+          placeholder="Scan an app name - teams, vscode, nginx…"
           onChange={(e) => {
             setTouched(true);
             setQ(e.target.value);
@@ -178,7 +178,7 @@ export function Scanner({
               {flash ?? (
                 <>
                   {state === "loading" && "Scanning…"}
-                  {state === "error" && "Scanner offline — retry in a moment"}
+                  {state === "error" && "Scanner offline - retry in a moment"}
                   {state === "idle" && "Ready"}
                   {state === "ready" &&
                     (hits.length

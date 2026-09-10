@@ -57,7 +57,7 @@ export interface App {
   slug: string;
   name: string;
   aliases: string[];
-  /** Null means "inherit the vendor's icon" — resolved on read, never stored resolved. */
+  /** Null means "inherit the vendor's icon" - resolved on read, never stored resolved. */
   iconUrl: string | null;
   logPaths: LogPath[];
   createdAt: string;

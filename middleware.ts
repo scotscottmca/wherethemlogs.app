@@ -6,7 +6,7 @@ import { isAdmin } from "@/lib/server/auth";
  *
  * Container Apps' built-in auth runs in front of the container and injects the
  * signed-in principal; this decides what to do with it. Route handlers under
- * /api/admin re-check with `requireAdmin()` — this is the friendly redirect,
+ * /api/admin re-check with `requireAdmin()` - this is the friendly redirect,
  * that is the lock.
  */
 export function middleware(request: NextRequest) {

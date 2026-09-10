@@ -147,10 +147,10 @@ function PathRow({
       <span className="tag mono prow__label">{label}</span>
       <code className="prow__path">
         {path}
-        {note && <span className="prow__note">— {note}</span>}
+        {note && <span className="prow__note">- {note}</span>}
         {failed && (
           <span className="prow__note" role="status">
-            — Clipboard unavailable in this browser. Select the path above and copy it.
+            - Clipboard unavailable in this browser. Select the path above and copy it.
           </span>
         )}
       </code>

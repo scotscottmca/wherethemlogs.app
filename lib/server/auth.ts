@@ -76,7 +76,7 @@ export function isAdmin(request: Request): boolean {
 /** Throws unless the caller holds the admin role. Returns who they are. */
 export function requireAdmin(request: Request): ClientPrincipal {
   // Local development only, and only when explicitly switched on. No deployed
-  // configuration sets it — the Bicep never emits it.
+  // configuration sets it - the Bicep never emits it.
   if (process.env.LOCAL_ADMIN_BYPASS === "true") {
     return {
       identityProvider: "local",

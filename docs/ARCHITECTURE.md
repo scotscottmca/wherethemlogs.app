@@ -5,7 +5,7 @@ runs on.
 
 All Azure access is by **user-assigned managed identity**, created before
 anything that needs it. A system-assigned identity would be created *with* the
-container app, which makes its own role assignments circular — the app cannot
+container app, which makes its own role assignments circular - the app cannot
 pull its image from the registry until a role is granted to a principal that
 does not exist until the app is created. `AZURE_CLIENT_ID` on the container
 tells `DefaultAzureCredential` which identity to present.
@@ -21,7 +21,7 @@ flowchart LR
   end
 
   ACR[("Container Registry")] -. "image pull, managed identity" .-> CA
-  NEXT -- "managed identity" --> COSMOS[("Cosmos DB — serverless<br/>vendors · apps")]
+  NEXT -- "managed identity" --> COSMOS[("Cosmos DB - serverless<br/>vendors · apps")]
   NEXT -- "managed identity" --> BLOB[("Blob Storage<br/>icons, public read")]
   Browser -- "icon URLs" --> BLOB
   NEXT --> AI["Application Insights"]
@@ -29,7 +29,7 @@ flowchart LR
 
 ## Why there is no separate API
 
-There was one — an Azure Function App behind Static Web Apps — and it existed
+There was one - an Azure Function App behind Static Web Apps - and it existed
 for exactly one reason: the site was a static export, so it had no server of
 its own to talk to Cosmos with. The static export was itself forced by SWA's
 Next.js hybrid mode ignoring `staticwebapp.config.json`'s routing and role
@@ -56,12 +56,12 @@ one service that is no longer literally possible, and Container Apps replaces it
 with something that covers the same ground:
 
 **Revisions.** Every deploy creates a new revision. A bad one is a traffic shift
-away from undone, and the previous revision is still warm — faster and safer
+away from undone, and the previous revision is still warm - faster and safer
 than reverting a commit and waiting for a rebuild. Path filters still keep
 application and infrastructure deploys apart.
 
-If the API ever gets consumers other than this site — a CLI, an MDM
-integration — that is the moment to split it back out. All data access sits
+If the API ever gets consumers other than this site - a CLI, an MDM
+integration - that is the moment to split it back out. All data access sits
 behind `lib/server/`, imported only by route handlers and page components, so
 extracting it is a move rather than a rewrite.
 
@@ -85,14 +85,14 @@ apps      partition key /vendorId   one document per app, log paths inside it
 The account is **serverless**: billing is per request unit consumed rather than
 per RU/s reserved. With the catalogue cached in-process for 60 seconds, real
 database traffic is a couple of queries per replica per minute, so reserving
-capacity around the clock would be paying for idle. Free tier is off — it is
+capacity around the clock would be paying for idle. Free tier is off - it is
 limited to one account per subscription and this subscription's is spent
 elsewhere.
 
 Serverless is **immutable after the account is created**. Switching to
 provisioned later means a new account and a data migration, so if steady load
-ever makes reserved capacity cheaper — or autoscale, multi-region writes or
-availability zones become requirements — set `cosmosMode` to `provisioned`
+ever makes reserved capacity cheaper - or autoscale, multi-region writes or
+availability zones become requirements - set `cosmosMode` to `provisioned`
 *before* the first deployment. Everything else in the template is unaffected.
 
 **Log paths are embedded, not their own container.** They are always read with
@@ -106,14 +106,14 @@ The join happens in memory, which is free at this size.
 
 **`/vendorId` partitions the apps** because "every app for this vendor" is the
 admin portal's main query, and that key makes it single-partition. Search fans
-out, which is fine — it is served from cache.
+out, which is fine - it is served from cache.
 
 **Slug uniqueness is enforced in code, not by a unique key.** Cosmos unique keys
 are scoped to a partition, which does not match what a slug means: on `vendors`
 (partitioned by `/id`) every document is alone in its partition, so the
 constraint would do nothing; on `apps` it makes a slug unique only within one
 vendor. Slugs are URLs, so `lib/server/slugs.ts` checks the whole container on
-every write — one query, on a path that writes take and reads never do.
+every write - one query, on a path that writes take and reads never do.
 
 **Moving an app between vendors** changes its partition key, which Cosmos cannot
 do in place. `PATCH /api/admin/apps/{id}` with a new `vendorId` does the
@@ -140,7 +140,7 @@ immediately correct and the others catch up within the TTL.
 
 Process-local, with no cross-replica invalidation. If editors ever need writes
 visible everywhere instantly, the upgrade is the Cosmos change feed pushing an
-invalidation — not a shorter TTL.
+invalidation - not a shorter TTL.
 
 ## Authentication
 
@@ -153,7 +153,7 @@ invalidation — not a shorter TTL.
 Container Apps' built-in authentication signs the visitor in with Entra ID and
 injects the principal as `x-ms-client-principal`. The platform strips any
 client-supplied copy of that header, so what the app reads is what the platform
-wrote — unlike the previous design, where the Function App's own public
+wrote - unlike the previous design, where the Function App's own public
 hostname made the header forgeable. That whole class of hardening problem is
 gone with the second service.
 
@@ -166,16 +166,16 @@ non-admin gets the `/403` page with a 403; anyone else is redirected to
 `admin` app role on the app registration and it arrives in the token's `roles`
 claim. There is no invitation list to keep in sync.
 
-`requireAdmin()` in each handler is defence in depth — a route added under
+`requireAdmin()` in each handler is defence in depth - a route added under
 `/api/admin/` that someone forgets to match in middleware still fails closed.
 
 ## Cost
 
 | Resource | Tier | Roughly |
 | --- | --- | --- |
-| Container Apps | Consumption, 0.5 vCPU / 1 GiB, min 1 replica | ~$12–18/month |
+| Container Apps | Consumption, 0.5 vCPU / 1 GiB, min 1 replica | ~$12-18/month |
 | Container Registry | Basic | ~$5/month |
-| Cosmos DB | Serverless | ~$1–3/month at this traffic — billed per request unit |
+| Cosmos DB | Serverless | ~$1-3/month at this traffic - billed per request unit |
 | Storage | Standard LRS | pennies |
 | Application Insights | Pay-as-you-go | $0 under the 5 GB monthly grant |
 
@@ -196,7 +196,7 @@ For a staging environment, set it to 0.
   infrastructure deployment builds everything except the app and `deploy-app`
   creates it once it has pushed an image. There is deliberately no placeholder
   image: one listens on its own port and answers none of our health paths, so
-  the app would have to be created with a different ingress port and no probes —
+  the app would have to be created with a different ingress port and no probes -
   and `az containerapp update --image` changes neither, which leaves ingress
   pointed at a port nothing serves.
 - **`deploy-app` deploys the template, not just the image.** The image is not
@@ -204,8 +204,8 @@ For a staging environment, set it to 0.
   live in the template, and an image-only update leaves them wherever they were.
   `deploy-infra` reads the currently deployed image back in, so an
   infrastructure-only change never rolls the application back.
-- **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything —
-  the app, the seed script, local development — authenticates with Entra ID.
+- **Cosmos key auth is disabled** (`disableLocalAuth: true`). Everything -
+  the app, the seed script, local development - authenticates with Entra ID.
 - **Serverless caps a container at 5,000 RU/s and 1 TB.** Both are orders of
   magnitude beyond this catalogue, but they are the ceiling that would force the
   move to provisioned.

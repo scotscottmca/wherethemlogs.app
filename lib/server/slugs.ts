@@ -7,10 +7,10 @@ import { conflict } from "./errors";
  * Cosmos unique keys are scoped to a partition, which does not match what a
  * slug means here:
  *
- *   vendors  partitioned by /id       — every document is alone in its
+ *   vendors  partitioned by /id       - every document is alone in its
  *                                       partition, so a unique key enforces
  *                                       nothing at all
- *   apps     partitioned by /vendorId — the unique key makes a slug unique
+ *   apps     partitioned by /vendorId - the unique key makes a slug unique
  *                                       within one vendor, but two vendors
  *                                       could both own "chrome"
  *

@@ -6,7 +6,7 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 export default {
   // Without this, Next walks up looking for a workspace root and can settle on
-  // a parent directory that happens to hold a lockfile — which nests the
+  // a parent directory that happens to hold a lockfile - which nests the
   // standalone output somewhere the Dockerfile is not looking.
   outputFileTracingRoot: projectRoot,
   // Standalone bundles the server and only the dependencies it actually uses,

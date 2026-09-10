@@ -4,7 +4,7 @@ import "./components.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Where Them Logs App — log file locations for Windows, macOS and Linux",
+    default: "Where Them Logs App - log file locations for Windows, macOS and Linux",
     template: "%s · Where Them Logs App",
   },
   description:

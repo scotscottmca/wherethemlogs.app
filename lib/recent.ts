@@ -5,7 +5,7 @@ import { RECENT_KEY } from "./site";
 export type RecentSearch = { q: string; at: number };
 
 /**
- * Recent searches live in this browser only — never sent anywhere, and not a
+ * Recent searches live in this browser only - never sent anywhere, and not a
  * cookie. The privacy sheet says the same thing in the same words.
  */
 export function readRecent(): RecentSearch[] {
@@ -34,7 +34,7 @@ export function pushRecent(q: string): RecentSearch[] {
     window.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
     window.dispatchEvent(new CustomEvent("wtla:recent"));
   } catch {
-    /* Storage disabled or full — the list simply does not persist. */
+    /* Storage disabled or full - the list simply does not persist. */
   }
   return next;
 }

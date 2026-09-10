@@ -1,6 +1,6 @@
 # wherethemlogs.app
 
-A searchable index of application log file locations across Windows, macOS and Linux —
+A searchable index of application log file locations across Windows, macOS and Linux -
 every path qualified by installer type and architecture, printed exactly as the machine
 writes it.
 
@@ -11,9 +11,9 @@ unknown vintage.
 ## Layout
 
 ```
-app/                  pages, route handlers, middleware — Next.js 15
+app/                  pages, route handlers, middleware - Next.js 15
 components/  lib/     UI, shared model, server-only data access
-infra/                Azure resources — Bicep
+infra/                Azure resources - Bicep
 scripts/              seed data and the seeder
 docs/                 architecture, API reference, deployment
 ```
@@ -42,7 +42,7 @@ setup is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 | `/` | Aisle sign, scanner field with live type-ahead, recent additions, recent searches, zone filter |
 | `/search` | Full results, filterable by platform, installer, architecture and scope |
 | `/privacy` | Privacy and cookie notice |
-| `/admin` | Not built yet. The CRUD API behind it is — see [docs/API.md](docs/API.md). |
+| `/admin` | Not built yet. The CRUD API behind it is - see [docs/API.md](docs/API.md). |
 
 Keyboard: `/` focuses the scanner from anywhere, arrows walk the type-ahead, `Enter`
 commits to the full results, `Shift+Enter` copies the highlighted plate's first path.
@@ -51,7 +51,7 @@ commits to the full results, `Shift+Enter` copies the highlighted plate's first 
 
 `Vendor > App > LogPath`. One vendor has many apps; one app has many log paths,
 embedded on the app document. Every vendor carries an icon and every app may
-override it — `App.iconUrl: null` means *inherit the vendor's*, resolved on read.
+override it - `App.iconUrl: null` means *inherit the vendor's*, resolved on read.
 
 Currently **seed data**: 24 vendors, 33 apps, 86 log paths in
 `scripts/seed-data.json`, all real and verifiable, labelled as a demonstration
@@ -61,7 +61,7 @@ set in the footer and on the privacy page.
 npm run seed -- --endpoint https://<account>.documents.azure.com:443/
 ```
 
-Paths are stored byte for byte — `%LOCALAPPDATA%`, `~/Library/Logs`,
+Paths are stored byte for byte - `%LOCALAPPDATA%`, `~/Library/Logs`,
 `$XDG_STATE_HOME` are never expanded, because the machine being fixed is not
 this one.
 
@@ -77,15 +77,15 @@ names into one.
 
 - [ ] Register the Entra ID app, add the `admin` app role, and set `authClientId` / `authTenantId`. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
 - [ ] Choose the analytics provider. The consent bar and `/privacy` both state plainly that
-      one has not been chosen and that nothing is loaded either way — update both when it is.
+      one has not been chosen and that nothing is loaded either way - update both when it is.
 - [ ] Replace the seed catalogue with the real index.
 - [ ] Build the admin UI on top of the CRUD API.
-- [ ] Decide whether the repo goes public — every "request an app" link points at its issue tracker.
+- [ ] Decide whether the repo goes public - every "request an app" link points at its issue tracker.
 
 ## Infrastructure
 
 Azure Container Apps runs the image; Cosmos DB (serverless) and Blob Storage sit
-behind it, both reached by managed identity — no keys anywhere. Deploys are a
+behind it, both reached by managed identity - no keys anywhere. Deploys are a
 new revision, so rolling back is a traffic shift rather than a rebuild.
 
 Around **$20/month**. Why each piece, and what it costs, is in
@@ -100,5 +100,5 @@ Two rules worth knowing before you touch the CSS:
 
 - **Flat print, no exceptions.** No gradients, no shadows, no floating cards. Structure is
   stencilled rules and hazard tape. Signal cyan on near-black must not drift into neon glow.
-- **Two voices.** Archivo for anything human, Spline Sans Mono for anything machine-true —
+- **Two voices.** Archivo for anything human, Spline Sans Mono for anything machine-true -
   paths, codes, counts, filter values. Nothing else.

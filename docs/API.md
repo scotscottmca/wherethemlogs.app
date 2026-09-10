@@ -7,7 +7,7 @@ anonymous.
 
 **Server-rendered pages do not use this API.** `app/page.tsx` calls `summary()`
 and `app/search/page.tsx` calls `search()` from `lib/server/catalog.ts`
-directly, in-process. These routes exist for the browser — the type-ahead — and
+directly, in-process. These routes exist for the browser - the type-ahead - and
 for the admin portal.
 
 ---
@@ -71,8 +71,8 @@ types: string[]                  // distinct across logPaths
 | --- | --- |
 | `q` | Search term. Empty returns the whole index, alphabetically. |
 | `platform` | `windows` \| `macos` \| `linux`. Anything else means all. |
-| `type` | Repeatable, or comma-separated. Filters **stack** — every type must be true. |
-| `limit` | 1–100. Omit for everything. |
+| `type` | Repeatable, or comma-separated. Filters **stack** - every type must be true. |
+| `limit` | 1-100. Omit for everything. |
 
 Filters narrow the log paths as well as the apps: `platform=windows&type=msi`
 returns matching apps carrying only their Windows MSI paths, and drops apps
@@ -89,7 +89,7 @@ left with none.
 }
 ```
 
-`matched` counts name matches before platform and type filters — that is what
+`matched` counts name matches before platform and type filters - that is what
 drives "3 plates on the pick list · 12 match the query".
 
 ### `GET /api/summary`
@@ -159,7 +159,7 @@ PATCH /api/admin/vendors/8f2c… HTTP/1.1
 If-Match: "0000d1…"
 ```
 
-Omit it and the write applies to whatever is current — last write wins. Send a
+Omit it and the write applies to whatever is current - last write wins. Send a
 stale one and you get `412`, which is the admin portal's cue to reload and
 reapply rather than silently clobber a colleague.
 
@@ -168,7 +168,7 @@ reapply rather than silently clobber a colleague.
 | Method | Route | Notes |
 | --- | --- | --- |
 | `GET` | `/api/admin/vendors` | All vendors, by name |
-| `POST` | `/api/admin/vendors` | `{ name, slug?, iconUrl?, website? }` — slug derives from name when omitted |
+| `POST` | `/api/admin/vendors` | `{ name, slug?, iconUrl?, website? }` - slug derives from name when omitted |
 | `GET` | `/api/admin/vendors/{id}` | Includes `_etag` |
 | `PATCH` | `/api/admin/vendors/{id}` | Partial. Only the fields you send change. |
 | `DELETE` | `/api/admin/vendors/{id}` | See below |
@@ -183,10 +183,10 @@ once.
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| `GET` | `/api/admin/apps` | `?vendorId=` narrows to one partition — cheap. Without it, cross-partition. |
+| `GET` | `/api/admin/apps` | `?vendorId=` narrows to one partition - cheap. Without it, cross-partition. |
 | `POST` | `/api/admin/apps` | `{ vendorId, name, slug?, aliases?, iconUrl? }`. `404`s the vendor if it does not exist. Created with `logPaths: []`. |
 | `GET` | `/api/admin/apps/{id}` | `?vendorId=` skips a lookup |
-| `PATCH` | `/api/admin/apps/{id}` | Partial. `logPaths` is ignored here — use the log path endpoints. |
+| `PATCH` | `/api/admin/apps/{id}` | Partial. `logPaths` is ignored here - use the log path endpoints. |
 | `DELETE` | `/api/admin/apps/{id}` | Takes its log paths with it. No orphans possible. |
 
 `iconUrl: null` is a meaningful value, not an omission: it means *inherit the
@@ -210,7 +210,7 @@ one app. Pass `?vendorId=` to skip the partition lookup.
 `POST` returns `400` if the same `platform` + `path` + `variant` already exists
 on the app. The same path twice on one platform is a duplicate, not a variant.
 
-Create and update return `{ app, logPath }` — the whole app document comes back
+Create and update return `{ app, logPath }` - the whole app document comes back
 so the portal can hold the new `_etag`.
 
 ### Icons
@@ -226,7 +226,7 @@ Raw bytes, `Content-Type` one of `image/svg+xml`, `image/png`, `image/webp`,
 
 Write that `url` to a vendor's or app's `iconUrl`. The blob is immutable and
 cached for a year; replacing an icon means uploading a new one and repointing.
-Nothing garbage-collects the old blob — a cleanup job is deliberately not built
+Nothing garbage-collects the old blob - a cleanup job is deliberately not built
 yet.
 
 ---
@@ -251,12 +251,12 @@ Every failure is the same shape:
 
 ## Validation rules worth knowing
 
-- `slug` — `^[a-z0-9][a-z0-9-]*$`, derived from `name` when omitted, and unique
+- `slug` - `^[a-z0-9][a-z0-9-]*$`, derived from `name` when omitted, and unique
   across the whole container. That last part is enforced in the route handlers,
   not by the database: Cosmos unique keys are scoped to a partition, so on
   `vendors` (partitioned by `/id`) one would enforce nothing, and on `apps`
   (partitioned by `/vendorId`) it only makes a slug unique within one vendor. A
   clash returns `409` naming the record that already holds it.
-- `path` — up to 1024 characters, stored **byte for byte**. Environment variables are never expanded and never normalised.
-- `types` — validated against the known list; unknown values are rejected with the full allowed set in `details.allowed`.
-- `iconUrl` / `website` — must parse as URLs and must be `https:`.
+- `path` - up to 1024 characters, stored **byte for byte**. Environment variables are never expanded and never normalised.
+- `types` - validated against the known list; unknown values are rejected with the full allowed set in `details.allowed`.
+- `iconUrl` / `website` - must parse as URLs and must be `https:`.

@@ -1,4 +1,4 @@
-@description('Lets a principal pull images. AcrPull, nothing more — the container never pushes.')
+@description('Lets a principal pull images. AcrPull, nothing more - the container never pushes.')
 param registryName string
 param principalId string
 

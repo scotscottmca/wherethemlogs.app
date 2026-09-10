@@ -8,7 +8,7 @@ type Choice = "granted" | "denied";
 
 /**
  * Usage-analytics consent. Both answers are the same button at the same size in
- * the same colour — the decline is not a link hiding under the accept.
+ * the same colour - the decline is not a link hiding under the accept.
  */
 export function Consent() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export function Consent() {
       if (stored !== "granted" && stored !== "denied") setOpen(true);
     } catch {
       // Storage blocked: ask, but the answer will not persist, so do not pretend
-      // it will — nothing is loaded either way until it is answered.
+      // it will - nothing is loaded either way until it is answered.
       setOpen(true);
     }
   }, []);
