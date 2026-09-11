@@ -74,6 +74,12 @@ param adminGithubLogins string = ''
 @description('The public origin once a custom domain is bound, e.g. https://wherethemlogs.app. Empty uses the app built-in default.')
 param siteUrl string = ''
 
+@description('Custom hostname served by the app. Empty means none.')
+param customDomain string = ''
+
+@description('Certificate already uploaded to the environment for customDomain. Both must be set to bind.')
+param customDomainCertificateName string = ''
+
 @description('Entra ID object IDs that should get Cosmos data-plane access for local development and seeding. Leave empty in CI.')
 param developerPrincipalIds array = []
 
@@ -198,6 +204,8 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     authClientSecret: authClientSecret
     adminGithubLogins: adminGithubLogins
     siteUrl: siteUrl
+    customDomain: customDomain
+    customDomainCertificateName: customDomainCertificateName
   }
   // The image pull happens as the app starts, so the grant has to be done.
   dependsOn: [acrPull, cosmosAccess, blobAccess]

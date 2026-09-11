@@ -76,6 +76,22 @@ Set it once a custom domain is bound.
 ''')
 param siteUrl string = ''
 
+@description('''
+Custom hostname served by this app, e.g. wherethemlogs.app. Empty means none.
+''')
+param customDomain string = ''
+
+@description('''
+Name of the certificate already uploaded to the managed environment for
+customDomain, e.g. a Cloudflare Origin Certificate.
+
+The binding is declared here rather than left to "az containerapp hostname
+bind" because every deploy re-applies this template. A domain bound by hand
+and absent from the template would be dropped by the next push, silently.
+Both this and customDomain must be set for the binding to exist.
+''')
+param customDomainCertificateName string = ''
+
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
   location: location
@@ -98,6 +114,8 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 // All three are needed. A client id with no secret produces an authConfig that
 // references a secret the app does not carry, which fails the deployment rather
 // than degrading.
+var bindCustomDomain = !empty(customDomain) && !empty(customDomainCertificateName)
+
 var authConfigured = authProvider != 'none' && !empty(authClientId) && !empty(authClientSecret)
 var authSecretName = authProvider == 'github' ? 'github-client-secret' : 'aad-client-secret'
 var effectiveAuthProvider = authConfigured ? authProvider : 'none'
@@ -150,6 +168,19 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
         traffic: [
           { latestRevision: true, weight: 100 }
         ]
+        customDomains: bindCustomDomain
+          ? [
+              {
+                name: customDomain
+                certificateId: resourceId(
+                  'Microsoft.App/managedEnvironments/certificates',
+                  environmentName,
+                  customDomainCertificateName
+                )
+                bindingType: 'SniEnabled'
+              }
+            ]
+          : []
       }
       secrets: authConfigured
         ? [

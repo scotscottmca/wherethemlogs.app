@@ -388,62 +388,70 @@ value to allowlist.
 
 </details>
 
-### 8. Bind the custom domain
+### 8. Serve it at wherethemlogs.app, behind Cloudflare
 
-DNS is on Cloudflare. The apex record must be **DNS only**, not proxied.
+DNS is on Cloudflare and the apex is **proxied** (orange cloud). Browsers talk
+to Cloudflare; Cloudflare talks to Azure over TLS.
 
-`wherethemlogs.app` is an apex domain, so it needs an A record rather than a
-CNAME, plus a TXT record proving you own it.
+The certificate on the Azure side is a **Cloudflare Origin Certificate**, not an
+Azure managed one. Azure revalidates DNS whenever a managed certificate renews,
+and it cannot see its own IP through the proxy, so a managed certificate behind
+the orange cloud fails to renew and TLS breaks months later. An origin
+certificate lasts up to 15 years and is never revalidated. Only Cloudflare
+trusts it, which is fine: only Cloudflare ever connects to the origin.
 
-| Type | Name | Value | Proxy |
-| --- | --- | --- | --- |
-| A | `@` | `20.76.241.92` | **DNS only** |
-| TXT | `asuid` | `D41D304C76089783B3534CD4B3E7C9D51C07E909DB2826C331ACC7101FB7717B` | n/a |
+**1. Create the origin certificate.** Cloudflare, SSL/TLS, Origin Server,
+Create certificate. RSA, hostnames `wherethemlogs.app` and
+`*.wherethemlogs.app`, 15 years. Save the certificate as `origin.pem` and the
+private key as `origin.key`. The key is shown once.
 
-The A record points at the **environment's** static IP, shared by every app in
-it and stable unless the environment is recreated. Read both back rather than
-trusting this table if either has changed:
+**2. Convert it and upload it to the environment**, under a fixed name the
+template refers to:
 
 ```powershell
-az containerapp env show -n cae-wtla-prod-s7gilgc3beox2 -g rg-wtla-prod `
-  --query properties.staticIp -o tsv
-az containerapp show -n ca-wtla-prod -g rg-wtla-prod `
-  --query customDomainVerificationId -o tsv
+$PFX_PASSWORD = [guid]::NewGuid().ToString()
+openssl pkcs12 -export -out origin.pfx -inkey origin.key -in origin.pem `
+  -passout "pass:$PFX_PASSWORD"
+
+az containerapp env certificate upload -g rg-wtla-prod `
+  -n cae-wtla-prod-s7gilgc3beox2 `
+  --certificate-name wherethemlogs-origin `
+  --certificate-file origin.pfx --password $PFX_PASSWORD
+
+Remove-Item origin.pfx, origin.key
+Remove-Variable PFX_PASSWORD
 ```
 
-> **The orange cloud breaks this.** With Cloudflare proxying, the apex resolves
-> to Cloudflare's IPs and Azure refuses the binding:
->
-> ```
-> (FailedARecordValidation) Not found A record of hostname 'wherethemlogs.app'
-> directly pointing to IP address '20.76.241.92'. Found A record(s) of the
-> hostname are 104.21.85.144,172.67.206.169.
-> ```
->
-> Those are Cloudflare's. Set the record to **DNS only** and wait for it to
-> propagate before binding.
+Keep `origin.pem` and `origin.key` somewhere safe if you want to re-upload later
+without reissuing, or delete them and reissue from Cloudflare when needed.
 
-Confirm it is really resolving to Azure before you try:
+**3. Grey-cloud the apex, once.** Azure checks that the A record points at the
+environment when a domain is first added, and it cannot see that through the
+proxy - that is the `FailedARecordValidation` error. Set the apex record to
+**DNS only** and confirm:
 
 ```powershell
 dig +short wherethemlogs.app A     # must return 20.76.241.92
 ```
 
-Then bind it and let Azure issue a free managed certificate:
+The `asuid` TXT record must also be present; it already is.
 
-```powershell
-az containerapp hostname add -n ca-wtla-prod -g rg-wtla-prod `
-  --hostname wherethemlogs.app
+**4. Bind it through the template.** Set the certificate name in
+`infra/main.parameters.json`:
 
-az containerapp hostname bind -n ca-wtla-prod -g rg-wtla-prod `
-  --hostname wherethemlogs.app --environment cae-wtla-prod-s7gilgc3beox2 `
-  --validation-method HTTP
+```json
+"customDomain":                { "value": "wherethemlogs.app" },
+"customDomainCertificateName": { "value": "wherethemlogs-origin" }
 ```
 
-**Then add the new callback to the Entra registration**, or sign-in breaks the
-moment anyone uses the custom domain. The platform builds the callback from the
-host it was reached on, so a request to `wherethemlogs.app` posts back to a URI
-Entra has never seen. Keep both while you cut over:
+and push, or run **Deploy infrastructure** with mode `deploy`. The binding
+belongs in the template, not in `az containerapp hostname bind`: every push
+redeploys the whole container app from the template, and a domain bound by hand
+but absent from it would be dropped on the next deploy, silently.
+
+**5. Add the callback to the Entra registration**, if not already done. The
+platform builds the callback from the host it was reached on, so without this
+sign-in breaks the moment anyone uses the domain:
 
 ```powershell
 az ad app update --id $CLIENT_ID --web-redirect-uris `
@@ -451,42 +459,33 @@ az ad app update --id $CLIENT_ID --web-redirect-uris `
   "https://wherethemlogs.app/.auth/login/aad/callback"
 ```
 
-`siteUrl` in `infra/main.parameters.json` is already
-`https://wherethemlogs.app`. It only feeds absolute URLs in the page metadata,
-`robots.txt` and the sitemap, so it is safe to set before DNS resolves.
+**6. Turn the proxy back on and lock the TLS mode.** Orange-cloud the apex, then
+Cloudflare, SSL/TLS, Overview: **Full (strict)**. Anything weaker either skips
+certificate verification or sends plain HTTP to the origin.
 
-#### Why DNS only, and not just for the binding
+**7. Confirm a redeploy keeps the binding.** Run **Deploy app** once more with
+the proxy on, then:
 
-Azure revalidates DNS when the managed certificate renews, roughly every six
-months. With the proxy on at that moment the renewal fails, and TLS breaks some
-weeks later with nothing having changed that day. Staying DNS only means the
-certificate renews itself forever and nobody has to remember.
+```powershell
+az containerapp hostname list -n ca-wtla-prod -g rg-wtla-prod -o table
+Invoke-RestMethod https://wherethemlogs.app/api/live
+```
 
-The cost is Cloudflare's cache, WAF and DDoS scrubbing. The cache was doing
-little here regardless: the pages are `force-dynamic` and render per request.
+This is the one step whose outcome is not known in advance. If a redeploy with
+the proxy on fails on domain validation, grey-cloud for deploys that touch the
+container app, or say so and the binding moves out of the per-push deploy.
 
-<details>
-<summary>If the proxy is ever turned back on</summary>
+#### Sign-in behind the proxy
 
-Two things become necessary, and the renewal problem above comes with them.
-
-Cloudflare's SSL/TLS mode must be **Full (strict)**, or it will not verify the
-Azure certificate on the origin.
-
-The platform's auth builds redirect URIs from the `Host` it sees, which behind a
-proxy is the proxy's rather than the browser's. That produces a redirect loop or
-a callback mismatch until it is told to read `X-Forwarded-Host`:
+Cloudflare forwards the original `Host` header unchanged, so the platform sees
+`wherethemlogs.app` and builds the right callback without extra configuration.
+Only if sign-in loops or lands on the container's own hostname does it need to
+be told to read forwarded headers instead:
 
 ```powershell
 az containerapp auth update -n ca-wtla-prod -g rg-wtla-prod `
   --proxy-convention Standard
 ```
-
-To avoid the renewal dance entirely, issue a Cloudflare Origin Certificate and
-upload it to Container Apps as a bring-your-own certificate rather than using the
-managed one. Azure then never revalidates DNS.
-
-</details>
 
 ## After the first run
 

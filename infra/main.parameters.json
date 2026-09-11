@@ -39,6 +39,12 @@
     },
     "siteUrl": {
       "value": "https://wherethemlogs.app"
+    },
+    "customDomain": {
+      "value": "wherethemlogs.app"
+    },
+    "customDomainCertificateName": {
+      "value": ""
     }
   }
 }
