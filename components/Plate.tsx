@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconCopy, IconCheck, IconFlag } from "./Icons";
 import { PLATFORM_META, type LogPath, type Plate as PlateData, type Platform } from "@/lib/api";
@@ -80,7 +81,9 @@ export function Plate({
             />
           )}
           <h3 className="plate__name">
-            {app.name}
+            <Link href={`/apps/${app.slug}`} style={{ textDecoration: "none" }}>
+              {app.name}
+            </Link>
             {/* Visible heading text stays just the app name (the zone band already
                 shows the platform); the hidden part gives each of an app's several
                 cards a distinct, non-repeating name for screen readers and search

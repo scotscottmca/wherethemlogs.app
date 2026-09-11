@@ -21,12 +21,49 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
-  const { q } = await searchParams;
+  const { q, platform, type } = await searchParams;
+  const filtered = Boolean(platform) || Boolean(type);
+  const canonical = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
+
+  if (!q) {
+    return {
+      title: "Browse the index",
+      description:
+        "Every application in the index, with log file locations for Windows, macOS and Linux, filterable by installer type and architecture.",
+      alternates: { canonical },
+      openGraph: { url: canonical },
+      ...(filtered ? { robots: { index: false, follow: true } } : {}),
+    };
+  }
+
+  // Name the app when the query clearly names one - "Google Chrome log file
+  // locations" reads better in results than the raw query ever will. Falls
+  // back to the query itself, including when search() finds nothing. The
+  // same call also drives the empty-results noindex check below, so there is
+  // only one snapshot read for this whole function.
+  let appName: string | undefined;
+  let noResults = false;
+  try {
+    const { results } = await search({ q, platform: "all", types: [] });
+    noResults = results.length === 0;
+    const top = results[0];
+    if (top) {
+      const needle = q.trim().toLowerCase();
+      const haystacks = [top.name, ...top.aliases].map((s) => s.toLowerCase());
+      if (haystacks.includes(needle)) appName = top.name;
+    }
+  } catch {
+    // Snapshot unavailable - fall back to the query-based title below, and
+    // keep this out of the index like a soft 404.
+    noResults = true;
+  }
+
   return {
-    title: q ? `“${q}” - results` : "Browse the index",
-    description: q
-      ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
-      : undefined,
+    title: appName ? `${appName} log file locations` : `Log file locations matching "${q}"`,
+    description: `Log file locations for ${q}, qualified by platform, installer type and architecture.`,
+    alternates: { canonical },
+    openGraph: { url: canonical },
+    ...(filtered || noResults ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
