@@ -152,7 +152,7 @@ export function planImport(
 
   const vendorBySlug = new Map([...vendors.values()].map((v) => [v.slug, v]));
   const appBySlug = new Map(apps.map((a) => [a.slug, a]));
-  const seenVendors = new Set<string>();
+  const seenVendors = new Map<string, Vendor>();
   const seenApps = new Map<string, string>();
   /** Vendors an app in the file lands under, and how many apps each existing vendor loses. */
   const receiving = new Set<string>();
@@ -181,15 +181,12 @@ export function planImport(
     if (!input) return;
 
     const slug = input.slug!;
-    if (seenVendors.has(slug)) {
-      plan.errors.push(`${vWhere}: a second vendor with the slug "${slug}". Merge the two entries.`);
-      return;
-    }
-    seenVendors.add(slug);
-
     const existing = vendorBySlug.get(slug);
-    let vendor: Vendor;
-    if (existing) {
+    let vendor = seenVendors.get(slug);
+    if (vendor) {
+      // A repeat entry is a writing convenience: its apps join the first entry's.
+      plan.warnings.push(`${vWhere}: repeated in the file; its apps were merged into the first entry.`);
+    } else if (existing) {
       vendor = { ...bare(existing), ...input, name: input.name!, slug } as Vendor;
       if (sameVendor(existing, vendor)) plan.vendors.unchanged++;
       else {
@@ -210,6 +207,7 @@ export function planImport(
       plan.vendors.create.push(vendor.name);
       vendorWrites.push({ kind: "vendor", doc: vendor });
     }
+    seenVendors.set(slug, vendor);
 
     if (fv.apps !== undefined && !Array.isArray(fv.apps)) {
       plan.errors.push(`${vWhere}: "apps" must be an array.`);

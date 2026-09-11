@@ -268,12 +268,34 @@ The admin portal drives both from `/admin/import`. The file is vendors > apps > 
             { "os": "all", "path": "~/.contoso/agent/" }
           ],
           "notes": ["Verbose logging is off until switched on in Settings."]
+        },
+        {
+          "name": "Contoso Agent Classic",
+          "aliases": ["Contoso Agent v1"],
+          "logs": [
+            {
+              "os": "windows",
+              "path": "%PROGRAMDATA%\\Contoso\\Agent\\v1\\agent.log",
+              "what": "Agent log",
+              "note": "Only present when the v1 MSI was used to install",
+              "variant": "Classic (v1)",
+              "scope": "per-machine",
+              "types": ["msi", "x64"]
+            }
+          ]
         }
       ]
     }
   ]
 }
 ```
+
+Two apps can share one vendor object, as above - vendors and apps are both
+matched by slug, so this is only a convenience for writing the file, not a
+grouping requirement. Two apps that are really rival products (Rectangle vs
+Magnet, Ice vs Bartender) belong under their own vendor even if the source
+material describes them together; two names that are one tightly coupled tool
+(APT / dpkg) stay one app under one vendor.
 
 | File key | Stored as | |
 | --- | --- | --- |
@@ -286,7 +308,9 @@ An export also writes the optional keys that make a round trip lossless: vendor
 `aliases`, `icon`; log `note`, `variant`, `types`, `scope`.
 
 - **Matching.** Vendors and apps match by slug, derived from `name` unless the
-  file gives one. An app found under a different vendor is moved there. Log
+  file gives one. A vendor the file repeats is merged: its apps join the first
+  entry, which is the one whose `website` and `icon` count. An app found under
+  a different vendor is moved there. Log
   paths match by platform and path (and variant, when the file gives one), and
   a matched path keeps its id.
 - **Missing versus empty.** A missing key leaves the stored value alone; an empty
