@@ -23,6 +23,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { q, platform, type } = await searchParams;
   const filtered = Boolean(platform) || Boolean(type);
+  const canonical = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
 
   // Same call the page component makes for its unfiltered pool - it reads the
   // in-process snapshot, so this costs nothing extra. A query with zero
@@ -42,6 +43,8 @@ export async function generateMetadata({
     description: q
       ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
       : undefined,
+    alternates: { canonical },
+    openGraph: { url: canonical },
     ...(filtered || noResults ? { robots: { index: false, follow: true } } : {}),
   };
 }

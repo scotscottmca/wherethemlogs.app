@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Privacy & cookies",
   description:
     "What Where Them Logs App stores, what it does not, and how to decline the analytics cookie.",
+  alternates: { canonical: "/privacy" },
+  openGraph: { url: "/privacy" },
 };
 
 /** The laminated notice on the aisle wall: black ink on label stock. */

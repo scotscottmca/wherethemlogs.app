@@ -21,7 +21,11 @@ export async function generateMetadata({
   searchParams: Promise<{ platform?: string }>;
 }): Promise<Metadata> {
   const { platform } = await searchParams;
-  return platform ? { robots: { index: false, follow: true } } : {};
+  return {
+    alternates: { canonical: "/" },
+    openGraph: { url: "/" },
+    ...(platform ? { robots: { index: false, follow: true } } : {}),
+  };
 }
 
 export default async function Home({
