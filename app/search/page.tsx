@@ -25,6 +25,19 @@ export async function generateMetadata({
   const filtered = Boolean(platform) || Boolean(type);
   const canonical = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
 
+  // Same call the page component makes for its unfiltered pool - it reads the
+  // in-process snapshot, so this costs nothing extra. A query with zero
+  // matches (or a catalogue that can't answer) renders a "nothing found"
+  // page: still useful to a person, but a soft 404 to a crawler, so keep it
+  // out of the index without changing the 200 status.
+  let noResults = false;
+  try {
+    const pool = await search({ q: (q ?? "").slice(0, 120), platform: "all", types: [] });
+    noResults = pool.results.length === 0;
+  } catch {
+    noResults = true;
+  }
+
   return {
     title: q ? `“${q}” - results` : "Browse the index",
     description: q
@@ -32,7 +45,7 @@ export async function generateMetadata({
       : undefined,
     alternates: { canonical },
     openGraph: { url: canonical },
-    ...(filtered ? { robots: { index: false, follow: true } } : {}),
+    ...(filtered || noResults ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
