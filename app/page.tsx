@@ -12,6 +12,18 @@ import { requestAppUrl } from "@/lib/site";
 // shell, and the catalogue is in the HTML a crawler receives.
 export const dynamic = "force-dynamic";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wherethemlogs.app";
+
+// The values here are all static and server-controlled, but a </script>
+// escape is cheap insurance for any JSON-LD block.
+const websiteJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Where Them Logs App",
+  alternateName: "wherethemlogs.app",
+  url: `${siteUrl}/`,
+}).replace(/</g, "\\u003c");
+
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 
 export default async function Home({
@@ -41,6 +53,10 @@ export default async function Home({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: websiteJsonLd }}
+      />
       <Header />
       <ZoneTabs
         active={platform}
