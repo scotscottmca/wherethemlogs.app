@@ -226,7 +226,21 @@ if (-not $SITE) { throw "Could not read the container app FQDN. Is ca-wtla-prod 
 
 az ad app create --display-name "Where Them Logs App" `
   --web-redirect-uris "https://$SITE/.auth/login/aad/callback" `
-  --sign-in-audience AzureADMyOrg
+  --sign-in-audience AzureADMyOrg `
+  --enable-id-token-issuance true
+```
+
+`--enable-id-token-issuance` is not optional and is easy to miss, because the
+portal's web-app wizard ticks it for you while the CLI does not. The platform
+signs people in with `response_type=code id_token` and `response_mode=form_post`,
+so without it Entra posts back to the callback with no ID token and the whole
+thing ends as a bare `401` on `POST /.auth/login/aad/callback` - which names
+nothing and looks like a bad client secret.
+
+On a registration that already exists:
+
+```powershell
+az ad app update --id $CLIENT_ID --enable-id-token-issuance true
 ```
 
 Then keep the ids the next steps need:
@@ -317,6 +331,16 @@ az deployment group create `
   --parameters authClientSecret=$SECRET `
   --query properties.outputs
 ```
+
+**If sign-in ends in `401` on `POST /.auth/login/aad/callback`**, check ID token
+issuance first - it is the one setting `az ad app create` leaves off:
+
+```powershell
+az ad app show --id $CLIENT_ID --query "web.implicitGrantSettings" -o json
+```
+
+`enableIdTokenIssuance` must be `true`. The client secret, the redirect URI and
+the role assignment can all be perfect and it will still fail without it.
 
 **What each refusal looks like**, so none of them reads as a bug:
 

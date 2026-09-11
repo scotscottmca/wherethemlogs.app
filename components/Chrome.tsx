@@ -6,7 +6,6 @@ import { requestAppUrl } from "@/lib/site";
 export function Header() {
   return (
     <header>
-      <div className="hazard" role="presentation" />
       <div className="hdr">
         <Link href="/" className="hdr__id" aria-label="Where Them Logs App - home">
           <Mark size={30} />
@@ -113,7 +112,7 @@ export function ZoneSwatch({ zone, size = 11 }: { zone: Platform | "all"; size?:
 export function Footer({ entryCount }: { entryCount: number | null }) {
   return (
     <footer className="foot no-print">
-      <div className="hazard" role="presentation" />
+      <div className="edge" role="presentation" />
       <div className="foot__row">
         <nav className="foot__nav tag mono" aria-label="Footer">
           <Link href="/">Index</Link>

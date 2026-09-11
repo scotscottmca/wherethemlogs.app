@@ -39,7 +39,7 @@ export function Consent() {
 
   return (
     <aside className="consent no-print" aria-label="Cookie consent">
-      <div className="hazard" role="presentation" />
+      <div className="edge" role="presentation" />
       <div className="consent__row">
         <div className="consent__copy">
           <h2 className="consent__h">Usage cookies</h2>

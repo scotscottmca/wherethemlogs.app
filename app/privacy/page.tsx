@@ -16,7 +16,6 @@ export default function Privacy() {
     <>
       <Header />
       <main className="sheet">
-        <div className="hazard" role="presentation" />
         <div className="sheet__inner">
           <div className="sheet__head">
             <h1 className="sheet__h1">

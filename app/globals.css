@@ -168,15 +168,11 @@ input[type="search"]::-webkit-search-decoration {
   font-variant-numeric: tabular-nums;
 }
 
-/* --- Hazard banding ------------------------------------------------------ */
-
-.hazard {
-  height: 10px;
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--hivis) 0 12px,
-    var(--ink) 12px 24px
-  );
+/* The page's bottom edge, and the top edge of anything docked over it. Two
+   pixels of signal, on the rule weight the rest of the system already uses. */
+.edge {
+  height: var(--rule-heavy);
+  background: var(--hivis);
 }
 
 /* --- Page frame ---------------------------------------------------------- */
