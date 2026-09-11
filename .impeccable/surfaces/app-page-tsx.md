@@ -51,3 +51,5 @@ Raises carried in from the weighed hand, each named for its donor:
 - GitHub owner/repo for the request link (single placeholder constant).
 - Analytics vendor behind the usage-tracking cookie - the consent prompt and privacy page must not name one until decided.
 - Whether entries carry contributor attribution or verification dates.
+
+**COPY (2026-09-11):** Interface text is plain, at the user's request - Catalogue, Add, Delete, Platform filter, Search for an app, log locations tracked. Warehouse terms survive only in class names and the visuals.

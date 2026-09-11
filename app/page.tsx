@@ -61,7 +61,7 @@ export default async function Home({
               <span className="sign__countNum">
                 {data ? String(data.apps).padStart(3, "0") : "---"}
               </span>
-              <span className="tag mono">apps racked</span>
+              <span className="tag mono">apps tracked</span>
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default async function Home({
               <div className="rackNote">
                 <p style={{ margin: 0 }}>
                   The catalogue is not answering. The index is still there - reload in a
-                  moment, or search anyway and the scanner will retry.
+                  moment, or search anyway and it will retry.
                 </p>
               </div>
             ) : recent.length ? (
@@ -111,7 +111,7 @@ export default async function Home({
             ) : (
               <div className="rackNote">
                 <p style={{ margin: 0 }}>
-                  Nothing added to this zone yet. Switch the zone filter above, or request
+                  Nothing added for this platform yet. Switch the platform filter above, or request
                   the application you were looking for.
                 </p>
               </div>

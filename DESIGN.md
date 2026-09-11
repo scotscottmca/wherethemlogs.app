@@ -280,6 +280,7 @@ This is deliberately not a toast, not a row flash, not a button label swap, not 
 ## Do's and Don'ts
 
 ### Do:
+- **Do** write interface copy in plain words - search, add, delete, platform, log locations. The warehouse lives in the visuals (racking, plates, zone colours), never in vocabulary a visitor has to decode.
 - **Do** commit signal cyan (`#22d3ee`) at region scale - a whole bar, tab, plate, or button - with near-black type on it.
 - **Do** print every path in `bone` (or `ink` on the confirmed cyan plate) at full contrast, in Spline Sans Mono.
 - **Do** give every zone all three signals: colour, its `ZoneSwatch` fill pattern, and its three-letter code.

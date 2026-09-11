@@ -2036,3 +2036,53 @@ button.tog {
 .void__acts .btn {
   margin-top: 0;
 }
+
+/* --- Import preview ------------------------------------------------------ */
+/* What a file would change, printed as counts and then the names behind them.
+   Long groups start folded so the counts stay the first thing read. */
+
+.admPlan {
+  width: 100%;
+}
+.admPlan .whoami {
+  margin: 0;
+}
+.admPlan__file {
+  color: var(--bone);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.admPlan__group {
+  width: 100%;
+}
+.admPlan__sum {
+  cursor: pointer;
+  list-style: none;
+  color: var(--bone-dim);
+  padding-bottom: 0.4rem;
+}
+.admPlan__sum::-webkit-details-marker {
+  display: none;
+}
+.admPlan__sum::after {
+  content: " +";
+  color: var(--bone-faint);
+}
+.admPlan__group[open] > .admPlan__sum::after {
+  content: " -";
+}
+.admPlan__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  border-top: var(--rule) solid var(--ink-rule);
+}
+.admPlan__list li {
+  padding: 0.4rem 0.7rem;
+  border-bottom: var(--rule) solid var(--ink-rule);
+  color: var(--bone-dim);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}

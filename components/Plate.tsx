@@ -47,7 +47,7 @@ export function Plate({
 
   // Qualifiers are per path; the foot prints the union across this platform.
   const types = [...new Set(logPaths.flatMap((p) => p.types))];
-  const scopes = [...new Set(logPaths.map((p) => p.scope))];
+  const scopes = [...new Set(logPaths.flatMap((p) => (p.scope ? [p.scope] : [])))];
 
   return (
     <article
@@ -161,7 +161,7 @@ function PathRow({
         aria-label={`Copy the ${label} path`}
       >
         <IconCopy size={13} />
-        Scan
+        Copy
       </button>
     </div>
   );

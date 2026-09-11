@@ -9,11 +9,11 @@ export default function NotFound() {
       <main className="rack">
         <div className="void" style={{ paddingInline: 0 }}>
           <p className="tag mono" style={{ margin: 0 }}>
-            Bay 404
+            Error 404
           </p>
           <h1 className="void__h">No such location</h1>
           <p className="void__p">
-            Nothing is racked at this address. The index is the fastest way back.
+            There is nothing at this address. The index is the fastest way back.
           </p>
           <Link className="btn tag mono" href="/">
             Back to the index

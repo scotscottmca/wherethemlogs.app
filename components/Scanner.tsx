@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { IconScan, IconClose, IconArrow } from "./Icons";
+import { IconSearch, IconClose, IconArrow } from "./Icons";
 import { Plate } from "./Plate";
 import { pushRecent } from "@/lib/recent";
 import { requestAppUrl } from "@/lib/site";
@@ -135,7 +135,7 @@ export function Scanner({
           commit(q);
         }}
       >
-        <IconScan size={22} />
+        <IconSearch size={22} />
         <label htmlFor={`${listId}-in`} className="sr">
           Application name
         </label>
@@ -148,7 +148,7 @@ export function Scanner({
           autoFocus={autoFocus}
           autoComplete="off"
           spellCheck={false}
-          placeholder="Scan an app name - teams, vscode, nginx…"
+          placeholder="Search for an app - teams, vscode, nginx…"
           onChange={(e) => {
             setTouched(true);
             setQ(e.target.value);
@@ -165,7 +165,7 @@ export function Scanner({
         <span className="scan__hint tag mono" id={`${listId}-hint`}>
           <span>Press</span>
           <kbd className="scan__key">/</kbd>
-          <span>to scan ·</span>
+          <span>to search ·</span>
           <kbd className="scan__key">↵</kbd>
           <span>for all results</span>
         </span>
@@ -177,13 +177,13 @@ export function Scanner({
             <span className="tag mono" role="status">
               {flash ?? (
                 <>
-                  {state === "loading" && "Scanning…"}
-                  {state === "error" && "Scanner offline - retry in a moment"}
+                  {state === "loading" && "Searching…"}
+                  {state === "error" && "Search is offline - retry in a moment"}
                   {state === "idle" && "Ready"}
                   {state === "ready" &&
                     (hits.length
                       ? `${hits.length} shown · highlighted: ${hits[cursor]?.app.name ?? ""} · shift+↵ copies`
-                      : "No plate on this rack")}
+                      : "No matches")}
                 </>
               )}
             </span>
@@ -197,10 +197,10 @@ export function Scanner({
 
           {state === "ready" && hits.length === 0 && (
             <div className="ahead__empty">
-              <h3 className="ahead__emptyH">Nothing racked under “{q.trim()}”</h3>
+              <h3 className="ahead__emptyH">Nothing found for “{q.trim()}”</h3>
               <p className="ahead__emptyP">
-                Check the spelling, widen the zone filter, or open a request and we will
-                rack it.
+                Check the spelling, switch the platform filter to all, or open a request and we
+                will add it.
               </p>
               <a
                 className="btn tag mono"

@@ -12,6 +12,7 @@ import { requestAppUrl } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+const pathCount = (list: ReturnType<typeof toPlates>) => list.reduce((n, p) => n + p.logPaths.length, 0);
 
 type SP = { q?: string; platform?: string; type?: string | string[] };
 
@@ -100,8 +101,8 @@ export default async function Results({ searchParams }: { searchParams: Promise<
             <p className="tag mono" style={{ margin: 0 }}>
               {failed
                 ? "The catalogue is not answering"
-                : `${plates.length} ${plates.length === 1 ? "plate" : "plates"} on the pick list${
-                    hasFilters ? ` · ${poolPlates.length} match the query` : ""
+                : `${pathCount(plates)} log ${pathCount(plates) === 1 ? "location" : "locations"} tracked${
+                    hasFilters ? ` · ${pathCount(poolPlates)} match the query` : ""
                   }`}
             </p>
             <a className="picklist__refine tag mono" href="#refine">
@@ -136,7 +137,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
 
             <div className="filters__group">
               <p className="tag mono" style={{ margin: 0 }}>
-                Zone
+                Platform
               </p>
               <div className="filters__set">
                 {[{ id: "all" as const, code: "All" }, ...PLATFORM_META.map((p) => ({ id: p.id, code: p.name }))].map(
@@ -212,12 +213,12 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                   {poolPlates.length
                     ? "Every match was filtered out"
                     : q
-                      ? `Nothing racked under “${q}”`
-                      : "The index is empty for this zone"}
+                      ? `Nothing found for “${q}”`
+                      : "The index is empty for this platform"}
                 </h2>
                 <p className="void__p">
                   {poolPlates.length
-                    ? `“${q}” matches ${poolPlates.length} ${poolPlates.length === 1 ? "plate" : "plates"}, but none of them carry every tag you selected. Drop a tag or widen the zone.`
+                    ? `“${q}” matches ${poolPlates.length} ${poolPlates.length === 1 ? "result" : "results"}, but none of them carry every tag you selected. Drop a tag or switch to all platforms.`
                     : "Check the spelling, try the vendor name, or open a request - the catalogue grows from them."}
                 </p>
                 {poolPlates.length ? (

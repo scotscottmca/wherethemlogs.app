@@ -35,9 +35,9 @@ export default async function Forbidden({
       <main className="rack">
         <div className="void" style={{ paddingInline: 0 }}>
           <p className="tag mono" style={{ margin: 0 }}>
-            {unconfigured ? "Bay 503" : "Bay 403"}
+            {unconfigured ? "Error 503" : "Error 403"}
           </p>
-          <h1 className="void__h">{unconfigured ? "No lock fitted yet" : "Not your bay"}</h1>
+          <h1 className="void__h">{unconfigured ? "Admin sign-in is not set up" : "Admins only"}</h1>
           <p className="void__p">
             {unconfigured
               ? "Admin sign-in has not been configured on this deployment, so there is nothing to sign in to. Set authProvider and authClientId in the infrastructure parameters and redeploy. The index itself is unaffected and needs no sign-in at all."

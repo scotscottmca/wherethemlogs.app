@@ -86,3 +86,5 @@ review, the verdict, DESIGN.md, and every shipping raster carrying its provenanc
   replica can therefore hand you a stale `_etag` - which lands as the 412 recovery this
   surface already designs, not as a silent clobber.
 - Nothing garbage-collects a replaced icon blob. Deliberately not built.
+
+**COPY (2026-09-11):** Interface text is plain, at the user's request - Catalogue, Add, Delete, Platform filter, Search for an app, log locations tracked. Warehouse terms survive only in class names and the visuals.

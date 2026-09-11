@@ -39,7 +39,7 @@ export async function POST(request: NextRequest, { params }: Ctx) {
       label: input.label!,
       path: input.path!,
       types: input.types ?? [],
-      scope: input.scope!,
+      ...(input.scope ? { scope: input.scope } : {}),
       ...(input.note ? { note: input.note } : {}),
       ...(input.variant ? { variant: input.variant } : {}),
     };

@@ -21,15 +21,15 @@ export default async function NewVendor() {
   return (
     <>
       <AisleBand
-        trail={[{ label: "Stock control", href: "/admin" }, { label: "New vendor" }]}
+        trail={[{ label: "Catalogue", href: "/admin" }, { label: "New vendor" }]}
         who={who?.userDetails ?? null}
       />
 
       <main className="rack">
         <BayHead
           name="New vendor"
-          facts="A vendor is an aisle - its apps and their icons hang off it"
-          back={{ label: "Stock control", href: "/admin" }}
+          facts="A vendor groups its apps - they can inherit its icon"
+          back={{ label: "Catalogue", href: "/admin" }}
         />
         <Aisle rail={<VendorRail vendors={vendors} />}>
           <VendorEditor vendor={null} />

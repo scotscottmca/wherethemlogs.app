@@ -75,6 +75,8 @@ export interface AppInput {
   slug: string;
   aliases: string[];
   iconUrl: string | null;
+  documentation?: string;
+  notes?: string[];
 }
 
 export function parseApp(body: unknown, { partial = false } = {}): Partial<AppInput> {
@@ -94,6 +96,15 @@ export function parseApp(body: unknown, { partial = false } = {}): Partial<AppIn
   if (!partial || b.aliases !== undefined) out.aliases = strArray(b.aliases, "aliases");
   // Explicit null is meaningful: it means "inherit the vendor's icon".
   if (!partial || b.iconUrl !== undefined) out.iconUrl = httpsUrl(b.iconUrl, "iconUrl");
+  // Present-but-empty clears: the key survives as undefined and drops out of the stored JSON.
+  if (b.documentation !== undefined) {
+    out.documentation = httpsUrl(b.documentation, "documentation") ?? undefined;
+  }
+  if (b.notes !== undefined) {
+    out.notes = strArray(b.notes, "notes", 20);
+    const long = out.notes.findIndex((n) => n.length > 500);
+    if (long >= 0) throw badRequest(`"notes[${long}]" is longer than 500 characters.`);
+  }
 
   return out;
 }
@@ -118,9 +129,12 @@ export function parseLogPath(body: unknown, { partial = false } = {}): Partial<L
   }
   if (b.note !== undefined) out.note = str(b.note, "note", { max: 500, required: false });
   if (b.variant !== undefined) out.variant = str(b.variant, "variant", { max: 80, required: false });
-  if (!partial || b.scope !== undefined) {
-    const scope = str(b.scope, "scope", { max: 20 })! as Scope;
-    if (!SCOPES.includes(scope)) throw badRequest(`"scope" must be one of: ${SCOPES.join(", ")}.`);
+  // Optional: blank or null means nobody has confirmed it, and clears a stored one.
+  if (b.scope !== undefined) {
+    const scope = str(b.scope, "scope", { max: 20, required: false }) as Scope | undefined;
+    if (scope && !SCOPES.includes(scope)) {
+      throw badRequest(`"scope" must be one of: ${SCOPES.join(", ")}.`);
+    }
     out.scope = scope;
   }
   if (!partial || b.types !== undefined) {

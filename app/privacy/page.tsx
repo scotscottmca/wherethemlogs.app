@@ -74,7 +74,7 @@ export default function Privacy() {
               <tr>
                 <td>Recent searches</td>
                 <td>Your browser (local storage)</td>
-                <td>The pick list on the index page</td>
+                <td>The recent searches list on the index page</td>
                 <td>Last 8, until you clear them</td>
               </tr>
               <tr>
@@ -96,7 +96,7 @@ export default function Privacy() {
           <p>
             If you accept, one first-party cookie records which search terms and platform
             filters are used, so the catalogue gets filled in the order people actually need.
-            It records the search term and the zone filter. It does not record your IP address
+            It records the search term and the platform filter. It does not record your IP address
             in full, does not follow you to other sites, and is not shared with an advertising
             network.
           </p>
@@ -111,7 +111,7 @@ export default function Privacy() {
 
           <h2>Recent searches are not a cookie</h2>
           <p>
-            The pick list on the index page is written to your browser&rsquo;s local storage.
+            The recent searches list on the index page is written to your browser&rsquo;s local storage.
             It is readable only by this site, on this device, and it is never transmitted.
             Clearing it is one button on the index page, or clearing site data in your
             browser. If your browser blocks storage, the list simply stays empty and nothing

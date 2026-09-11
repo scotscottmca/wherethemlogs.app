@@ -39,13 +39,13 @@ setup is in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 | Route | What it does |
 |---|---|
-| `/` | Aisle sign, scanner field with live type-ahead, recent additions, recent searches, zone filter |
+| `/` | Title sign, search field with live type-ahead, recent additions, recent searches, platform filter |
 | `/search` | Full results, filterable by platform, installer, architecture and scope |
 | `/privacy` | Privacy and cookie notice |
-| `/admin` | Not built yet. The CRUD API behind it is - see [docs/API.md](docs/API.md). |
+| `/admin` | Admin portal - vendors, apps and log paths, with JSON import and export at `/admin/import`. Entra sign-in, `admin` role. API in [docs/API.md](docs/API.md). |
 
-Keyboard: `/` focuses the scanner from anywhere, arrows walk the type-ahead, `Enter`
-commits to the full results, `Shift+Enter` copies the highlighted plate's first path.
+Keyboard: `/` focuses the search field from anywhere, arrows walk the type-ahead, `Enter`
+commits to the full results, `Shift+Enter` copies the highlighted result's first path.
 
 ## The catalogue
 
@@ -78,8 +78,8 @@ names into one.
 - [ ] Register the Entra ID app, add the `admin` app role, and set `authClientId` / `authTenantId`. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
 - [ ] Choose the analytics provider. The consent bar and `/privacy` both state plainly that
       one has not been chosen and that nothing is loaded either way - update both when it is.
-- [ ] Replace the seed catalogue with the real index.
-- [ ] Build the admin UI on top of the CRUD API.
+- [ ] Replace the seed catalogue with the real index - `/admin/import` takes the research JSON.
+- [x] Build the admin UI on top of the CRUD API.
 - [ ] Decide whether the repo goes public - every "request an app" link points at its issue tracker.
 
 ## Infrastructure

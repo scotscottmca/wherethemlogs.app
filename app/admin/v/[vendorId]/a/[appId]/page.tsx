@@ -42,7 +42,7 @@ export default async function AppPage({ params }: Ctx) {
     <>
       <AisleBand
         trail={[
-          { label: "Stock control", href: "/admin" },
+          { label: "Catalogue", href: "/admin" },
           { label: vendor.name, href: `/admin/v/${vendor.id}` },
           { label: app.name },
         ]}

@@ -36,7 +36,7 @@ LogPath {
   note?: string
   variant?: string      // "Classic (v1)"
   types: string[]       // msi exe msix appx pkg dmg mas deb rpm snap flatpak appimage x86 x64 arm64
-  scope: "per-user" | "per-machine" | "system"
+  scope?: "per-user" | "per-machine" | "system"   // unset = nobody has confirmed it
 }
 
 App {
@@ -46,6 +46,8 @@ App {
   name: string
   aliases: string[]
   iconUrl: string | null   // null MEANS "inherit the vendor's icon"
+  documentation?: string   // https; the vendor's own page on its logs
+  notes?: string[]         // free-text caveats, one per entry
   logPaths: LogPath[]      // embedded
   createdAt: string
   updatedAt: string
@@ -184,7 +186,7 @@ once.
 | Method | Route | Notes |
 | --- | --- | --- |
 | `GET` | `/api/admin/apps` | `?vendorId=` narrows to one partition - cheap. Without it, cross-partition. |
-| `POST` | `/api/admin/apps` | `{ vendorId, name, slug?, aliases?, iconUrl? }`. `404`s the vendor if it does not exist. Created with `logPaths: []`. |
+| `POST` | `/api/admin/apps` | `{ vendorId, name, slug?, aliases?, iconUrl?, documentation?, notes? }`. `404`s the vendor if it does not exist. Created with `logPaths: []`. |
 | `GET` | `/api/admin/apps/{id}` | `?vendorId=` skips a lookup |
 | `PATCH` | `/api/admin/apps/{id}` | Partial. `logPaths` is ignored here - use the log path endpoints. |
 | `DELETE` | `/api/admin/apps/{id}` | Takes its log paths with it. No orphans possible. |
@@ -203,15 +205,77 @@ one app. Pass `?vendorId=` to skip the partition lookup.
 | Method | Route | Notes |
 | --- | --- | --- |
 | `GET` | `/api/admin/apps/{id}/logpaths` | |
-| `POST` | `/api/admin/apps/{id}/logpaths` | `{ platform, label, path, scope, types?, note?, variant? }` |
+| `POST` | `/api/admin/apps/{id}/logpaths` | `{ platform, label, path, scope?, types?, note?, variant? }` |
 | `PATCH` | `/api/admin/apps/{id}/logpaths/{logPathId}` | Partial |
 | `DELETE` | `/api/admin/apps/{id}/logpaths/{logPathId}` | |
+
+`scope` is optional: leave it out when nobody has confirmed whose profile the
+path lives under, and send `scope: null` on `PATCH` to clear one.
 
 `POST` returns `400` if the same `platform` + `path` + `variant` already exists
 on the app. The same path twice on one platform is a duplicate, not a variant.
 
 Create and update return `{ app, logPath }` - the whole app document comes back
 so the portal can hold the new `_etag`.
+
+### Import and export
+
+| Method | Route | Notes |
+| --- | --- | --- |
+| `GET` | `/api/admin/export` | The whole catalogue as one file, `wherethemlogs-export-YYYY-MM-DD.json` |
+| `POST` | `/api/admin/import` | The body is the file. Previews only - returns `{ plan, applied: 0 }` and writes nothing |
+| `POST` | `/api/admin/import?apply=true` | Plans again against the store, then writes. `400` if the file has problems |
+
+The admin portal drives both from `/admin/import`. The file is vendors > apps > logs:
+
+```json
+{
+  "vendors": [
+    {
+      "name": "Contoso",
+      "apps": [
+        {
+          "name": "Contoso Agent",
+          "documentation": "https://contoso.example/agent/logs",
+          "logs": [
+            { "os": "windows", "path": "%PROGRAMDATA%\\Contoso\\Agent\\agent.log", "what": "Agent log" },
+            { "os": "all", "path": "~/.contoso/agent/" }
+          ],
+          "notes": ["Verbose logging is off until switched on in Settings."]
+        }
+      ]
+    }
+  ]
+}
+```
+
+| File key | Stored as | |
+| --- | --- | --- |
+| `os` | `platform` | `windows`, `macos`, `linux`, or `all` - which is stored as one path per platform |
+| `what` | `label` | A new path with no `what` is labelled `Logs` |
+| `documentation`, `notes` | the same | On the app |
+
+An export also writes the optional keys that make a round trip lossless: vendor
+`slug` (only when it is not the name's), `website`, `icon`; app `slug`,
+`aliases`, `icon`; log `note`, `variant`, `types`, `scope`.
+
+- **Matching.** Vendors and apps match by slug, derived from `name` unless the
+  file gives one. An app found under a different vendor is moved there. Log
+  paths match by platform and path (and variant, when the file gives one), and
+  a matched path keeps its id.
+- **Missing versus empty.** A missing key leaves the stored value alone; an empty
+  one clears it. `logs` is the exception - when present it is the app's whole
+  list, and stored paths it leaves out are removed.
+- **Nothing else is deleted.** A vendor the import would leave with no apps is
+  named in `plan.warnings`, not removed. The usual cause is the file naming it
+  differently ("Microsoft Corporation" for "Microsoft").
+- **Not a transaction.** Writes run vendors first, one at a time - Cosmos only
+  batches inside a partition. A failure stops the run with `409
+  import_incomplete`; preview and apply again and the rest is finished.
+- 5 MB per file.
+
+`node scripts/check-interchange.mjs` exports, previews the export straight back,
+and fails unless that comes to zero writes.
 
 ### Icons
 

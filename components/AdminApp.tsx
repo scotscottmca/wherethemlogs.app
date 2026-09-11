@@ -12,6 +12,8 @@ const WATCH = [
   { key: "slug" as const, label: "Slug" },
   { key: "aliases" as const, label: "Aliases" },
   { key: "iconUrl" as const, label: "Icon" },
+  { key: "documentation" as const, label: "Documentation" },
+  { key: "notes" as const, label: "Notes" },
 ];
 
 interface Form {
@@ -19,6 +21,9 @@ interface Form {
   slug: string;
   aliases: string;
   iconUrl: string | null;
+  documentation: string;
+  /** One note per line. */
+  notes: string;
   vendorId: string;
 }
 
@@ -27,8 +32,13 @@ const formOf = (app: App | null, vendorId: string): Form => ({
   slug: app?.slug ?? "",
   aliases: (app?.aliases ?? []).join(", "),
   iconUrl: app?.iconUrl ?? null,
+  documentation: app?.documentation ?? "",
+  notes: (app?.notes ?? []).join("\n"),
   vendorId: app?.vendorId ?? vendorId,
 });
+
+const splitLines = (value: string) =>
+  value.split("\n").map((n) => n.trim()).filter(Boolean);
 
 const splitAliases = (value: string) =>
   value.split(",").map((a) => a.trim()).filter(Boolean);
@@ -71,6 +81,8 @@ export function AppEditor({
           slug,
           aliases: splitAliases(form.aliases),
           iconUrl: form.iconUrl,
+          documentation: form.documentation,
+          notes: splitLines(form.notes),
           ...(app ? { vendorId: form.vendorId } : { vendorId: vendor.id }),
         };
         return app ? patchApp(app.id, vendor.id, body, withEtag) : createApp(body);
@@ -145,6 +157,23 @@ export function AppEditor({
           placeholder="teams, msteams"
           hint="Comma separated. What someone might type instead of the name - the search matches on these too."
         />
+        <Text
+          label="Documentation"
+          mono
+          value={form.documentation}
+          onChange={(v) => set("documentation", v)}
+          error={write.fields.documentation}
+          placeholder="https://…"
+          hint="Optional. The vendor's own page on where the logs are or how to collect them. Must be https."
+        />
+        <Text
+          label="Notes"
+          multiline
+          value={form.notes}
+          onChange={(v) => set("notes", v)}
+          error={write.fields.notes}
+          hint="Optional. One note per line - how to switch logging on, or what the paths below do not cover."
+        />
         <IconField
           value={form.iconUrl}
           onChange={(v) => set("iconUrl", v)}
@@ -152,8 +181,8 @@ export function AppEditor({
           inherit={{
             label: `Inherit ${vendor.name}`,
             note: vendor.iconUrl
-              ? `Stored as null. The plate shows ${vendor.name}'s icon, and follows it if the vendor's changes.`
-              : `Stored as null. ${vendor.name} carries no icon either, so the plate shows none - give the vendor one and this app picks it up.`,
+              ? `Stored as null. The public page shows ${vendor.name}'s icon, and follows it if the vendor's changes.`
+              : `Stored as null. ${vendor.name} carries no icon either, so the public page shows none - give the vendor one and this app picks it up.`,
             preview: vendor.iconUrl,
           }}
         />
@@ -165,7 +194,7 @@ export function AppEditor({
             hint={
               moving
                 ? "Moving an app changes its partition, so the API recreates it under the new vendor and deletes the old copy. It keeps its id, its slug and all its log paths."
-                : "The aisle this app is racked in."
+                : "The vendor this app belongs to."
             }
           >
             <span className="admSelectWrap">
@@ -193,13 +222,13 @@ export function AppEditor({
           onClick={() => save()}
           disabled={write.busy || !form.name.trim()}
         >
-          {write.busy ? "Writing…" : moving ? "Move and save the app" : app ? "Save the app" : "Rack the app"}
+          {write.busy ? "Writing…" : moving ? "Move and save the app" : app ? "Save the app" : "Add the app"}
           <IconArrow size={15} />
         </button>
         <p className="tag mono admCommit__note">
           {app
             ? "Log paths are written separately - this saves the record, not the paths beneath it."
-            : "The app is racked with no log paths. You add those on its own record, next."}
+            : "The app is created with no log paths. You add those on its own record, next."}
         </p>
       </div>
     </section>
@@ -213,7 +242,7 @@ export function AppDelete({ app, vendorId }: { app: App; vendorId: string }) {
   return (
     <section className="admRecord" aria-label="Delete this app">
       <div className="rackHead admRecord__head">
-        <span className="tag mono">Remove the bay</span>
+        <span className="tag mono">Delete this app</span>
       </div>
       <div className="admRemove">
         <p className="admRemove__p">

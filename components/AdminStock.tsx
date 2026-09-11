@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ZoneTags } from "./AdminChrome";
-import { IconClose, IconScan } from "./Icons";
+import { IconClose, IconSearch } from "./Icons";
 import type { StockRow } from "@/lib/admin";
 
 /**
@@ -30,7 +30,7 @@ export function StockList({ rows }: { rows: StockRow[] }) {
   return (
     <>
       <div className="scan__bar scan__bar--bench">
-        <IconScan size={20} />
+        <IconSearch size={20} />
         <label htmlFor="adm-filter" className="sr">
           Filter the catalogue
         </label>
@@ -56,7 +56,7 @@ export function StockList({ rows }: { rows: StockRow[] }) {
         )}
         <span className="scan__hint tag mono">
           {shown.length === rows.length
-            ? `${String(rows.length).padStart(3, "0")} racked`
+            ? `${String(rows.length).padStart(3, "0")} apps`
             : `${String(shown.length).padStart(3, "0")} of ${rows.length}`}
         </span>
       </div>
@@ -81,10 +81,10 @@ export function StockList({ rows }: { rows: StockRow[] }) {
         </div>
       ) : (
         <div className="void">
-          <h2 className="void__h">Nothing racked under “{q.trim()}”</h2>
+          <h2 className="void__h">Nothing matches “{q.trim()}”</h2>
           <p className="void__p">
             No app, alias, slug or vendor matches that. Clear the filter to see the whole
-            catalogue, or rack the application from its vendor's aisle.
+            catalogue, or add the application from its vendor's page.
           </p>
         </div>
       )}

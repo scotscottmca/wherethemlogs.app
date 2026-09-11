@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
       name: input.name!,
       aliases: input.aliases ?? [],
       iconUrl: input.iconUrl ?? null,
+      ...(input.documentation ? { documentation: input.documentation } : {}),
+      ...(input.notes?.length ? { notes: input.notes } : {}),
       logPaths: [],
       createdAt: now,
       updatedAt: now,

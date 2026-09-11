@@ -18,11 +18,19 @@ const base = (size: number, className?: string) => ({
   className,
 });
 
-export function IconScan({ size = 20, className }: IconProps) {
+export function IconSearch({ size = 20, className }: IconProps) {
   return (
     <svg {...base(size, className)}>
-      <path d="M3 8V3h5M21 8V3h-5M3 16v5h5M21 16v5h-5" />
-      <path d="M2 12h20" strokeWidth={2.5} />
+      <circle cx="10" cy="10" r="6.5" />
+      <path d="M14.8 14.8 21 21" strokeWidth={2.5} />
+    </svg>
+  );
+}
+
+export function IconPlus({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M12 4v16M4 12h16" />
     </svg>
   );
 }

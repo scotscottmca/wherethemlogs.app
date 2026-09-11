@@ -6,7 +6,7 @@
  * validate against, so a field renamed on one side fails to compile on the
  * other.
  */
-import type { App, LogPath, Platform, Vendor } from "./model";
+import type { App, LogPath, Platform, Scope, Vendor } from "./model";
 
 export type { App, LogPath, Vendor };
 
@@ -157,6 +157,9 @@ export const deleteApp = (id: string, vendorId: string) =>
 
 /* --- Log paths ------------------------------------------------------------ */
 
+/** What the editor sends. Null scope is how "unknown" clears a stored one. */
+type LogPathBody = Omit<Partial<LogPath>, "scope"> & { scope?: Scope | null };
+
 /** Create and update hand the whole app back, so the portal can hold its new tag. */
 export interface LogPathWrite {
   app: App;
@@ -169,7 +172,7 @@ const logPathUrl = (appId: string, vendorId: string, logPathId?: string) =>
 export const createLogPath = (
   appId: string,
   vendorId: string,
-  body: Partial<LogPath>,
+  body: LogPathBody,
   etag?: string,
 ) => call<LogPathWrite>("POST", logPathUrl(appId, vendorId), { body, etag });
 
@@ -177,7 +180,7 @@ export const patchLogPath = (
   appId: string,
   vendorId: string,
   logPathId: string,
-  body: Partial<LogPath>,
+  body: LogPathBody,
   etag?: string,
 ) => call<LogPathWrite>("PATCH", logPathUrl(appId, vendorId, logPathId), { body, etag });
 
@@ -222,4 +225,37 @@ export async function uploadIcon(file: File): Promise<{ url: string; bytes: numb
   });
   if (!response.ok) return fail(response);
   return (await response.json()) as { url: string; bytes: number };
+}
+
+/* --- Import and export ---------------------------------------------------- */
+
+/** What an import would do, or did. Names are listed so the preview can print them. */
+export interface ImportPlan {
+  vendors: { create: string[]; update: string[]; unchanged: number };
+  apps: {
+    create: string[];
+    update: string[];
+    move: { name: string; from: string; to: string }[];
+    unchanged: number;
+  };
+  logPaths: { create: number; update: number; remove: number };
+  writes: number;
+  warnings: string[];
+  errors: string[];
+}
+
+export const IMPORT_MAX_BYTES = 5 * 1024 * 1024;
+
+/** The file goes up as it is. Without `apply` the server only plans. */
+export async function importCatalogue(
+  text: string,
+  apply = false,
+): Promise<{ plan: ImportPlan; applied: number }> {
+  const response = await fetch(`/api/admin/import${apply ? "?apply=true" : ""}`, {
+    method: "POST",
+    headers: { accept: "application/json", "content-type": "application/json" },
+    body: text,
+  });
+  if (!response.ok) return fail(response);
+  return (await response.json()) as { plan: ImportPlan; applied: number };
 }

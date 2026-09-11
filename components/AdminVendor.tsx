@@ -147,7 +147,7 @@ export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
           onClick={() => save()}
           disabled={write.busy || !form.name.trim()}
         >
-          {write.busy ? "Writing…" : vendor ? "Save the vendor" : "Rack the vendor"}
+          {write.busy ? "Writing…" : vendor ? "Save the vendor" : "Add the vendor"}
           <IconArrow size={15} />
         </button>
         <p className="tag mono admCommit__note">
@@ -155,7 +155,7 @@ export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
             ? etag
               ? "Written against the version you loaded. A change underneath is refused, never merged."
               : "This record carries no version tag, so the write applies to whatever is current."
-            : "Creating a vendor racks an empty aisle - add its apps next."}
+            : "The vendor starts with no apps - add them next."}
         </p>
       </div>
     </section>
@@ -193,12 +193,12 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
   return (
     <section className="admRecord" aria-label="Delete this vendor">
       <div className="rackHead admRecord__head">
-        <span className="tag mono">Remove the aisle</span>
+        <span className="tag mono">Delete this vendor</span>
       </div>
 
       {blocking ? (
         <div className="admNotice admNotice--wide" role="alert">
-          <p className="admNotice__code tag mono">Held · {blocking.length} racked</p>
+          <p className="admNotice__code tag mono">Blocked · {blocking.length} app{blocking.length === 1 ? "" : "s"}</p>
           <div className="admNotice__body">
             <p className="admNotice__p">
               {vendor.name} still owns {blocking.length} app{blocking.length === 1 ? "" : "s"}.
@@ -238,7 +238,7 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
                 }}
                 disabled={write.busy}
               >
-                Leave it racked
+                Keep it
               </button>
             </div>
           </div>

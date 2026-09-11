@@ -47,7 +47,8 @@ export interface LogPath {
   /** Distinguishes shipping flavours, e.g. "Classic (v1)". */
   variant?: string;
   types: string[];
-  scope: Scope;
+  /** Unset when nobody has confirmed whose profile the path lives under. */
+  scope?: Scope;
 }
 
 export interface App {
@@ -59,6 +60,10 @@ export interface App {
   aliases: string[];
   /** Null means "inherit the vendor's icon" - resolved on read, never stored resolved. */
   iconUrl: string | null;
+  /** A vendor page on where the logs are or how to collect them. */
+  documentation?: string;
+  /** Free-text caveats: how to switch logging on, what the path does not cover. */
+  notes?: string[];
   logPaths: LogPath[];
   createdAt: string;
   updatedAt: string;

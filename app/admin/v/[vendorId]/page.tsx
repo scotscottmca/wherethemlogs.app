@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { AisleBand, Aisle, BayHead, ZoneTags } from "@/components/AdminChrome";
 import { VendorRail } from "@/components/AdminRails";
 import { VendorDelete, VendorEditor } from "@/components/AdminVendor";
-import { IconScan } from "@/components/Icons";
+import { IconPlus } from "@/components/Icons";
 import { aisle, vendorRecord, whoAmI, type AisleVendor } from "@/lib/server/admin";
 import type { Platform } from "@/lib/model";
 
@@ -38,14 +38,14 @@ export default async function VendorPage({ params }: Ctx) {
   return (
     <>
       <AisleBand
-        trail={[{ label: "Stock control", href: "/admin" }, { label: vendor.name }]}
+        trail={[{ label: "Catalogue", href: "/admin" }, { label: vendor.name }]}
         who={who?.userDetails ?? null}
       />
 
       <main className="rack">
         <BayHead
           name={vendor.name}
-          back={{ label: "Stock control", href: "/admin" }}
+          back={{ label: "Catalogue", href: "/admin" }}
           facts={
             <>
               {vendor.slug} · {String(apps.length).padStart(2, "0")} app
@@ -58,7 +58,7 @@ export default async function VendorPage({ params }: Ctx) {
         <Aisle rail={<VendorRail vendors={vendors} currentId={vendor.id} />}>
           <VendorEditor vendor={vendor} />
 
-          <section className="admRecord" aria-label="Apps in this aisle">
+          <section className="admRecord" aria-label="Apps from this vendor">
             <div className="rackHead admRecord__head">
               <span className="tag mono">
                 Apps · {String(apps.length).padStart(2, "0")}
@@ -90,16 +90,16 @@ export default async function VendorPage({ params }: Ctx) {
               </div>
             ) : (
               <div className="void" style={{ paddingInline: "clamp(0.9rem, 1.6vw, 1.25rem)" }}>
-                <h3 className="void__h">This aisle is empty</h3>
+                <h3 className="void__h">No apps yet</h3>
                 <p className="void__p">
-                  {vendor.name} is racked but owns no apps yet. Add the first one - it
+                  {vendor.name} has no apps yet. Add the first one - it
                   arrives with no log paths, which you type onto its own record.
                 </p>
               </div>
             )}
 
             <Link href={`/admin/v/${vendor.id}/a/new`} className="admAdd tag mono">
-              <IconScan size={16} />
+              <IconPlus size={16} />
               Add an app to {vendor.name}
             </Link>
           </section>

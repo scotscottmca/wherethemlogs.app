@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeletePress, Field, Fields, Notice, Reading, Superseded, Text, Toggles, useWrite } from "./AdminField";
 import { ZoneSwatch } from "./Chrome";
-import { IconArrow, IconScan } from "./Icons";
+import { IconArrow, IconPlus } from "./Icons";
 import { PLATFORM_META, TYPE_GROUPS, type Platform } from "@/lib/api";
 import { SCOPES, type Scope } from "@/lib/model";
 import { createLogPath, deleteLogPath, patchLogPath, type App, type LogPath } from "@/lib/admin";
@@ -29,7 +29,8 @@ interface Form {
   note: string;
   variant: string;
   types: string[];
-  scope: Scope;
+  /** Blank is "unknown": nobody has confirmed whose profile the path lives under. */
+  scope: Scope | "";
 }
 
 const formOf = (logPath: LogPath | null): Form => ({
@@ -39,7 +40,7 @@ const formOf = (logPath: LogPath | null): Form => ({
   note: logPath?.note ?? "",
   variant: logPath?.variant ?? "",
   types: logPath?.types ?? [],
-  scope: logPath?.scope ?? "per-user",
+  scope: logPath ? (logPath.scope ?? "") : "per-user",
 });
 
 const comparable = (form: Form) => ({
@@ -108,9 +109,9 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
         </div>
       ) : (
         <div className="void" style={{ paddingInline: "clamp(0.9rem, 1.6vw, 1.25rem)" }}>
-          <h3 className="void__h">This bay is empty</h3>
+          <h3 className="void__h">No log paths yet</h3>
           <p className="void__p">
-            {app.name} is racked but carries no log paths, so it never appears in a result.
+            {app.name} has no log paths, so it never appears in a result.
             Add the first one - platform, what the file is, and the path exactly as the
             machine writes it.
           </p>
@@ -128,7 +129,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
         />
       ) : (
         <button type="button" className="admAdd tag mono" onClick={() => setOpen("new")}>
-          <IconScan size={16} />
+          <IconPlus size={16} />
           Add a log path
         </button>
       )}
@@ -177,7 +178,7 @@ function LogPathRow({
                 {t}
               </span>
             ))}
-            <span className="chip tag mono chip--scope">{logPath.scope}</span>
+            {logPath.scope && <span className="chip tag mono chip--scope">{logPath.scope}</span>}
           </div>
           <span className="tag mono admPath__len">{logPath.path.length} chars</span>
         </div>
@@ -225,7 +226,8 @@ function LogPathEditor({
           note: form.note,
           variant: form.variant,
           types: form.types,
-          scope: form.scope,
+          // Null clears a stored scope; an absent key would leave it alone.
+          scope: form.scope || null,
         };
         return logPath
           ? patchLogPath(app.id, vendorId, logPath.id, body, withEtag)
@@ -288,7 +290,7 @@ function LogPathEditor({
             error={write.fields.label}
             maxLength={80}
             placeholder="Client logs"
-            hint="What the file is, in the words a person would use. It heads the plate."
+            hint="What the file is, in the words a person would use. It heads the entry."
           />
 
           <Field
@@ -329,7 +331,7 @@ function LogPathEditor({
             maxLength={500}
             multiline
             placeholder="Only written when the app is started with --enable-logging"
-            hint="Optional. Prints under the path in the smallest voice on the plate."
+            hint="Optional. Prints under the path in small type."
           />
 
           <Text
@@ -340,7 +342,7 @@ function LogPathEditor({
             error={write.fields.variant}
             maxLength={80}
             placeholder="Classic (v1)"
-            hint="Optional. Splits this path onto its own plate - the same path twice on one platform is a duplicate, not a variant."
+            hint="Optional. Splits this path onto its own card - the same path twice on one platform is a duplicate, not a variant."
           />
 
           {TYPE_GROUPS.map((group) => (
@@ -360,12 +362,13 @@ function LogPathEditor({
             />
           ))}
 
-          <Toggles<Scope>
+          <Toggles<Scope | "">
             label="Scope"
             value={[form.scope]}
-            onChange={([s]) => s && set("scope", s)}
+            onChange={([s]) => s !== undefined && set("scope", s)}
             error={write.fields.scope}
-            options={SCOPES.map((s) => ({ id: s, label: s }))}
+            options={[...SCOPES.map((s) => ({ id: s, label: s })), { id: "" as const, label: "unknown" }]}
+            hint="Unknown prints no scope on the public page. Imports leave it unknown unless the file says."
           />
         </Fields>
 
@@ -376,7 +379,7 @@ function LogPathEditor({
             onClick={() => save()}
             disabled={write.busy || !form.label.trim() || !form.path.trim()}
           >
-            {write.busy ? "Writing…" : logPath ? "Save this path" : "Rack this path"}
+            {write.busy ? "Writing…" : logPath ? "Save this path" : "Add this path"}
             <IconArrow size={15} />
           </button>
           <button type="button" className="btn btn--ghost tag mono" onClick={onCancel} disabled={write.busy}>

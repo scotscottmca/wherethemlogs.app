@@ -8,7 +8,7 @@ import { aisle, stock, whoAmI, type AisleVendor, type StockRow } from "@/lib/ser
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Stock control" };
+export const metadata: Metadata = { title: "Catalogue" };
 
 export default async function StockControl() {
   const who = await whoAmI();
@@ -28,21 +28,26 @@ export default async function StockControl() {
 
   return (
     <>
-      <AisleBand trail={[{ label: "Stock control" }]} who={who?.userDetails ?? null} />
+      <AisleBand trail={[{ label: "Catalogue" }]} who={who?.userDetails ?? null} />
 
       <main className="rack">
         <BayHead
-          name="Stock control"
+          name="Catalogue"
           facts={
             failed
               ? "The store is not answering"
               : `${String(vendors.length).padStart(2, "0")} vendors · ${String(rows.length).padStart(2, "0")} apps · ${String(logPaths).padStart(3, "0")} log paths${empty ? ` · ${empty} app${empty === 1 ? "" : "s"} with no path` : ""}`
           }
           actions={
-            <Link href="/admin/v/new" className="btn tag mono">
-              Rack a vendor
-              <IconArrow size={15} />
-            </Link>
+            <>
+              <Link href="/admin/import" className="btn btn--ghost tag mono">
+                Import / export
+              </Link>
+              <Link href="/admin/v/new" className="btn tag mono">
+                Add a vendor
+                <IconArrow size={15} />
+              </Link>
+            </>
           }
         />
 
@@ -60,16 +65,21 @@ export default async function StockControl() {
           </Aisle>
         ) : (
           <div className="void">
-            <h2 className="void__h">Nothing racked yet</h2>
+            <h2 className="void__h">Nothing here yet</h2>
             <p className="void__p">
               The catalogue is empty. A path belongs to an app and an app belongs to a
-              vendor, so the first thing to rack is the vendor - then its apps, then the
+              vendor, so the first thing to add is the vendor - then its apps, then the
               paths on each one.
             </p>
-            <Link className="btn tag mono" href="/admin/v/new">
-              Rack the first vendor
-              <IconArrow size={15} />
-            </Link>
+            <div className="void__acts">
+              <Link className="btn tag mono" href="/admin/v/new">
+                Add the first vendor
+                <IconArrow size={15} />
+              </Link>
+              <Link className="btn btn--ghost tag mono" href="/admin/import">
+                Import a JSON file
+              </Link>
+            </div>
           </div>
         )}
       </main>

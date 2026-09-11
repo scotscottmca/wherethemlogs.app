@@ -24,7 +24,7 @@ export default async function NewApp({ params }: Ctx) {
     <>
       <AisleBand
         trail={[
-          { label: "Stock control", href: "/admin" },
+          { label: "Catalogue", href: "/admin" },
           { label: vendor.name, href: `/admin/v/${vendor.id}` },
           { label: "New app" },
         ]}
@@ -35,7 +35,7 @@ export default async function NewApp({ params }: Ctx) {
         <BayHead
           name="New app"
           back={{ label: vendor.name, href: `/admin/v/${vendor.id}` }}
-          facts={`Racked under ${vendor.name} · log paths are added on its own record`}
+          facts={`Adding to ${vendor.name} · log paths are added on its own record`}
         />
         <Aisle rail={<AppRail vendorId={vendor.id} vendorName={vendor.name} apps={apps} />}>
           <AppEditor app={null} vendor={vendor} />

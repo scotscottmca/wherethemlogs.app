@@ -14,7 +14,7 @@ export function Header() {
             <br />
             Logs App
           </span>
-          <span className="tag mono hdr__bay">Bay WTLA·01</span>
+          <span className="tag mono hdr__bay">WTLA-01</span>
         </Link>
         <nav className="hdr__nav" aria-label="Primary">
           <Link href="/privacy" className="hdr__link tag mono">
@@ -46,7 +46,7 @@ export function ZoneTabs({
   hrefFor: (p: Platform | "all") => string;
 }) {
   const zones: { id: Platform | "all"; code: string; name: string }[] = [
-    { id: "all", code: "ALL", name: "All zones" },
+    { id: "all", code: "ALL", name: "All platforms" },
     ...PLATFORM_META,
   ];
 
@@ -67,7 +67,7 @@ export function ZoneTabs({
         </Link>
       ))}
       <span className="zones__legend tag mono" aria-hidden>
-        Zone filter · default all
+        Platform filter · default all
       </span>
     </nav>
   );
