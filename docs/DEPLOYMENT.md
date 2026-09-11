@@ -203,6 +203,21 @@ prints the principal that was refused and the exact command to grant it. To fix
 it permanently rather than for this machine, add the id to
 `developerPrincipalIds` and redeploy the infrastructure.
 
+#### Replacing the seed with the real catalogue
+
+The seed is sample data. To swap it for the real index, first download a backup
+from **Import / export** in the admin portal, then remove the seed:
+
+```powershell
+node scripts/unseed.mjs --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/
+node scripts/unseed.mjs --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/ --yes
+```
+
+The first run only lists what it would delete. The second deletes every vendor
+and app whose id is in `scripts/seed-data.json` - nothing added since, and never
+a seed vendor that now owns a non-seed app. There is no undo. Then import the
+real file at `/admin/import`.
+
 ### 7. Turn on sign-in for the admin surface
 
 Until this is done `/admin` returns 503 and says so plainly: no provider is
