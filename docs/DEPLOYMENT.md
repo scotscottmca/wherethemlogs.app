@@ -342,6 +342,27 @@ az ad app show --id $CLIENT_ID --query "web.implicitGrantSettings" -o json
 `enableIdTokenIssuance` must be `true`. The client secret, the redirect URI and
 the role assignment can all be perfect and it will still fail without it.
 
+**If you sign in and land on "Not your bay"**, the account you signed in with
+carries no `admin` role. The page itself now prints which account the platform
+saw and what roles came with it, which is usually the whole answer: a tenant with
+more than one account of yours, or an assignment that landed on the other one.
+
+The trap is **Default Access**. Adding a user under Enterprise applications
+without picking a named role assigns `00000000-0000-0000-0000-000000000000`,
+which puts no `roles` claim in the token at all - indistinguishable from not
+being assigned. Check what is actually assigned:
+
+```powershell
+$SP_ID = az ad sp show --id $CLIENT_ID --query id -o tsv
+az rest --method get `
+  --url "https://graph.microsoft.com/v1.0/servicePrincipals/$SP_ID/appRoleAssignedTo" `
+  --query "value[].{principal:principalDisplayName, role:appRoleId}" -o table
+```
+
+An `appRoleId` of all zeros is Default Access. Assign the real role to that
+account, then **sign out and back in** - the role is written into the token at
+sign-in, so reloading will not pick it up.
+
 **What each refusal looks like**, so none of them reads as a bug:
 
 | Who | What they get |

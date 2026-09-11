@@ -1992,3 +1992,23 @@ button.tog {
     width: 5.5rem;
   }
 }
+
+/* The 403 page's own evidence: who the platform says you are, and what it sent. */
+.whoami {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.35rem 1.25rem;
+  margin: 0.5rem 0 0;
+  padding-top: 0.9rem;
+  border-top: var(--rule) solid var(--ink-rule);
+  max-width: 60ch;
+}
+.whoami dt {
+  padding-top: 0.15rem;
+}
+.whoami dd {
+  margin: 0;
+  color: var(--bone);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
