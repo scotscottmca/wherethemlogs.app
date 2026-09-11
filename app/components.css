@@ -163,6 +163,20 @@
   text-wrap: balance;
 }
 
+/* Second line inside the h1 - the search-facing phrase, set well below the
+   brand lockup so the sign still reads "Where them logs at" first. */
+.sign__hSub {
+  display: block;
+  margin-top: 0.3em;
+  font-stretch: 100%;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.9vw, 1.4rem);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  color: var(--bone-dim);
+}
+
 .sign__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

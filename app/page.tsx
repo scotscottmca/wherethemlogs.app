@@ -50,7 +50,12 @@ export default async function Home({
 
       <main className="rack">
         <div className="sign">
-          <h1 className="sign__h">Where them logs at</h1>
+          <h1 className="sign__h">
+            Where them logs at
+            <span className="sign__hSub">
+              Log file locations for Windows, macOS and Linux
+            </span>
+          </h1>
           <div className="sign__row">
             <p className="sign__sub">
               The log file location for any application, on Windows, macOS or Linux - every
