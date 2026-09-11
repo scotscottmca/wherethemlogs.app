@@ -29,10 +29,10 @@
       "value": "aad"
     },
     "authClientId": {
-      "value": ""
+      "value": "7551b4bf-efd6-4484-a8e2-955a6d467a87"
     },
     "authTenantId": {
-      "value": ""
+      "value": "c48ea385-2cc7-4b39-b906-f6efffb5d4cc"
     },
     "adminGithubLogins": {
       "value": ""
