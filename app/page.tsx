@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
@@ -12,7 +13,32 @@ import { requestAppUrl } from "@/lib/site";
 // shell, and the catalogue is in the HTML a crawler receives.
 export const dynamic = "force-dynamic";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wherethemlogs.app";
+
+// The values here are all static and server-controlled, but a </script>
+// escape is cheap insurance for any JSON-LD block.
+const websiteJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Where Them Logs App",
+  alternateName: "wherethemlogs.app",
+  url: `${siteUrl}/`,
+}).replace(/</g, "\\u003c");
+
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ platform?: string }>;
+}): Promise<Metadata> {
+  const { platform } = await searchParams;
+  return {
+    alternates: { canonical: "/" },
+    openGraph: { url: "/" },
+    ...(platform ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 export default async function Home({
   searchParams,
@@ -41,6 +67,10 @@ export default async function Home({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: websiteJsonLd }}
+      />
       <Header />
       <ZoneTabs
         active={platform}
@@ -50,7 +80,12 @@ export default async function Home({
 
       <main className="rack">
         <div className="sign">
-          <h1 className="sign__h">Where them logs at</h1>
+          <h1 className="sign__h">
+            Where them logs at
+            <span className="sign__hSub">
+              Log file locations for Windows, macOS and Linux
+            </span>
+          </h1>
           <div className="sign__row">
             <p className="sign__sub">
               The log file location for any application, on Windows, macOS or Linux - every
@@ -94,7 +129,7 @@ export default async function Home({
               <ul className="picks">
                 {recent.map((app) => (
                   <li key={app.id} className="pick">
-                    <Link className="pick__link" href={`/search?q=${encodeURIComponent(app.name)}`}>
+                    <Link className="pick__link" href={`/apps/${app.slug}`}>
                       <span className="pick__app">{app.name}</span>
                       <span className="pick__zones">
                         {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (

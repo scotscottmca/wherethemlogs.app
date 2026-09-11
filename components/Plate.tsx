@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconCopy, IconCheck, IconFlag } from "./Icons";
 import type { LogPath, Plate as PlateData, Platform } from "@/lib/api";
@@ -75,7 +76,11 @@ export function Plate({
               decoding="async"
             />
           )}
-          <h3 className="plate__name">{app.name}</h3>
+          <h3 className="plate__name">
+            <Link href={`/apps/${app.slug}`} style={{ textDecoration: "none" }}>
+              {app.name}
+            </Link>
+          </h3>
           {variant && <span className="tag mono plate__variant">{variant}</span>}
           <span className="tag mono plate__vendor">{app.vendor.name}</span>
           {confirmed && (
