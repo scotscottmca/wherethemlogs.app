@@ -22,11 +22,34 @@ export async function generateMetadata({
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
   const { q } = await searchParams;
+
+  if (!q) {
+    return {
+      title: "Browse the index",
+      description:
+        "Every application in the index, with log file locations for Windows, macOS and Linux, filterable by installer type and architecture.",
+    };
+  }
+
+  // Name the app when the query clearly names one - "Google Chrome log file
+  // locations" reads better in results than the raw query ever will. Falls
+  // back to the query itself, including when search() finds nothing.
+  let appName: string | undefined;
+  try {
+    const { results } = await search({ q, platform: "all", types: [] });
+    const top = results[0];
+    if (top) {
+      const needle = q.trim().toLowerCase();
+      const haystacks = [top.name, ...top.aliases].map((s) => s.toLowerCase());
+      if (haystacks.includes(needle)) appName = top.name;
+    }
+  } catch {
+    // Snapshot unavailable - fall back to the query-based title below.
+  }
+
   return {
-    title: q ? `“${q}” - results` : "Browse the index",
-    description: q
-      ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
-      : undefined,
+    title: appName ? `${appName} log file locations` : `Log file locations matching "${q}"`,
+    description: `Log file locations for ${q}, qualified by platform, installer type and architecture.`,
   };
 }
 
