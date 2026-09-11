@@ -13,7 +13,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wherethemlogs.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Where Them Logs App - log file locations for Windows, macOS and Linux",
+    default: "Application log file locations - Where Them Logs App",
     template: "%s · Where Them Logs App",
   },
   description:
