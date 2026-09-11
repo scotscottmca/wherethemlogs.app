@@ -421,6 +421,8 @@
   font-size: clamp(0.85rem, 1.05vw, 0.97rem);
   line-height: 1.45;
   color: var(--bone);
+  /* One path per line when a label lists several files. */
+  white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
   margin: 0;

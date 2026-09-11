@@ -6,7 +6,7 @@ import { DeletePress, Field, Fields, Notice, Reading, Superseded, Text, Toggles,
 import { ZoneSwatch } from "./Chrome";
 import { IconArrow, IconPlus } from "./Icons";
 import { PLATFORM_META, TYPE_GROUPS, type Platform } from "@/lib/api";
-import { SCOPES, type Scope } from "@/lib/model";
+import { SCOPES, pathLines, type Scope } from "@/lib/model";
 import { createLogPath, deleteLogPath, patchLogPath, type App, type LogPath } from "@/lib/admin";
 
 const ZONE_CODE: Record<Platform, string> = { windows: "WIN", macos: "MAC", linux: "LNX" };
@@ -214,7 +214,9 @@ function LogPathEditor({
   const set = <K extends keyof Form>(key: K, value: Form[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  const trimmed = form.path !== form.path.trim();
+  const lines = pathLines(form.path);
+  const stored = lines.join("\n");
+  const trimmed = form.path !== stored;
 
   const save = (withEtag = etag) =>
     void write.run(
@@ -296,28 +298,29 @@ function LogPathEditor({
           <Field
             label="Path"
             error={write.fields.path}
-            hint="Up to 1024 characters, stored exactly as typed. %LOCALAPPDATA%, ~/Library/Logs and $XDG_STATE_HOME are never expanded."
+            hint="One path per line - list several files under this label by putting each on its own line. Up to 4096 characters, stored exactly as typed. %LOCALAPPDATA%, ~/Library/Logs and $XDG_STATE_HOME are never expanded."
           >
-            <input
-              type="text"
+            <textarea
               className="frow__in mono"
               value={form.path}
+              rows={Math.min(Math.max(lines.length, 1) + 1, 14)}
               spellCheck={false}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
-              maxLength={1024}
+              maxLength={4096}
               placeholder={"%LOCALAPPDATA%\\Vendor\\App\\logs\\"}
               onChange={(e) => set("path", e.target.value)}
               aria-invalid={write.fields.path ? true : undefined}
             />
-            {form.path && (
+            {stored && (
               <div className="admProof">
                 <p className="admProof__code tag mono">Stored as</p>
-                <code className="prow__path">{form.path.trim()}</code>
+                <code className="prow__path">{stored}</code>
                 <p className="tag mono admProof__len">
-                  {form.path.trim().length} characters
-                  {trimmed && " · the space at the edge of what you typed is dropped on save"}
+                  {lines.length > 1 && `${lines.length} paths · `}
+                  {stored.length} characters
+                  {trimmed && " · spaces at the edges of each line and blank lines are dropped on save"}
                 </p>
               </div>
             )}

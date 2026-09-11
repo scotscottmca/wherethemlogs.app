@@ -91,6 +91,13 @@ export function slugify(value: string): string {
     .slice(0, 80);
 }
 
+/**
+ * A log path's `path` may list several files, one per line, under the one
+ * label. Each line is trimmed and blank lines dropped; the rest stays verbatim.
+ */
+export const pathLines = (path: string): string[] =>
+  path.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+
 export function resolveApp(app: App, vendor: Vendor | undefined): ResolvedApp {
   const platforms = [...new Set(app.logPaths.map((p) => p.platform))] as Platform[];
   const types = [...new Set(app.logPaths.flatMap((p) => p.types))];

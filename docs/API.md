@@ -321,6 +321,6 @@ Every failure is the same shape:
   `vendors` (partitioned by `/id`) one would enforce nothing, and on `apps`
   (partitioned by `/vendorId`) it only makes a slug unique within one vendor. A
   clash returns `409` naming the record that already holds it.
-- `path` - up to 1024 characters, stored **byte for byte**. Environment variables are never expanded and never normalised.
+- `path` - up to 4096 characters, stored **byte for byte**. Environment variables are never expanded and never normalised. Several files under one label go one per line (`\n`-separated); each line is trimmed and blank lines are dropped, and the site prints one path per line.
 - `types` - validated against the known list; unknown values are rejected with the full allowed set in `details.allowed`.
 - `iconUrl` / `website` - must parse as URLs and must be `https:`.

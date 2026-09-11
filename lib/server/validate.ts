@@ -1,6 +1,6 @@
 import { badRequest } from "./errors";
 import {
-  ALL_TYPES, PLATFORMS, SCOPES, slugify,
+  ALL_TYPES, PLATFORMS, SCOPES, pathLines, slugify,
   type LogPath, type Platform, type Scope,
 } from "../model";
 
@@ -124,8 +124,9 @@ export function parseLogPath(body: unknown, { partial = false } = {}): Partial<L
   if (!partial || b.label !== undefined) out.label = str(b.label, "label", { max: 80 })!;
   if (!partial || b.path !== undefined) {
     // Stored byte for byte. %LOCALAPPDATA%, ~ and $XDG_STATE_HOME survive
-    // intact, because the machine being fixed is not this one.
-    out.path = str(b.path, "path", { max: 1024 })!;
+    // intact, because the machine being fixed is not this one. Several paths
+    // under one label are one per line.
+    out.path = pathLines(str(b.path, "path", { max: 4096 })!).join("\n");
   }
   if (b.note !== undefined) out.note = str(b.note, "note", { max: 500, required: false });
   if (b.variant !== undefined) out.variant = str(b.variant, "variant", { max: 80, required: false });
