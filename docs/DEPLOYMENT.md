@@ -558,6 +558,57 @@ az containerapp ingress access-restriction remove -n ca-wtla-prod -g rg-wtla-pro
 The container-address callback in the Entra registration is now unreachable.
 It does no harm and can be removed whenever convenient.
 
+#### Redirect www to the apex
+
+The `www` form has no origin behind it and never did - only `wherethemlogs.app`
+is bound to the container (step 4 above). Left alone, `www.wherethemlogs.app`
+does not answer at all, which is exactly what the 11 September 2026 SEO audit
+found. The fix is entirely at the Cloudflare edge: no code, no Bicep, no CI
+change is possible or needed from this repository.
+
+**1. Add a proxied DNS record for `www`.** Cloudflare, DNS, Add record:
+
+| Type | Name | Content | Proxy status |
+| --- | --- | --- | --- |
+| AAAA | `www` | `100::` | Proxied |
+
+`100::` is Cloudflare's documented placeholder for a proxied-only record that
+has no real origin behind it - the redirect happens entirely at the edge, and
+Cloudflare never opens a connection to that address. It only works with the
+proxy on; if it is ever set to DNS only, `www` starts resolving to an address
+nothing listens on.
+
+**2. Add a Redirect Rule.** Cloudflare, Rules, Redirect Rules, Create rule:
+
+| Field | Value |
+| --- | --- |
+| Rule name | `www to apex` |
+| When incoming requests match | Custom filter expression: `(http.host eq "www.wherethemlogs.app")` |
+| Then | Dynamic, expression `concat("https://wherethemlogs.app/", http.request.uri.path, http.request.uri.query)` |
+| Status code | 301 |
+| Preserve query string | On |
+
+The wizard's simpler "match" form does the same thing: matching request URL
+`www.wherethemlogs.app/*` to a static target `https://wherethemlogs.app/${1}`
+with the path captured as `${1}`, status 301, and the query-string toggle on.
+Either form is fine, so long as the query string is preserved - without it a
+link like `www.wherethemlogs.app/?q=teams` lands on the apex with the search
+term dropped.
+
+**3. Verify.**
+
+```powershell
+# PowerShell's own "curl" is an alias for Invoke-WebRequest and does not take
+# -sI the way real curl does. Use curl.exe to get the actual tool.
+curl.exe -sI https://www.wherethemlogs.app/privacy
+```
+
+Expect `301` with a `location` header of `https://wherethemlogs.app/privacy`.
+This never reaches the container - it is answered by Cloudflare before the
+request leaves the edge - so `allowedIngressCidrs` and the custom domain
+binding are unaffected, and no deploy of either workflow is needed to turn it
+on.
+
 ## After the first run
 
 Merge a PR into `main`. Path filters decide what moves:
