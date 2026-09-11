@@ -1,0 +1,1 @@
+Where Them Logs App - search for any application's log file locations on Windows, macOS and Linux

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/Chrome";
-import { Consent } from "@/components/Consent";
+import { Consent, ConsentReset } from "@/components/Consent";
 import { GITHUB_ISSUES } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -39,11 +39,11 @@ export default function Privacy() {
           <div className="sheet__body">
           <h2>The short version</h2>
           <ul>
-            <li>No account, no sign-in, no advertising, and nothing sold or shared.</li>
+            <li>No account, no sign-in, no advertising, and nothing sold.</li>
             <li>
-              One optional analytics cookie, set only if you press <strong>Accept</strong>.
-              Decline and the site behaves identically - no reduced features, no repeated
-              asking on every page.
+              Optional Google Analytics cookies, set only if you press <strong>Accept</strong>.
+              Decline and Google is never loaded, and the site behaves identically - no
+              reduced features, no repeated asking on every page.
             </li>
             <li>
               Your recent searches are stored in your own browser and never sent to us.
@@ -78,10 +78,10 @@ export default function Privacy() {
                 <td>Last 8, until you clear them</td>
               </tr>
               <tr>
-                <td>Analytics cookie</td>
-                <td>First-party cookie</td>
+                <td>Analytics cookies (<span className="mono">_ga</span>, <span className="mono">_ga_CG11KY5XE3</span>)</td>
+                <td>Your browser, read by Google Analytics</td>
                 <td>Counting which applications get looked up</td>
-                <td>Set only on Accept</td>
+                <td>Set only on Accept, for up to 2 years</td>
               </tr>
               <tr>
                 <td>Server request logs</td>
@@ -92,21 +92,27 @@ export default function Privacy() {
             </tbody>
           </table>
 
-          <h2>The analytics cookie</h2>
+          <h2>Google Analytics</h2>
           <p>
-            If you accept, one first-party cookie records which search terms and platform
-            filters are used, so the catalogue gets filled in the order people actually need.
-            It records the search term and the platform filter. It does not record your IP address
-            in full, does not follow you to other sites, and is not shared with an advertising
-            network.
+            If you accept, the site loads Google Analytics 4. It sets two first-party cookies
+            and sends Google the pages you view - the address includes the search term and
+            platform filter - along with your browser type, screen size and approximate
+            location. We use it to see which applications people look up, so the catalogue
+            gets filled in the order people actually need.
           </p>
           <p>
-            <strong>
-              The analytics vendor for this cookie has not been chosen yet, so this section
-              will be updated with the processor&rsquo;s name and location before the cookie
-              is switched on in production.
-            </strong>{" "}
-            Until then, declining and accepting have the same practical effect.
+            Google Analytics 4 does not log or store IP addresses. Google signals and ad
+            personalisation are switched off for this site, so the data is not used for
+            advertising or linked to a Google account. Google may process it outside your
+            country, including in the United States.{" "}
+            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
+              How Google uses this data
+            </a>
+            .
+          </p>
+          <p>
+            Decline, or never answer, and the Google script is not loaded at all - nothing
+            is sent to Google.
           </p>
 
           <h2>Recent searches are not a cookie</h2>
@@ -120,9 +126,13 @@ export default function Privacy() {
 
           <h2>Changing your mind</h2>
           <p>
-            Clear this site&rsquo;s data in your browser and the consent question is asked
-            again from scratch. Declining is remembered the same way accepting is - we do not
-            treat a decline as an invitation to ask again tomorrow.
+            This button forgets your answer, deletes the Google Analytics cookies and asks
+            again. Clearing this site&rsquo;s data in your browser does the same. Declining is
+            remembered the same way accepting is - we do not treat a decline as an invitation
+            to ask again tomorrow.
+          </p>
+          <p>
+            <ConsentReset />
           </p>
 
           <h2>Contributions</h2>

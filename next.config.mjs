@@ -27,12 +27,13 @@ export default {
             key: "content-security-policy",
             value: [
               "default-src 'self'",
-              // Next's hydration inlines its bootstrap payload.
-              "script-src 'self' 'unsafe-inline'",
+              // Next's hydration inlines its bootstrap payload. Google's tag
+              // is only ever requested after an Accept (components/Consent.tsx).
+              "script-src 'self' 'unsafe-inline' https://*.googletagmanager.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https://*.blob.core.windows.net",
+              "img-src 'self' data: https://*.blob.core.windows.net https://*.google-analytics.com https://*.googletagmanager.com",
               "font-src 'self'",
-              "connect-src 'self'",
+              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

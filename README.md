@@ -76,8 +76,7 @@ names into one.
 ## Before this goes live
 
 - [ ] Register the Entra ID app, add the `admin` app role, and set `authClientId` / `authTenantId`. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
-- [ ] Choose the analytics provider. The consent bar and `/privacy` both state plainly that
-      one has not been chosen and that nothing is loaded either way - update both when it is.
+- [x] Choose the analytics provider - Google Analytics 4, loaded only after Accept (`components/Consent.tsx`).
 - [ ] Replace the seed catalogue with the real index - `/admin/import` takes the research JSON.
 - [x] Build the admin UI on top of the CRUD API.
 - [ ] Decide whether the repo goes public - every "request an app" link points at its issue tracker.

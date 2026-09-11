@@ -57,7 +57,7 @@ The differentiator a neighbouring product could not truthfully copy: paths are q
 **Undecided / not yet supplied**
 
 - GitHub owner/repo. The request link and any repo references use a single clearly-marked placeholder the user swaps in one place.
-- Which analytics product backs the usage-tracking cookie. The consent prompt and privacy page must not name a vendor until this is decided.
+- Analytics is Google Analytics 4 (`G-CG11KY5XE3`), loaded only after the visitor accepts. A decline, or no answer, loads nothing from Google.
 - Whether entries carry contributor attribution, verification dates, or app version scoping.
 
 ## Brand Commitments

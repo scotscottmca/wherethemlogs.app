@@ -47,3 +47,6 @@ export function correctionUrl(app: string, platform: string) {
 
 export const RECENT_KEY = "wtla.recent";
 export const CONSENT_KEY = "wtla.consent";
+/** Fired on window when the visitor answers, so analytics can load without a reload. */
+export const CONSENT_EVENT = "wtla:consent";
+export const GA_ID = "G-CG11KY5XE3";

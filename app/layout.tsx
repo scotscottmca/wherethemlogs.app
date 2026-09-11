@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./components.css";
+import { Analytics } from "@/components/Consent";
 
 /**
  * The public origin, for absolute URLs in metadata. Without it Next emits
@@ -17,6 +18,13 @@ export const metadata: Metadata = {
   },
   description:
     "A searchable index of application log file locations across Windows, macOS and Linux, qualified by installer type and architecture.",
+  // The image itself is app/opengraph-image.png, which Next wires in.
+  openGraph: {
+    type: "website",
+    siteName: "Where Them Logs App",
+    url: "/",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -27,7 +35,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

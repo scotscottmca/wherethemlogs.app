@@ -53,6 +53,7 @@ One Next.js 15 App Router app (`output: "standalone"`) runs as a single Azure Co
   - Both share one concurrency group, because each deploys the same template and they would otherwise race.
 - **Cloudflare sits in front of the site.** The container's ingress allows only Cloudflare's IPv4 ranges (`allowedIngressCidrs`), so the container's own URL returns 403 by design. Smoke tests and health checks go through the public URL.
   - The custom domain binding and its Cloudflare origin certificate are declared in Bicep, so a redeploy does not remove them.
+- **Analytics** is Google Analytics 4, loaded by `<Analytics />` (`components/Consent.tsx`, mounted in the root layout) only after the consent bar's Accept. Nothing from Google loads before an answer or after a Decline; the privacy page's button withdraws consent and deletes the `_ga` cookies. The CSP allows Google's hosts, but no request is made without consent.
 - **Credentials:** identity and role grants are given to the owner as commands to run. The Entra client secret exists only as the GitHub secret `AZURE_AAD_CLIENT_SECRET`.
 
 ## Design
