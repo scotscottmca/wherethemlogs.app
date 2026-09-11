@@ -1,0 +1,2348 @@
+{
+  "generatedAt": "2026-09-11T22:08:46.975Z",
+  "note": "Best-effort snapshot of the live wherethemlogs.app catalog, refreshed manually from a session with real network access whenever convenient. The scheduled discover-untracked-apps routine cannot reach wherethemlogs.app from its sandbox (egress policy), so it reads this file as its baseline exclusion list instead of the live API, and refreshes it itself in the same PR whenever a live check does succeed. This can go stale between refreshes - it only reflects apps with at least one log path (apps with an empty logPaths array do not appear in `/api/search` results and are not captured here, but the routine skips no-log apps on its own merits anyway).",
+  "liveCount": 384,
+  "liveMatchedCount": 399,
+  "apps": [
+    {
+      "name": "1Password",
+      "slug": "1password",
+      "vendor": "AgileBits Inc.",
+      "aliases": []
+    },
+    {
+      "name": "389 Directory Server",
+      "slug": "389-directory-server",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "Ableton Live",
+      "slug": "ableton-live",
+      "vendor": "Ableton AG",
+      "aliases": []
+    },
+    {
+      "name": "Acronis Cyber Protect",
+      "slug": "acronis-cyber-protect",
+      "vendor": "Acronis International GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Active Directory Domain Services",
+      "slug": "active-directory-domain-services",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "ActiveMQ Artemis",
+      "slug": "activemq-artemis",
+      "vendor": "Apache Software Foundation",
+      "aliases": []
+    },
+    {
+      "name": "AdGuard for Mac",
+      "slug": "adguard-for-mac",
+      "vendor": "AdGuard Software Limited",
+      "aliases": []
+    },
+    {
+      "name": "Adobe Acrobat",
+      "slug": "adobe-acrobat",
+      "vendor": "Adobe Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Adobe Acrobat Reader",
+      "slug": "adobe-acrobat-reader",
+      "vendor": "Adobe Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Adobe Photoshop",
+      "slug": "adobe-photoshop",
+      "vendor": "Adobe Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Advanced Insights for ConfigMgr",
+      "slug": "advanced-insights-configmgr",
+      "vendor": "Patch My PC",
+      "aliases": []
+    },
+    {
+      "name": "Advanced Insights for Intune",
+      "slug": "advanced-insights-for-intune",
+      "vendor": "Patch My PC",
+      "aliases": []
+    },
+    {
+      "name": "Advanced Installer",
+      "slug": "advanced-installer",
+      "vendor": "Caphyon",
+      "aliases": []
+    },
+    {
+      "name": "Airtable",
+      "slug": "airtable",
+      "vendor": "Formagrid, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Alacritty",
+      "slug": "alacritty",
+      "vendor": "Alacritty",
+      "aliases": []
+    },
+    {
+      "name": "Alfred",
+      "slug": "alfred",
+      "vendor": "Running with Crayons Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Android Studio",
+      "slug": "android-studio",
+      "vendor": "Google, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "AnyDesk",
+      "slug": "anydesk",
+      "vendor": "AnyDesk Software GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Apache Cassandra",
+      "slug": "apache-cassandra",
+      "vendor": "Apache Software Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Apache HTTP Server",
+      "slug": "apache-http-server",
+      "vendor": "Apache Software Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Apache Kafka",
+      "slug": "apache-kafka",
+      "vendor": "Apache Software Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Apache Tomcat",
+      "slug": "apache-tomcat",
+      "vendor": "Apache Software Foundation",
+      "aliases": []
+    },
+    {
+      "name": "AppArmor",
+      "slug": "apparmor",
+      "vendor": "Canonical",
+      "aliases": []
+    },
+    {
+      "name": "AppCleaner",
+      "slug": "appcleaner",
+      "vendor": "FreeMacSoft",
+      "aliases": []
+    },
+    {
+      "name": "Apple iTunes",
+      "slug": "apple-itunes",
+      "vendor": "Apple",
+      "aliases": []
+    },
+    {
+      "name": "APT / dpkg",
+      "slug": "apt-dpkg",
+      "vendor": "Debian",
+      "aliases": []
+    },
+    {
+      "name": "Arc Browser",
+      "slug": "arc-browser",
+      "vendor": "The Browser Company",
+      "aliases": []
+    },
+    {
+      "name": "Arq",
+      "slug": "arq",
+      "vendor": "Haystack Software LLC",
+      "aliases": []
+    },
+    {
+      "name": "Audacity",
+      "slug": "audacity",
+      "vendor": "Muse Group",
+      "aliases": []
+    },
+    {
+      "name": "auditd",
+      "slug": "auditd",
+      "vendor": "Linux Audit",
+      "aliases": []
+    },
+    {
+      "name": "AutoCAD",
+      "slug": "autocad",
+      "vendor": "Autodesk, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Azure Data Studio",
+      "slug": "azure-data-studio",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Backblaze",
+      "slug": "backblaze",
+      "vendor": "Backblaze, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Bacula",
+      "slug": "bacula",
+      "vendor": "Bacula Systems SA",
+      "aliases": []
+    },
+    {
+      "name": "Bartender",
+      "slug": "bartender",
+      "vendor": "Surtees Studios",
+      "aliases": []
+    },
+    {
+      "name": "Battle.net",
+      "slug": "battle-net",
+      "vendor": "Blizzard Entertainment, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "BBEdit",
+      "slug": "bbedit",
+      "vendor": "Bare Bones Software, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Bear",
+      "slug": "bear",
+      "vendor": "Shiny Frog Ltd",
+      "aliases": [
+        "Bear Notes"
+      ]
+    },
+    {
+      "name": "Beekeeper Studio",
+      "slug": "beekeeper-studio",
+      "vendor": "Matthew Rathbone",
+      "aliases": []
+    },
+    {
+      "name": "BetterDisplay",
+      "slug": "betterdisplay",
+      "vendor": "Kodeon Software",
+      "aliases": []
+    },
+    {
+      "name": "BetterTouchTool",
+      "slug": "bettertouchtool",
+      "vendor": "folivora.ai",
+      "aliases": []
+    },
+    {
+      "name": "BIND",
+      "slug": "bind",
+      "vendor": "Internet Systems Consortium",
+      "aliases": [
+        "named"
+      ]
+    },
+    {
+      "name": "Bitdefender Antivirus for Mac",
+      "slug": "bitdefender-antivirus-for-mac",
+      "vendor": "Bitdefender",
+      "aliases": []
+    },
+    {
+      "name": "Bitwarden",
+      "slug": "bitwarden",
+      "vendor": "Bitwarden Inc.",
+      "aliases": []
+    },
+    {
+      "name": "BleachBit",
+      "slug": "bleachbit",
+      "vendor": "BleachBit",
+      "aliases": []
+    },
+    {
+      "name": "Blender",
+      "slug": "blender",
+      "vendor": "Blender Foundation",
+      "aliases": []
+    },
+    {
+      "name": "BlueZ",
+      "slug": "bluez",
+      "vendor": "BlueZ",
+      "aliases": [
+        "bluetoothd"
+      ]
+    },
+    {
+      "name": "Box Drive",
+      "slug": "box-drive",
+      "vendor": "Box, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Brave Browser",
+      "slug": "brave-browser",
+      "vendor": "Brave Software, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "btop",
+      "slug": "btop",
+      "vendor": "btop",
+      "aliases": [
+        "bpytop"
+      ]
+    },
+    {
+      "name": "Caddy",
+      "slug": "caddy",
+      "vendor": "Caddy",
+      "aliases": []
+    },
+    {
+      "name": "Carbon Copy Cloner",
+      "slug": "carbon-copy-cloner",
+      "vendor": "Bombich Software, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Certbot",
+      "slug": "certbot",
+      "vendor": "Electronic Frontier Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Chocolatey",
+      "slug": "chocolatey",
+      "vendor": "Chocolatey Software",
+      "aliases": []
+    },
+    {
+      "name": "ChronoSync",
+      "slug": "chronosync",
+      "vendor": "Econ Technologies, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "chrony",
+      "slug": "chrony",
+      "vendor": "chrony",
+      "aliases": []
+    },
+    {
+      "name": "Cinema 4D",
+      "slug": "cinema-4d",
+      "vendor": "Maxon Computer GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Cisco Secure Client",
+      "slug": "cisco-secure-client",
+      "vendor": "Cisco Systems, Inc.",
+      "aliases": [
+        "Cisco AnyConnect"
+      ]
+    },
+    {
+      "name": "Citrix Workspace",
+      "slug": "citrix-workspace",
+      "vendor": "Citrix Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "ClamAV",
+      "slug": "clamav",
+      "vendor": "Cisco Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "ClamXAV",
+      "slug": "clamxav",
+      "vendor": "Canimaan Software Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Claude Code",
+      "slug": "claude-code",
+      "vendor": "Anthropic PBC",
+      "aliases": []
+    },
+    {
+      "name": "Claude Desktop",
+      "slug": "claude-desktop",
+      "vendor": "Anthropic PBC",
+      "aliases": []
+    },
+    {
+      "name": "CleanMyMac X",
+      "slug": "cleanmymac-x",
+      "vendor": "MacPaw Inc.",
+      "aliases": []
+    },
+    {
+      "name": "CleanShot X",
+      "slug": "cleanshot-x",
+      "vendor": "CleanShot",
+      "aliases": []
+    },
+    {
+      "name": "ClickHouse",
+      "slug": "clickhouse",
+      "vendor": "ClickHouse, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "ClickUp",
+      "slug": "clickup",
+      "vendor": "ClickUp",
+      "aliases": []
+    },
+    {
+      "name": "CLion",
+      "slug": "clion",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "cloud-init",
+      "slug": "cloud-init",
+      "vendor": "Canonical",
+      "aliases": []
+    },
+    {
+      "name": "CockroachDB",
+      "slug": "cockroachdb",
+      "vendor": "Cockroach Labs",
+      "aliases": []
+    },
+    {
+      "name": "collectd",
+      "slug": "collectd",
+      "vendor": "collectd",
+      "aliases": []
+    },
+    {
+      "name": "Company Portal",
+      "slug": "company-portal",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Configuration Manager (SCCM)",
+      "slug": "configuration-manager-sccm",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "ConnectWise Automate Agent",
+      "slug": "connectwise-automate-agent",
+      "vendor": "ConnectWise, LLC",
+      "aliases": []
+    },
+    {
+      "name": "containerd",
+      "slug": "containerd",
+      "vendor": "Cloud Native Computing Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Contexts",
+      "slug": "contexts",
+      "vendor": "Contexts",
+      "aliases": []
+    },
+    {
+      "name": "Corosync",
+      "slug": "corosync",
+      "vendor": "ClusterLabs",
+      "aliases": []
+    },
+    {
+      "name": "Corsair iCUE",
+      "slug": "corsair-icue",
+      "vendor": "Corsair Gaming, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "CrowdStrike Falcon Sensor",
+      "slug": "crowdstrike-falcon-sensor",
+      "vendor": "CrowdStrike, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Cryptomator",
+      "slug": "cryptomator",
+      "vendor": "Skymatic GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Cubase",
+      "slug": "cubase",
+      "vendor": "Steinberg Media Technologies GmbH",
+      "aliases": []
+    },
+    {
+      "name": "CUPS",
+      "slug": "cups",
+      "vendor": "OpenPrinting",
+      "aliases": []
+    },
+    {
+      "name": "Cyberduck",
+      "slug": "cyberduck",
+      "vendor": "iterate GmbH",
+      "aliases": []
+    },
+    {
+      "name": "DaisyDisk",
+      "slug": "daisydisk",
+      "vendor": "Software Ambience Corp.",
+      "aliases": []
+    },
+    {
+      "name": "Dash",
+      "slug": "dash",
+      "vendor": "Kapeli",
+      "aliases": []
+    },
+    {
+      "name": "DataGrip",
+      "slug": "datagrip",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Datto RMM Agent",
+      "slug": "datto-rmm-agent",
+      "vendor": "Kaseya, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "DaVinci Resolve",
+      "slug": "davinci-resolve",
+      "vendor": "Blackmagic Design",
+      "aliases": []
+    },
+    {
+      "name": "DBeaver",
+      "slug": "dbeaver",
+      "vendor": "DBeaver Corp",
+      "aliases": []
+    },
+    {
+      "name": "Dell Command Update",
+      "slug": "dell-command-update",
+      "vendor": "Dell, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Deluge",
+      "slug": "deluge",
+      "vendor": "Deluge Team",
+      "aliases": []
+    },
+    {
+      "name": "Discord",
+      "slug": "discord",
+      "vendor": "Discord Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Disk Drill",
+      "slug": "disk-drill",
+      "vendor": "CleverFiles",
+      "aliases": []
+    },
+    {
+      "name": "DNF / YUM",
+      "slug": "dnf-yum",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "dnsmasq",
+      "slug": "dnsmasq",
+      "vendor": "dnsmasq",
+      "aliases": []
+    },
+    {
+      "name": "Docker Desktop",
+      "slug": "docker-desktop",
+      "vendor": "Docker Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Docker Engine",
+      "slug": "docker-engine",
+      "vendor": "Docker Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Dovecot",
+      "slug": "dovecot",
+      "vendor": "Dovecot",
+      "aliases": []
+    },
+    {
+      "name": "Dropbox",
+      "slug": "dropbox",
+      "vendor": "Dropbox, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Dropover",
+      "slug": "dropover",
+      "vendor": "Dropover",
+      "aliases": []
+    },
+    {
+      "name": "EA App",
+      "slug": "ea-app",
+      "vendor": "Electronic Arts Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Easy Anti-Cheat",
+      "slug": "easy-anti-cheat",
+      "vendor": "Epic Games, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Eclipse IDE",
+      "slug": "eclipse-ide",
+      "vendor": "Eclipse Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Elasticsearch",
+      "slug": "elasticsearch",
+      "vendor": "Elastic NV",
+      "aliases": []
+    },
+    {
+      "name": "Element",
+      "slug": "element",
+      "vendor": "Element",
+      "aliases": []
+    },
+    {
+      "name": "eM Client",
+      "slug": "em-client",
+      "vendor": "eM Client s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Epic Games Launcher",
+      "slug": "epic-games-launcher",
+      "vendor": "Epic Games, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "ESET Endpoint Security",
+      "slug": "eset-endpoint-security",
+      "vendor": "ESET, spol. s r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Evernote",
+      "slug": "evernote",
+      "vendor": "Bending Spoons S.p.A.",
+      "aliases": []
+    },
+    {
+      "name": "Everything",
+      "slug": "everything",
+      "vendor": "voidtools",
+      "aliases": [
+        "Everything (Voidtools)"
+      ]
+    },
+    {
+      "name": "ExpanDrive",
+      "slug": "expandrive",
+      "vendor": "ExpanDrive",
+      "aliases": []
+    },
+    {
+      "name": "Fail2ban",
+      "slug": "fail2ban",
+      "vendor": "Fail2ban",
+      "aliases": []
+    },
+    {
+      "name": "Ferdium",
+      "slug": "ferdium",
+      "vendor": "Ferdium",
+      "aliases": []
+    },
+    {
+      "name": "FileZilla Client",
+      "slug": "filezilla-client",
+      "vendor": "Tim Kosse",
+      "aliases": []
+    },
+    {
+      "name": "FileZilla Server",
+      "slug": "filezilla-server",
+      "vendor": "Tim Kosse",
+      "aliases": []
+    },
+    {
+      "name": "firewalld",
+      "slug": "firewalld",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "FL Studio",
+      "slug": "fl-studio",
+      "vendor": "Image-Line",
+      "aliases": []
+    },
+    {
+      "name": "Flatpak",
+      "slug": "flatpak",
+      "vendor": "Flatpak",
+      "aliases": [
+        "Flathub"
+      ]
+    },
+    {
+      "name": "Fork",
+      "slug": "fork",
+      "vendor": "Dan Pristupov",
+      "aliases": []
+    },
+    {
+      "name": "ForkLift",
+      "slug": "forklift",
+      "vendor": "BinaryNights LLC",
+      "aliases": []
+    },
+    {
+      "name": "FortiClient",
+      "slug": "forticlient",
+      "vendor": "Fortinet, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Foxit PDF Editor",
+      "slug": "foxit-pdf-editor",
+      "vendor": "Foxit Software Inc.",
+      "aliases": []
+    },
+    {
+      "name": "FreeIPA",
+      "slug": "freeipa",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "GDM",
+      "slug": "gdm",
+      "vendor": "The GNOME Project",
+      "aliases": []
+    },
+    {
+      "name": "Gemini 2",
+      "slug": "gemini-2",
+      "vendor": "MacPaw Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GIMP",
+      "slug": "gimp",
+      "vendor": "GIMP Team",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Copilot (JetBrains IDEs)",
+      "slug": "github-copilot-jetbrains-ides",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Copilot (Visual Studio 2022+)",
+      "slug": "github-copilot-visual-studio-2022",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Copilot (VS Code)",
+      "slug": "github-copilot-vs-code",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Copilot CLI",
+      "slug": "github-copilot-cli",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Copilot desktop app",
+      "slug": "github-copilot-desktop-app",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitHub Desktop",
+      "slug": "github-desktop",
+      "vendor": "Github, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GitLab Runner",
+      "slug": "gitlab-runner",
+      "vendor": "GitLab Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GlobalProtect",
+      "slug": "globalprotect",
+      "vendor": "Palo Alto Networks, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GOG Galaxy",
+      "slug": "gog-galaxy",
+      "vendor": "GOG sp. z o.o.",
+      "aliases": []
+    },
+    {
+      "name": "GoLand",
+      "slug": "goland",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "GoodSync",
+      "slug": "goodsync",
+      "vendor": "Siber Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Google Chrome",
+      "slug": "google-chrome",
+      "vendor": "Google, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Google Drive Desktop",
+      "slug": "google-drive-desktop",
+      "vendor": "Google, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Google Earth Pro",
+      "slug": "google-earth-pro",
+      "vendor": "Google, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "GParted",
+      "slug": "gparted",
+      "vendor": "GParted",
+      "aliases": []
+    },
+    {
+      "name": "Grafana",
+      "slug": "grafana",
+      "vendor": "Grafana Labs",
+      "aliases": []
+    },
+    {
+      "name": "Greenshot",
+      "slug": "greenshot",
+      "vendor": "Greenshot",
+      "aliases": []
+    },
+    {
+      "name": "HandBrake",
+      "slug": "handbrake",
+      "vendor": "HandBrake Team",
+      "aliases": []
+    },
+    {
+      "name": "HAProxy",
+      "slug": "haproxy",
+      "vendor": "HAProxy Technologies",
+      "aliases": []
+    },
+    {
+      "name": "Hazel",
+      "slug": "hazel",
+      "vendor": "Noodlesoft, LLC",
+      "aliases": []
+    },
+    {
+      "name": "Hidden Bar",
+      "slug": "hidden-bar",
+      "vendor": "Dwarves Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Homebrew",
+      "slug": "homebrew",
+      "vendor": "Homebrew",
+      "aliases": []
+    },
+    {
+      "name": "HWiNFO64",
+      "slug": "hwinfo64",
+      "vendor": "REALiX",
+      "aliases": []
+    },
+    {
+      "name": "Hyper",
+      "slug": "hyper",
+      "vendor": "Vercel Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Icinga2",
+      "slug": "icinga2",
+      "vendor": "Icinga GmbH",
+      "aliases": []
+    },
+    {
+      "name": "IINA",
+      "slug": "iina",
+      "vendor": "IINA",
+      "aliases": []
+    },
+    {
+      "name": "InfluxDB",
+      "slug": "influxdb",
+      "vendor": "InfluxData, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Inkscape",
+      "slug": "inkscape",
+      "vendor": "Inkscape",
+      "aliases": []
+    },
+    {
+      "name": "Insomnia",
+      "slug": "insomnia",
+      "vendor": "Kong Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Intel Driver & Support Assistant",
+      "slug": "intel-driver-support-assistant",
+      "vendor": "Intel Corporation",
+      "aliases": []
+    },
+    {
+      "name": "IntelliJ IDEA",
+      "slug": "intellij-idea",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Internet Information Services (IIS)",
+      "slug": "internet-information-services-iis",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Intune Management Extension",
+      "slug": "intune-management-extension",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "ISC DHCP Server",
+      "slug": "isc-dhcp-server",
+      "vendor": "Internet Systems Consortium",
+      "aliases": []
+    },
+    {
+      "name": "iStat Menus",
+      "slug": "istat-menus",
+      "vendor": "Bjango",
+      "aliases": []
+    },
+    {
+      "name": "iTerm2",
+      "slug": "iterm2",
+      "vendor": "George Nachman",
+      "aliases": []
+    },
+    {
+      "name": "Jamf Pro agent",
+      "slug": "jamf-pro-agent",
+      "vendor": "Jamf",
+      "aliases": []
+    },
+    {
+      "name": "Jenkins",
+      "slug": "jenkins",
+      "vendor": "Jenkins",
+      "aliases": []
+    },
+    {
+      "name": "JetBrains Toolbox",
+      "slug": "jetbrains-toolbox",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Jitsi Meet",
+      "slug": "jitsi-meet",
+      "vendor": "8x8, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Joplin",
+      "slug": "joplin",
+      "vendor": "Laurent Cozic",
+      "aliases": []
+    },
+    {
+      "name": "K3s",
+      "slug": "k3s",
+      "vendor": "SUSE",
+      "aliases": []
+    },
+    {
+      "name": "Karabiner-Elements",
+      "slug": "karabiner-elements",
+      "vendor": "Fumihiko Takayama",
+      "aliases": []
+    },
+    {
+      "name": "Kaseya VSA Agent",
+      "slug": "kaseya-vsa-agent",
+      "vendor": "Kaseya, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Kdenlive",
+      "slug": "kdenlive",
+      "vendor": "KDE",
+      "aliases": []
+    },
+    {
+      "name": "Kerberos KDC",
+      "slug": "kerberos-kdc",
+      "vendor": "MIT Kerberos",
+      "aliases": []
+    },
+    {
+      "name": "Keybase",
+      "slug": "keybase",
+      "vendor": "Zoom Video Communications, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Keyboard Maestro",
+      "slug": "keyboard-maestro",
+      "vendor": "Stairways Software Pty Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Keycloak",
+      "slug": "keycloak",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "Kitty Terminal",
+      "slug": "kitty-terminal",
+      "vendor": "Kovid Goyal",
+      "aliases": []
+    },
+    {
+      "name": "Kodi",
+      "slug": "kodi",
+      "vendor": "XBMC Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Krita",
+      "slug": "krita",
+      "vendor": "Krita Foundation",
+      "aliases": []
+    },
+    {
+      "name": "kubelet",
+      "slug": "kubelet",
+      "vendor": "Cloud Native Computing Foundation",
+      "aliases": []
+    },
+    {
+      "name": "LibreOffice",
+      "slug": "libreoffice",
+      "vendor": "The Document Foundation",
+      "aliases": []
+    },
+    {
+      "name": "libvirt",
+      "slug": "libvirt",
+      "vendor": "Red Hat",
+      "aliases": [
+        "libvirtd"
+      ]
+    },
+    {
+      "name": "LightDM",
+      "slug": "lightdm",
+      "vendor": "Canonical",
+      "aliases": []
+    },
+    {
+      "name": "Linear",
+      "slug": "linear",
+      "vendor": "Linear Orbit, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Little Snitch",
+      "slug": "little-snitch",
+      "vendor": "Objective Development Software GmbH",
+      "aliases": []
+    },
+    {
+      "name": "LogMeIn",
+      "slug": "logmein",
+      "vendor": "GoTo",
+      "aliases": []
+    },
+    {
+      "name": "Logseq",
+      "slug": "logseq",
+      "vendor": "Logseq",
+      "aliases": []
+    },
+    {
+      "name": "Logstash",
+      "slug": "logstash",
+      "vendor": "Elastic NV",
+      "aliases": []
+    },
+    {
+      "name": "Loom",
+      "slug": "loom",
+      "vendor": "Atlassian Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Lutris",
+      "slug": "lutris",
+      "vendor": "Lutris",
+      "aliases": []
+    },
+    {
+      "name": "Maccy",
+      "slug": "maccy",
+      "vendor": "Maccy",
+      "aliases": []
+    },
+    {
+      "name": "macOS Installer / Software Update",
+      "slug": "macos-installer-software-update",
+      "vendor": "Apple",
+      "aliases": []
+    },
+    {
+      "name": "Magnet",
+      "slug": "magnet",
+      "vendor": "CrowdCafe",
+      "aliases": []
+    },
+    {
+      "name": "Mailspring",
+      "slug": "mailspring",
+      "vendor": "Foundry 376, LLC",
+      "aliases": []
+    },
+    {
+      "name": "Malwarebytes",
+      "slug": "malwarebytes",
+      "vendor": "Malwarebytes Inc.",
+      "aliases": []
+    },
+    {
+      "name": "MariaDB",
+      "slug": "mariadb",
+      "vendor": "MariaDB Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Matrix Synapse",
+      "slug": "matrix-synapse",
+      "vendor": "The Matrix.org Foundation C.I.C.",
+      "aliases": []
+    },
+    {
+      "name": "Mattermost Desktop",
+      "slug": "mattermost-desktop",
+      "vendor": "Mattermost, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "McAfee Total Protection",
+      "slug": "mcafee-total-protection",
+      "vendor": "McAfee Corp.",
+      "aliases": []
+    },
+    {
+      "name": "mdadm",
+      "slug": "mdadm",
+      "vendor": "mdadm",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft 365 / Office",
+      "slug": "microsoft-365-office",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Defender",
+      "slug": "microsoft-defender",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Edge",
+      "slug": "microsoft-edge",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Edge WebView2 Runtime",
+      "slug": "microsoft-edge-webview2-runtime",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft OneDrive",
+      "slug": "microsoft-onedrive",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Outlook",
+      "slug": "microsoft-outlook",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Power BI Desktop",
+      "slug": "microsoft-power-bi-desktop",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft PowerToys",
+      "slug": "microsoft-powertoys",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Microsoft Teams",
+      "slug": "microsoft-teams",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "MinIO",
+      "slug": "minio",
+      "vendor": "MinIO, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Miro",
+      "slug": "miro",
+      "vendor": "Miro",
+      "aliases": []
+    },
+    {
+      "name": "MongoDB",
+      "slug": "mongodb",
+      "vendor": "MongoDB, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "MongoDB Compass",
+      "slug": "mongodb-compass",
+      "vendor": "MongoDB, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Mountain Duck",
+      "slug": "mountain-duck",
+      "vendor": "iterate GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Mozilla Firefox",
+      "slug": "mozilla-firefox",
+      "vendor": "Mozilla",
+      "aliases": []
+    },
+    {
+      "name": "MSI Afterburner",
+      "slug": "msi-afterburner",
+      "vendor": "Micro-Star International",
+      "aliases": []
+    },
+    {
+      "name": "Mullvad VPN",
+      "slug": "mullvad-vpn",
+      "vendor": "Mullvad VPN AB",
+      "aliases": []
+    },
+    {
+      "name": "Munki",
+      "slug": "munki",
+      "vendor": "Munki",
+      "aliases": []
+    },
+    {
+      "name": "MySQL",
+      "slug": "mysql",
+      "vendor": "Oracle Corporation",
+      "aliases": []
+    },
+    {
+      "name": "MySQL Workbench",
+      "slug": "mysql-workbench",
+      "vendor": "Oracle Corporation",
+      "aliases": []
+    },
+    {
+      "name": "N-able N-central Windows Agent",
+      "slug": "n-able-n-central-windows-agent",
+      "vendor": "N-able, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "NATS Server",
+      "slug": "nats-server",
+      "vendor": "Synadia Communications, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Navicat Premium",
+      "slug": "navicat-premium",
+      "vendor": "PremiumSoft CyberTech Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Neovim",
+      "slug": "neovim",
+      "vendor": "Neovim",
+      "aliases": []
+    },
+    {
+      "name": "Netdata",
+      "slug": "netdata",
+      "vendor": "Netdata, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "NetworkManager",
+      "slug": "networkmanager",
+      "vendor": "The GNOME Project",
+      "aliases": []
+    },
+    {
+      "name": "Nextcloud Desktop Client",
+      "slug": "nextcloud-desktop-client",
+      "vendor": "Nextcloud GmbH",
+      "aliases": []
+    },
+    {
+      "name": "NFS Server",
+      "slug": "nfs-server",
+      "vendor": "nfs-utils",
+      "aliases": []
+    },
+    {
+      "name": "Nginx",
+      "slug": "nginx",
+      "vendor": "F5, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "NinjaOne Agent",
+      "slug": "ninjaone-agent",
+      "vendor": "NinjaOne, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "NordVPN",
+      "slug": "nordvpn",
+      "vendor": "Nord Security",
+      "aliases": []
+    },
+    {
+      "name": "Notepad++",
+      "slug": "notepad",
+      "vendor": "Notepad++ Team",
+      "aliases": []
+    },
+    {
+      "name": "Notion Desktop",
+      "slug": "notion-desktop",
+      "vendor": "Notion Labs, Inc.",
+      "aliases": [
+        "Notion"
+      ]
+    },
+    {
+      "name": "npm",
+      "slug": "npm",
+      "vendor": "npm, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "NVIDIA App",
+      "slug": "nvidia-app",
+      "vendor": "NVIDIA Corporation",
+      "aliases": [
+        "GeForce Experience"
+      ]
+    },
+    {
+      "name": "OBS Studio",
+      "slug": "obs-studio",
+      "vendor": "OBS Project",
+      "aliases": []
+    },
+    {
+      "name": "Obsidian",
+      "slug": "obsidian",
+      "vendor": "Dynalist Inc.",
+      "aliases": []
+    },
+    {
+      "name": "OmniFocus",
+      "slug": "omnifocus",
+      "vendor": "The Omni Group",
+      "aliases": []
+    },
+    {
+      "name": "OnyX",
+      "slug": "onyx",
+      "vendor": "Titanium Software",
+      "aliases": []
+    },
+    {
+      "name": "Open vSwitch",
+      "slug": "open-vswitch",
+      "vendor": "Open vSwitch",
+      "aliases": []
+    },
+    {
+      "name": "OpenLDAP",
+      "slug": "openldap",
+      "vendor": "OpenLDAP Foundation",
+      "aliases": [
+        "slapd"
+      ]
+    },
+    {
+      "name": "OpenSSH",
+      "slug": "openssh",
+      "vendor": "OpenBSD Project",
+      "aliases": []
+    },
+    {
+      "name": "OpenVPN",
+      "slug": "openvpn",
+      "vendor": "OpenVPN Inc.",
+      "aliases": []
+    },
+    {
+      "name": "OpenVPN GUI",
+      "slug": "openvpn-gui",
+      "vendor": "OpenVPN Inc.",
+      "aliases": []
+    },
+    {
+      "name": "OrbStack",
+      "slug": "orbstack",
+      "vendor": "Orbital Labs, LLC",
+      "aliases": []
+    },
+    {
+      "name": "Pacemaker",
+      "slug": "pacemaker",
+      "vendor": "ClusterLabs",
+      "aliases": []
+    },
+    {
+      "name": "Pacman",
+      "slug": "pacman",
+      "vendor": "Arch Linux",
+      "aliases": []
+    },
+    {
+      "name": "Parallels Desktop",
+      "slug": "parallels-desktop",
+      "vendor": "Parallels International GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Parsec",
+      "slug": "parsec",
+      "vendor": "Parsec Cloud, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Patch My PC Publisher",
+      "slug": "patch-my-pc-publisher",
+      "vendor": "Patch My PC",
+      "aliases": [
+        "pmpc publisher"
+      ]
+    },
+    {
+      "name": "pgAdmin",
+      "slug": "pgadmin",
+      "vendor": "pgAdmin Development Team",
+      "aliases": []
+    },
+    {
+      "name": "PHP-FPM",
+      "slug": "php-fpm",
+      "vendor": "The PHP Group",
+      "aliases": []
+    },
+    {
+      "name": "PhpStorm",
+      "slug": "phpstorm",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "PipeWire",
+      "slug": "pipewire",
+      "vendor": "PipeWire",
+      "aliases": []
+    },
+    {
+      "name": "Pixelmator Pro",
+      "slug": "pixelmator-pro",
+      "vendor": "Pixelmator Team",
+      "aliases": []
+    },
+    {
+      "name": "Plex Media Server",
+      "slug": "plex-media-server",
+      "vendor": "Plex Inc.",
+      "aliases": [
+        "Plex HTPC"
+      ]
+    },
+    {
+      "name": "Podman",
+      "slug": "podman",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "Postfix",
+      "slug": "postfix",
+      "vendor": "Postfix",
+      "aliases": []
+    },
+    {
+      "name": "PostgreSQL",
+      "slug": "postgresql",
+      "vendor": "PostgreSQL Global Development Group",
+      "aliases": []
+    },
+    {
+      "name": "Postman",
+      "slug": "postman",
+      "vendor": "Postman, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "PowerDNS Recursor",
+      "slug": "powerdns-recursor",
+      "vendor": "PowerDNS.COM B.V.",
+      "aliases": []
+    },
+    {
+      "name": "PowerShell",
+      "slug": "powershell",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Prometheus",
+      "slug": "prometheus",
+      "vendor": "Cloud Native Computing Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Proton VPN",
+      "slug": "proton-vpn",
+      "vendor": "Proton AG",
+      "aliases": []
+    },
+    {
+      "name": "PulseAudio",
+      "slug": "pulseaudio",
+      "vendor": "PulseAudio",
+      "aliases": []
+    },
+    {
+      "name": "Pulseway",
+      "slug": "pulseway",
+      "vendor": "Kaseya, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Puppet Server",
+      "slug": "puppet-server",
+      "vendor": "Perforce Software, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "PuTTY",
+      "slug": "putty",
+      "vendor": "Simon Tatham",
+      "aliases": []
+    },
+    {
+      "name": "PyCharm",
+      "slug": "pycharm",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "qBittorrent",
+      "slug": "qbittorrent",
+      "vendor": "qBittorrent project",
+      "aliases": []
+    },
+    {
+      "name": "QEMU / KVM",
+      "slug": "qemu-kvm",
+      "vendor": "QEMU Project",
+      "aliases": []
+    },
+    {
+      "name": "QuickBooks Desktop",
+      "slug": "quickbooks-desktop",
+      "vendor": "Intuit Inc.",
+      "aliases": []
+    },
+    {
+      "name": "RabbitMQ",
+      "slug": "rabbitmq",
+      "vendor": "Broadcom Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Rambox",
+      "slug": "rambox",
+      "vendor": "Rambox",
+      "aliases": []
+    },
+    {
+      "name": "Raycast",
+      "slug": "raycast",
+      "vendor": "Raycast Technologies Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Razer Synapse",
+      "slug": "razer-synapse",
+      "vendor": "Razer Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Rectangle",
+      "slug": "rectangle",
+      "vendor": "Rectangle",
+      "aliases": []
+    },
+    {
+      "name": "Redis",
+      "slug": "redis",
+      "vendor": "Redis Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Redis Insight",
+      "slug": "redis-insight",
+      "vendor": "Redis Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Remmina",
+      "slug": "remmina",
+      "vendor": "Remmina",
+      "aliases": []
+    },
+    {
+      "name": "Revit",
+      "slug": "revit",
+      "vendor": "Autodesk, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Rider",
+      "slug": "rider",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Riot Vanguard",
+      "slug": "riot-vanguard",
+      "vendor": "Riot Games, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Roblox Player",
+      "slug": "roblox-player",
+      "vendor": "Roblox Corporation",
+      "aliases": []
+    },
+    {
+      "name": "RStudio Desktop",
+      "slug": "rstudio-desktop",
+      "vendor": "Posit, PBC",
+      "aliases": []
+    },
+    {
+      "name": "RubyMine",
+      "slug": "rubymine",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "Rufus",
+      "slug": "rufus",
+      "vendor": "Akeo Consulting",
+      "aliases": []
+    },
+    {
+      "name": "Safari",
+      "slug": "safari",
+      "vendor": "Apple",
+      "aliases": []
+    },
+    {
+      "name": "Sage 50",
+      "slug": "sage-50",
+      "vendor": "The Sage Group plc",
+      "aliases": []
+    },
+    {
+      "name": "Salt Minion",
+      "slug": "salt-minion",
+      "vendor": "Broadcom Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Samba",
+      "slug": "samba",
+      "vendor": "Samba Team",
+      "aliases": []
+    },
+    {
+      "name": "SDDM",
+      "slug": "sddm",
+      "vendor": "KDE",
+      "aliases": []
+    },
+    {
+      "name": "Setapp",
+      "slug": "setapp",
+      "vendor": "MacPaw Inc.",
+      "aliases": []
+    },
+    {
+      "name": "ShareX",
+      "slug": "sharex",
+      "vendor": "ShareX",
+      "aliases": []
+    },
+    {
+      "name": "Shotcut",
+      "slug": "shotcut",
+      "vendor": "Meltytech, LLC",
+      "aliases": []
+    },
+    {
+      "name": "Shottr",
+      "slug": "shottr",
+      "vendor": "Shottr",
+      "aliases": []
+    },
+    {
+      "name": "Signal Desktop",
+      "slug": "signal-desktop",
+      "vendor": "Signal Messenger LLC",
+      "aliases": []
+    },
+    {
+      "name": "Sketch",
+      "slug": "sketch",
+      "vendor": "Sketch B.V.",
+      "aliases": []
+    },
+    {
+      "name": "Skype for Business",
+      "slug": "skype-for-business",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Slack",
+      "slug": "slack",
+      "vendor": "Slack Technologies",
+      "aliases": []
+    },
+    {
+      "name": "smartd",
+      "slug": "smartd",
+      "vendor": "smartmontools",
+      "aliases": [
+        "smartmontools"
+      ]
+    },
+    {
+      "name": "snapd",
+      "slug": "snapd",
+      "vendor": "Canonical",
+      "aliases": []
+    },
+    {
+      "name": "Software Center",
+      "slug": "software-center",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "SolidWorks",
+      "slug": "solidworks",
+      "vendor": "Dassault Systèmes",
+      "aliases": []
+    },
+    {
+      "name": "Sophos Endpoint",
+      "slug": "sophos-endpoint",
+      "vendor": "Sophos Ltd",
+      "aliases": []
+    },
+    {
+      "name": "SpeedCommander",
+      "slug": "speedcommander",
+      "vendor": "SpeedProject GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Splashtop Streamer",
+      "slug": "splashtop-streamer",
+      "vendor": "Splashtop Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Spotify",
+      "slug": "spotify",
+      "vendor": "Spotify AB",
+      "aliases": []
+    },
+    {
+      "name": "SQL Server",
+      "slug": "sql-server",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "SQL Server Management Studio (SSMS)",
+      "slug": "sql-server-management-studio-ssms",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Squid",
+      "slug": "squid",
+      "vendor": "Squid Cache",
+      "aliases": []
+    },
+    {
+      "name": "SSSD",
+      "slug": "sssd",
+      "vendor": "Red Hat",
+      "aliases": []
+    },
+    {
+      "name": "Stats",
+      "slug": "stats",
+      "vendor": "Stats",
+      "aliases": []
+    },
+    {
+      "name": "Steam",
+      "slug": "steam",
+      "vendor": "Valve Corporation",
+      "aliases": []
+    },
+    {
+      "name": "strongSwan",
+      "slug": "strongswan",
+      "vendor": "strongSwan",
+      "aliases": []
+    },
+    {
+      "name": "Sublime Merge",
+      "slug": "sublime-merge",
+      "vendor": "Sublime HQ Pty Ltd",
+      "aliases": []
+    },
+    {
+      "name": "Sublime Text",
+      "slug": "sublime-text",
+      "vendor": "Sublime HQ Pty Ltd",
+      "aliases": []
+    },
+    {
+      "name": "SuperDuper!",
+      "slug": "superduper",
+      "vendor": "Shirt Pocket",
+      "aliases": []
+    },
+    {
+      "name": "Surfshark",
+      "slug": "surfshark",
+      "vendor": "Surfshark B.V.",
+      "aliases": []
+    },
+    {
+      "name": "Syncthing",
+      "slug": "syncthing",
+      "vendor": "Syncthing",
+      "aliases": []
+    },
+    {
+      "name": "Sysinternals Process Monitor",
+      "slug": "sysinternals-process-monitor",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "System Informer",
+      "slug": "system-informer",
+      "vendor": "Winsider Seminars & Solutions, Inc.",
+      "aliases": [
+        "Process Hacker"
+      ]
+    },
+    {
+      "name": "systemd journal",
+      "slug": "systemd-journal",
+      "vendor": "systemd",
+      "aliases": []
+    },
+    {
+      "name": "TablePlus",
+      "slug": "tableplus",
+      "vendor": "TinyApp",
+      "aliases": []
+    },
+    {
+      "name": "Tailscale",
+      "slug": "tailscale",
+      "vendor": "Tailscale Inc.",
+      "aliases": []
+    },
+    {
+      "name": "TeamSpeak Client",
+      "slug": "teamspeak-client",
+      "vendor": "TeamSpeak Systems GmbH",
+      "aliases": []
+    },
+    {
+      "name": "TeamViewer",
+      "slug": "teamviewer",
+      "vendor": "TeamViewer SE",
+      "aliases": []
+    },
+    {
+      "name": "Telegraf",
+      "slug": "telegraf",
+      "vendor": "InfluxData, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Telegram Desktop",
+      "slug": "telegram-desktop",
+      "vendor": "Telegram FZ-LLC",
+      "aliases": []
+    },
+    {
+      "name": "Termius",
+      "slug": "termius",
+      "vendor": "Termius",
+      "aliases": []
+    },
+    {
+      "name": "Things 3",
+      "slug": "things-3",
+      "vendor": "Cultured Code GmbH & Co. KG",
+      "aliases": []
+    },
+    {
+      "name": "Thunderbird",
+      "slug": "thunderbird",
+      "vendor": "Mozilla",
+      "aliases": []
+    },
+    {
+      "name": "Timeshift",
+      "slug": "timeshift",
+      "vendor": "Linux Mint Team",
+      "aliases": []
+    },
+    {
+      "name": "TLP",
+      "slug": "tlp",
+      "vendor": "TLP",
+      "aliases": []
+    },
+    {
+      "name": "Total Commander",
+      "slug": "total-commander",
+      "vendor": "Ghisler Software GmbH",
+      "aliases": []
+    },
+    {
+      "name": "Transmission",
+      "slug": "transmission",
+      "vendor": "Transmission Project",
+      "aliases": []
+    },
+    {
+      "name": "Transmit",
+      "slug": "transmit",
+      "vendor": "Panic Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Trend Micro Apex One",
+      "slug": "trend-micro-apex-one",
+      "vendor": "Trend Micro Incorporated",
+      "aliases": []
+    },
+    {
+      "name": "TunnelBear",
+      "slug": "tunnelbear",
+      "vendor": "McAfee Corp.",
+      "aliases": []
+    },
+    {
+      "name": "Tunnelblick",
+      "slug": "tunnelblick",
+      "vendor": "Jonathan Bullard",
+      "aliases": []
+    },
+    {
+      "name": "Ubisoft Connect",
+      "slug": "ubisoft-connect",
+      "vendor": "Ubisoft Entertainment",
+      "aliases": []
+    },
+    {
+      "name": "UFW",
+      "slug": "ufw",
+      "vendor": "Canonical",
+      "aliases": [
+        "Uncomplicated Firewall"
+      ]
+    },
+    {
+      "name": "Unbound",
+      "slug": "unbound",
+      "vendor": "NLnet Labs",
+      "aliases": []
+    },
+    {
+      "name": "Unity Editor",
+      "slug": "unity-editor",
+      "vendor": "Unity Technologies",
+      "aliases": []
+    },
+    {
+      "name": "Unreal Engine",
+      "slug": "unreal-engine",
+      "vendor": "Epic Games, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Veeam Backup & Replication",
+      "slug": "veeam-backup-replication",
+      "vendor": "Veeam Software",
+      "aliases": []
+    },
+    {
+      "name": "VirtualBox",
+      "slug": "virtualbox",
+      "vendor": "Oracle Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Visual C++ Redistributable",
+      "slug": "visual-c-redistributable",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Visual Studio",
+      "slug": "visual-studio",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Visual Studio Code",
+      "slug": "visual-studio-code",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Vivaldi",
+      "slug": "vivaldi",
+      "vendor": "Vivaldi Technologies",
+      "aliases": []
+    },
+    {
+      "name": "VLC Media Player",
+      "slug": "vlc-media-player",
+      "vendor": "VideoLAN",
+      "aliases": []
+    },
+    {
+      "name": "vMix",
+      "slug": "vmix",
+      "vendor": "StudioCoast Pty Ltd",
+      "aliases": []
+    },
+    {
+      "name": "VMware Fusion",
+      "slug": "vmware-fusion",
+      "vendor": "Broadcom Inc.",
+      "aliases": []
+    },
+    {
+      "name": "VMware Workstation Pro",
+      "slug": "vmware-workstation-pro",
+      "vendor": "Broadcom Inc.",
+      "aliases": [
+        "VMware Workstation Player"
+      ]
+    },
+    {
+      "name": "vsftpd",
+      "slug": "vsftpd",
+      "vendor": "vsftpd",
+      "aliases": []
+    },
+    {
+      "name": "Warp Terminal",
+      "slug": "warp-terminal",
+      "vendor": "Warp",
+      "aliases": []
+    },
+    {
+      "name": "Webex",
+      "slug": "webex",
+      "vendor": "Cisco Systems, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Webroot SecureAnywhere",
+      "slug": "webroot-secureanywhere",
+      "vendor": "OpenText Corporation",
+      "aliases": []
+    },
+    {
+      "name": "WebStorm",
+      "slug": "webstorm",
+      "vendor": "JetBrains s.r.o.",
+      "aliases": []
+    },
+    {
+      "name": "WhatsApp Desktop",
+      "slug": "whatsapp-desktop",
+      "vendor": "WhatsApp LLC",
+      "aliases": []
+    },
+    {
+      "name": "Whimsical",
+      "slug": "whimsical",
+      "vendor": "Whimsical",
+      "aliases": []
+    },
+    {
+      "name": "Windows Installer (msiexec)",
+      "slug": "windows-installer-msiexec",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windows Print Spooler",
+      "slug": "windows-print-spooler",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windows Server DHCP Server role",
+      "slug": "windows-server-dhcp-server-role",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windows Server DNS Server role",
+      "slug": "windows-server-dns-server-role",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windows Server Update Services",
+      "slug": "windows-server-update-services",
+      "vendor": "Microsoft Corporation",
+      "aliases": [
+        "WSUS"
+      ]
+    },
+    {
+      "name": "Windows Setup (OS upgrades/installs)",
+      "slug": "windows-setup-os-upgrades-installs",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windows Update",
+      "slug": "windows-update",
+      "vendor": "Microsoft Corporation",
+      "aliases": []
+    },
+    {
+      "name": "Windscribe",
+      "slug": "windscribe",
+      "vendor": "Windscribe Limited",
+      "aliases": []
+    },
+    {
+      "name": "WinRAR",
+      "slug": "winrar",
+      "vendor": "win.rar GmbH",
+      "aliases": []
+    },
+    {
+      "name": "WinSCP",
+      "slug": "winscp",
+      "vendor": "Martin Prikryl",
+      "aliases": []
+    },
+    {
+      "name": "WireGuard",
+      "slug": "wireguard",
+      "vendor": "Jason A. Donenfeld",
+      "aliases": []
+    },
+    {
+      "name": "WizTree",
+      "slug": "wiztree",
+      "vendor": "Antibody Software",
+      "aliases": []
+    },
+    {
+      "name": "wpa_supplicant",
+      "slug": "wpa-supplicant",
+      "vendor": "wpa_supplicant",
+      "aliases": []
+    },
+    {
+      "name": "X.Org Server",
+      "slug": "x-org-server",
+      "vendor": "X.Org Foundation",
+      "aliases": []
+    },
+    {
+      "name": "Xcode",
+      "slug": "xcode",
+      "vendor": "Apple",
+      "aliases": []
+    },
+    {
+      "name": "XSplit Broadcaster",
+      "slug": "xsplit-broadcaster",
+      "vendor": "SplitmediaLabs Limited",
+      "aliases": []
+    },
+    {
+      "name": "Zabbix Agent",
+      "slug": "zabbix-agent",
+      "vendor": "Zabbix SIA",
+      "aliases": []
+    },
+    {
+      "name": "Zabbix Server",
+      "slug": "zabbix-server",
+      "vendor": "Zabbix SIA",
+      "aliases": []
+    },
+    {
+      "name": "Zed Editor",
+      "slug": "zed-editor",
+      "vendor": "Zed Industries, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Zeplin",
+      "slug": "zeplin",
+      "vendor": "Zeplin, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Zoom Workplace",
+      "slug": "zoom-workplace",
+      "vendor": "Zoom",
+      "aliases": []
+    },
+    {
+      "name": "Zscaler Client Connector",
+      "slug": "zscaler-client-connector",
+      "vendor": "Zscaler, Inc.",
+      "aliases": []
+    },
+    {
+      "name": "Zulip Desktop",
+      "slug": "zulip-desktop",
+      "vendor": "Kandra Labs, Inc.",
+      "aliases": []
+    }
+  ]
+}
