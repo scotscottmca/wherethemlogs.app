@@ -40,7 +40,7 @@ const formOf = (logPath: LogPath | null): Form => ({
   note: logPath?.note ?? "",
   variant: logPath?.variant ?? "",
   types: logPath?.types ?? [],
-  scope: logPath ? (logPath.scope ?? "") : "per-user",
+  scope: logPath?.scope ?? "",
 });
 
 const comparable = (form: Form) => ({
