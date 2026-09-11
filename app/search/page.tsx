@@ -22,11 +22,14 @@ export async function generateMetadata({
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
   const { q } = await searchParams;
+  const canonical = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
   return {
     title: q ? `“${q}” - results` : "Browse the index",
     description: q
       ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
       : undefined,
+    alternates: { canonical },
+    openGraph: { url: canonical },
   };
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
@@ -11,6 +12,11 @@ import { requestAppUrl } from "@/lib/site";
 // Rendered per request, straight out of Cosmos. No client fetch, no loading
 // shell, and the catalogue is in the HTML a crawler receives.
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 
