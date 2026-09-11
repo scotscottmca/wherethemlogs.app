@@ -10,12 +10,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.2.0",
+    "@azure/identity": "^4.5.0",
+    "@azure/storage-blob": "^12.26.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "next": "15.5.4",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "@azure/cosmos": "^4.2.0",
-    "@azure/identity": "^4.5.0",
-    "@azure/storage-blob": "^12.26.0"
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/node": "22.10.2",

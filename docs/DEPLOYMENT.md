@@ -539,7 +539,8 @@ Paste the result into `allowedIngressCidrs` and push.
 **If the smoke test fails through Cloudflare with a 403 or 503 challenge**, a
 Cloudflare security feature such as Bot Fight Mode is challenging GitHub's
 runners. Add a WAF skip rule for `/api/health`, or exempt that path from the
-challenge.
+challenge. The same feature would block MCP clients, which are not browsers
+either, so give `/api/mcp` the same rule.
 
 **To reach the container directly for debugging**, allow your own IP for the
 duration, then remove it. The next deploy removes it regardless, because the

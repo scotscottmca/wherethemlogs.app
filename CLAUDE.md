@@ -26,7 +26,7 @@ There is no lint script and no test framework. `scripts/check-interchange.mjs` i
 
 One Next.js 15 App Router app (`output: "standalone"`) runs as a single Azure Container App. The data lives in Cosmos DB (serverless), and icons in Blob storage.
 
-- **Server components never call this app's own API.** They import from `lib/server/*` directly. The route handlers under `app/api/` exist for the browser: the search type-ahead and every admin write.
+- **Server components never call this app's own API.** They import from `lib/server/*` directly. The route handlers under `app/api/` exist for the browser (the search type-ahead and every admin write) and for AI agents: `app/api/mcp` is a stateless MCP server over the same `search()` and snapshot.
 - **Model (`lib/model.ts`): Vendor > App > LogPath.**
   - The `vendors` container is partitioned by `/id`; `apps` by `/vendorId`, with log paths embedded in the app document.
   - Moving an app to another vendor changes its partition key, so it is a create in the new partition followed by a delete from the old one.

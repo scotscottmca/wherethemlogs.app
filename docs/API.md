@@ -8,7 +8,7 @@ anonymous.
 **Server-rendered pages do not use this API.** `app/page.tsx` calls `summary()`
 and `app/search/page.tsx` calls `search()` from `lib/server/catalog.ts`
 directly, in-process. These routes exist for the browser - the type-ahead - and
-for the admin portal.
+for the admin portal, and `/api/mcp` serves AI agents.
 
 ---
 
@@ -144,6 +144,32 @@ you an admin?" cannot be gated on being one, or a signed-in non-admin receives a
 403 instead of an answer.
 
 Read endpoints send `cache-control: public, max-age=60, stale-while-revalidate=300`.
+
+### `POST /api/mcp`
+
+The catalogue as an [MCP](https://modelcontextprotocol.io) server, for AI
+agents. Streamable HTTP, stateless: every request stands alone, there are no
+sessions, and responses are plain JSON rather than an event stream. `GET` and
+`DELETE` return `405`.
+
+| Tool | Arguments | Returns |
+| --- | --- | --- |
+| `search_log_locations` | `query`, `platform?`, `limit?` (1-25, default 10) | Matching apps, each with its log paths by platform |
+| `get_app_log_locations` | `slug` | One app's log paths, or an error result naming the slug |
+
+Search matches app names and aliases, the same as `/api/search`. Results leave
+out ids, icons and timestamps, and a `path` holding several lines comes back as
+a `paths` list. Request bodies over 64 KB get `413`.
+
+Connect a client, and check the endpoint from a shell:
+
+```powershell
+claude mcp add --transport http wherethemlogs https://wherethemlogs.app/api/mcp
+
+Invoke-RestMethod https://wherethemlogs.app/api/mcp -Method Post -ContentType application/json `
+  -Headers @{ Accept = 'application/json, text/event-stream' } `
+  -Body '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_log_locations","arguments":{"query":"teams"}}}'
+```
 
 ---
 
