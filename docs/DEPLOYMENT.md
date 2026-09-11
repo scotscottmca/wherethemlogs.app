@@ -471,14 +471,17 @@ az containerapp hostname list -n ca-wtla-prod -g rg-wtla-prod -o table
 Invoke-RestMethod https://wherethemlogs.app/api/live
 ```
 
-This is the one step whose outcome is not known in advance. If a redeploy with
-the proxy on fails on domain validation, grey-cloud for deploys that touch the
-container app, or say so and the binding moves out of the per-push deploy.
+Verified on 2026-09-11: a full infrastructure redeploy with the proxy on
+succeeded and the binding survived it. Re-applying the template does not re-run
+the A-record check for a domain that is already bound, so the orange cloud can
+stay on for every deploy. Only the first bind needs the record grey.
 
 #### Sign-in behind the proxy
 
 Cloudflare forwards the original `Host` header unchanged, so the platform sees
 `wherethemlogs.app` and builds the right callback without extra configuration.
+Verified: with the proxy on, `/admin` redirects to Entra with
+`redirect_uri=https://wherethemlogs.app/.auth/login/aad/callback`.
 Only if sign-in loops or lands on the container's own hostname does it need to
 be told to read forwarded headers instead:
 
