@@ -243,6 +243,12 @@ For a staging environment, set it to 0.
   workflow gates on.
 - **Search ranking lives in `lib/server/catalog.ts`.** The client does no
   scoring.
+- **The OAuth client secret is a deployment parameter**, not something set on
+  the container app by hand. The auth config references it by name, so a
+  template that names a secret it does not create cannot build the app from
+  nothing. CI passes it from a GitHub secret; a manual deploy passes it on the
+  command line. Auth needs the provider, the client id and the secret all
+  present, and two of three leaves it off rather than half-configured.
 - **The auth token store is off.** It persists the provider's access and refresh
   tokens so an app can call downstream APIs as the signed-in user; this one only
   reads the identity out of the injected header. Turning it on also requires a

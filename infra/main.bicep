@@ -60,6 +60,14 @@ param authClientId string = ''
 @description('Entra ID tenant id. Only read when authProvider is "aad".')
 param authTenantId string = ''
 
+@description('''
+OAuth client secret for the chosen provider. Never committed: CI passes it from
+a GitHub secret, and a manual deploy passes it on the command line. Auth stays
+off until it is supplied.
+''')
+@secure()
+param authClientSecret string = ''
+
 @description('Comma separated GitHub logins allowed to administer the catalogue. Empty means nobody is.')
 param adminGithubLogins string = ''
 
@@ -184,6 +192,7 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     authProvider: authProvider
     authClientId: authClientId
     authTenantId: authTenantId
+    authClientSecret: authClientSecret
     adminGithubLogins: adminGithubLogins
   }
   // The image pull happens as the app starts, so the grant has to be done.

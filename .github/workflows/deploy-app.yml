@@ -94,6 +94,7 @@ jobs:
             --name "app-$GITHUB_RUN_ID" \
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
+            --parameters "authClientSecret=${{ secrets.AZURE_AAD_CLIENT_SECRET }}" \
             --parameters "containerImage=${{ steps.image.outputs.image }}" \
             --query properties.outputs -o json | tee outputs.json
 

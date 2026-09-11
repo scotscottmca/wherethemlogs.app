@@ -62,6 +62,7 @@ jobs:
             --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
+            --parameters "authClientSecret=${{ secrets.AZURE_AAD_CLIENT_SECRET }}" \
             "${extra[@]}"
 
   deploy:
@@ -107,6 +108,7 @@ jobs:
             --name "infra-$GITHUB_RUN_ID" \
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
+            --parameters "authClientSecret=${{ secrets.AZURE_AAD_CLIENT_SECRET }}" \
             "${extra[@]}" \
             --query properties.outputs -o json | tee outputs.json
 

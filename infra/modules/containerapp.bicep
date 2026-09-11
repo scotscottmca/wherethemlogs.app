@@ -48,6 +48,17 @@ param authClientId string = ''
 param authTenantId string = ''
 
 @description('''
+The OAuth client secret for the chosen provider.
+
+Declared here rather than set out of band with "az containerapp secret set",
+because the authConfig below references it by name: a template that names a
+secret it does not create cannot build the app from nothing. Passed from a
+GitHub secret in CI, and on the command line for a manual deploy.
+''')
+@secure()
+param authClientSecret string = ''
+
+@description('''
 Comma separated GitHub logins allowed to administer the catalogue.
 
 GitHub authenticates but carries no roles, so this is the authorization list.
@@ -75,7 +86,11 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
 // Naming a provider is not the same as having configured one. Until the client
 // id is filled in there is no /.auth/login/... endpoint, so the app is told
 // "none" and says so, rather than redirecting people into a 404.
-var authConfigured = authProvider != 'none' && !empty(authClientId)
+// All three are needed. A client id with no secret produces an authConfig that
+// references a secret the app does not carry, which fails the deployment rather
+// than degrading.
+var authConfigured = authProvider != 'none' && !empty(authClientId) && !empty(authClientSecret)
+var authSecretName = authProvider == 'github' ? 'github-client-secret' : 'aad-client-secret'
 var effectiveAuthProvider = authConfigured ? authProvider : 'none'
 
 var appProbes = [
@@ -127,6 +142,14 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           { latestRevision: true, weight: 100 }
         ]
       }
+      secrets: authConfigured
+        ? [
+            {
+              name: authSecretName
+              value: authClientSecret
+            }
+          ]
+        : []
       registries: [
         {
           server: registryLoginServer
@@ -199,7 +222,7 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (a
               clientId: authClientId
               // The secret is set on the container app separately, so it never
               // passes through a template or a parameters file.
-              clientSecretSettingName: 'github-client-secret'
+              clientSecretSettingName: authSecretName
             }
             login: {
               // Enough to read the login and numeric id, and nothing else. The
@@ -214,7 +237,7 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (a
             registration: {
               openIdIssuer: '${az.environment().authentication.loginEndpoint}${authTenantId}/v2.0'
               clientId: authClientId
-              clientSecretSettingName: 'aad-client-secret'
+              clientSecretSettingName: authSecretName
             }
             validation: {
               // The sign-in flow's ID token carries aud = the client id. The

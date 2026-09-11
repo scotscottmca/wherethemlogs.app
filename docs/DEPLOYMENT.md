@@ -258,10 +258,8 @@ your app):
   unassigned account cannot get a token at all and never reaches the site.
 - Users and groups, add yourself with the **Admin** role.
 
-**Create a client secret and store it.** One does not exist yet: the app
-registration is created without credentials, and this makes one. Generating it
-straight into the container app means the value never lands in a file, a
-clipboard, or this document.
+**Create a client secret.** One does not exist yet: the app registration is
+created without credentials, and this makes one.
 
 ```powershell
 # --append matters. Without it, "reset" removes every existing credential on the
@@ -270,10 +268,14 @@ $SECRET = az ad app credential reset --id $CLIENT_ID --append --years 2 `
   --query password -o tsv
 
 if (-not $SECRET) { throw "No secret was returned. Check that $CLIENT_ID is right." }
+```
 
-az containerapp secret set -n ca-wtla-prod -g rg-wtla-prod `
-  --secrets "aad-client-secret=$SECRET"
+**Store it as a GitHub secret**, which is the only place it lives. The
+deployment takes it as a parameter, so nothing has to be set on the container
+app out of band, and a rebuild from nothing works:
 
+```powershell
+gh secret set AZURE_AAD_CLIENT_SECRET --body $SECRET
 Remove-Variable SECRET
 ```
 
@@ -297,9 +299,24 @@ Set these in `infra/main.parameters.json` and redeploy the infrastructure:
 "authTenantId":  { "value": "<directory (tenant) id>" }
 ```
 
-Auth only switches on when `authClientId` is non-empty, so committing the
-placeholders is safe: the app reports itself unconfigured rather than
-redirecting into a login endpoint that was never deployed.
+Auth switches on only when the provider, the client id **and** the secret are
+all present. Two of the three leaves it off rather than half-configured, and the
+app reports itself unconfigured rather than redirecting into a login endpoint
+that was never deployed.
+
+The secret is a deployment parameter rather than something set on the container
+app by hand, because the auth config references it by name: a template that
+names a secret it does not create cannot build the app from nothing. To deploy
+manually, pass it:
+
+```powershell
+az deployment group create `
+  --resource-group rg-wtla-prod `
+  --template-file infra/main.bicep `
+  --parameters infra/main.parameters.json `
+  --parameters authClientSecret=$SECRET `
+  --query properties.outputs
+```
 
 **What each refusal looks like**, so none of them reads as a bug:
 
