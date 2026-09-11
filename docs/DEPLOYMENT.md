@@ -258,12 +258,36 @@ your app):
   unassigned account cannot get a token at all and never reaches the site.
 - Users and groups, add yourself with the **Admin** role.
 
-**Store the secret and configure the app:**
+**Create a client secret and store it.** One does not exist yet: the app
+registration is created without credentials, and this makes one. Generating it
+straight into the container app means the value never lands in a file, a
+clipboard, or this document.
 
 ```powershell
+# --append matters. Without it, "reset" removes every existing credential on the
+# registration, which is a blunt way to discover what else was using it.
+$SECRET = az ad app credential reset --id $CLIENT_ID --append --years 2 `
+  --query password -o tsv
+
+if (-not $SECRET) { throw "No secret was returned. Check that $CLIENT_ID is right." }
+
 az containerapp secret set -n ca-wtla-prod -g rg-wtla-prod `
-  --secrets aad-client-secret=<the-client-secret>
+  --secrets "aad-client-secret=$SECRET"
+
+Remove-Variable SECRET
 ```
+
+Azure shows a secret's value once, at creation. There is no way to read it back
+afterwards, so if you lose it before storing it, generate another with the same
+command rather than hunting for the old one.
+
+Doing it in the portal instead: App registrations, your app, **Certificates &
+secrets**, New client secret. Copy the **Value** column, not the Secret ID.
+
+> **It expires.** `--years 2` sets the lifetime, and Entra caps it at two. When
+> it lapses, sign-in breaks with `AADSTS7000222` and nothing else changes, so it
+> reads as a sudden inexplicable outage. Note the date now, or move to a
+> certificate, which the same `az ad app credential reset` can issue.
 
 Set these in `infra/main.parameters.json` and redeploy the infrastructure:
 
