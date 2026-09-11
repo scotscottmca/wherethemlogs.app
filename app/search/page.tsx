@@ -14,7 +14,14 @@ export const dynamic = "force-dynamic";
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
 const pathCount = (list: ReturnType<typeof toPlates>) => list.reduce((n, p) => n + p.logPaths.length, 0);
 
-type SP = { q?: string; platform?: string; type?: string | string[] };
+// Browsing the whole index (no search term) has no natural upper bound - the
+// catalogue is meant to grow. A search narrows the list itself, so it is left
+// uncapped; this only caps the "everything" view, in fixed steps via a plain
+// link, so the page stays a normal server-rendered document at any catalogue
+// size instead of growing linearly with it forever.
+const BROWSE_STEP = 20;
+
+type SP = { q?: string; platform?: string; type?: string | string[]; limit?: string };
 
 export async function generateMetadata({
   searchParams,
@@ -35,11 +42,12 @@ function asTypes(t: SP["type"]): string[] {
   return (Array.isArray(t) ? t : [t]).flatMap((v) => v.split(",")).filter(Boolean);
 }
 
-function buildHref(base: { q: string; platform: Platform | "all"; types: string[] }) {
+function buildHref(base: { q: string; platform: Platform | "all"; types: string[]; limit?: number }) {
   const p = new URLSearchParams();
   if (base.q) p.set("q", base.q);
   if (base.platform !== "all") p.set("platform", base.platform);
   base.types.forEach((t) => p.append("type", t));
+  if (base.limit) p.set("limit", String(base.limit));
   const s = p.toString();
   return s ? `/search?${s}` : "/search";
 }
@@ -77,6 +85,14 @@ export default async function Results({ searchParams }: { searchParams: Promise<
   }
 
   const hasFilters = platform !== "all" || types.length > 0;
+
+  // Only the unfiltered browse view is capped - typing a search already
+  // narrows the list itself, and platform/type filters do the same.
+  const requestedLimit = Number.parseInt(sp.limit ?? "", 10);
+  const validRequestedLimit = Number.isFinite(requestedLimit) && requestedLimit > 0;
+  const limit = q ? undefined : validRequestedLimit ? requestedLimit : BROWSE_STEP;
+  const shownPlates = limit ? plates.slice(0, limit) : plates;
+  const hiddenCount = limit ? plates.length - shownPlates.length : 0;
 
   return (
     <>
@@ -206,7 +222,25 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                 </p>
               </div>
             ) : plates.length ? (
-              plates.map((plate, i) => <Plate key={plate.key} plate={plate} index={i} animate />)
+              <>
+                {shownPlates.map((plate, i) => (
+                  <Plate key={plate.key} plate={plate} index={i} animate />
+                ))}
+                {hiddenCount > 0 && (
+                  <div className="void">
+                    <p className="void__p" style={{ marginTop: 0 }}>
+                      Showing {shownPlates.length} of {plates.length}. The rest are one click away.
+                    </p>
+                    <Link
+                      className="btn tag mono"
+                      href={buildHref({ q, platform, types, limit: (limit ?? 0) + BROWSE_STEP })}
+                    >
+                      Show {Math.min(BROWSE_STEP, hiddenCount)} more
+                      <IconArrow size={15} />
+                    </Link>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="void">
                 <h2 className="void__h">

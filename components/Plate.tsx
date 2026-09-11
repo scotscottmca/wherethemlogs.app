@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { IconCopy, IconCheck, IconFlag } from "./Icons";
+import { IconFlag } from "./Icons";
+import { CopyButton } from "./CopyButton";
 import type { LogPath, Plate as PlateData, Platform } from "@/lib/api";
 import { correctionUrl } from "@/lib/site";
 
@@ -17,6 +17,16 @@ const ZONE_CODE: Record<Platform, string> = {
 /**
  * The label plate. Zone band down the left, app in condensed caps, every path
  * stacked against one vertical rule, qualifiers printed as tags along the foot.
+ *
+ * The card itself has no state of its own any more - only `CopyButton`, one
+ * per path row, is interactive. It stays a client component even so: it is
+ * the one place `plate`'s data is handed to the browser, and keeping that a
+ * single boundary (one compact reference per card) is what stops the
+ * catalogue being duplicated into the page's hydration payload. Splitting the
+ * card into a server-rendered shell around several small client rows was
+ * tried and measured worse - see the pull request description for the
+ * numbers - because Next then has to describe the shell's own markup in that
+ * payload too, in addition to each row's client boundary.
  */
 export function Plate({
   plate,
@@ -33,18 +43,6 @@ export function Plate({
 }) {
   const { app, platform, variant, logPaths } = plate;
 
-  // Scan to confirm: the whole plate inverts, the way a scanned label lights up.
-  const [confirmed, setConfirmed] = useState<string | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-
-  const confirm = useCallback((label: string) => {
-    setConfirmed(label);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setConfirmed(null), 1800);
-  }, []);
-
   // Qualifiers are per path; the foot prints the union across this platform.
   const types = [...new Set(logPaths.flatMap((p) => p.types))];
   const scopes = [...new Set(logPaths.flatMap((p) => (p.scope ? [p.scope] : [])))];
@@ -52,9 +50,7 @@ export function Plate({
   return (
     <article
       id={id}
-      className={`plate${selected ? " plate--sel" : ""}${confirmed ? " plate--done" : ""}${
-        animate ? " rack-in" : ""
-      }`}
+      className={`plate${selected ? " plate--sel" : ""}${animate ? " rack-in" : ""}`}
       style={animate ? ({ ["--i" as string]: index } as React.CSSProperties) : undefined}
     >
       <div className="plate__zone" data-zone={platform}>
@@ -78,17 +74,11 @@ export function Plate({
           <h3 className="plate__name">{app.name}</h3>
           {variant && <span className="tag mono plate__variant">{variant}</span>}
           <span className="tag mono plate__vendor">{app.vendor.name}</span>
-          {confirmed && (
-            <span className="plate__confirm mono" role="status">
-              <IconCheck size={14} />
-              {confirmed} on the clipboard
-            </span>
-          )}
         </div>
 
         <div className="plate__paths">
           {logPaths.map((p) => (
-            <PathRow key={p.id} logPath={p} onConfirm={confirm} />
+            <PathRow key={p.id} logPath={p} />
           ))}
         </div>
 
@@ -120,27 +110,8 @@ export function Plate({
   );
 }
 
-function PathRow({
-  logPath,
-  onConfirm,
-}: {
-  logPath: LogPath;
-  onConfirm: (label: string) => void;
-}) {
+function PathRow({ logPath }: { logPath: LogPath }) {
   const { label, path, note } = logPath;
-  const [failed, setFailed] = useState(false);
-
-  const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(path);
-      setFailed(false);
-      onConfirm(label);
-    } catch {
-      // Clipboard is blocked (insecure origin, denied permission). Say so and
-      // leave the path selected so it can be copied by hand.
-      setFailed(true);
-    }
-  }, [path, label, onConfirm]);
 
   return (
     <div className="prow">
@@ -148,21 +119,8 @@ function PathRow({
       <code className="prow__path">
         {path}
         {note && <span className="prow__note">- {note}</span>}
-        {failed && (
-          <span className="prow__note" role="status">
-            - Clipboard unavailable in this browser. Select the path above and copy it.
-          </span>
-        )}
       </code>
-      <button
-        type="button"
-        className="prow__copy tag mono"
-        onClick={copy}
-        aria-label={`Copy the ${label} path`}
-      >
-        <IconCopy size={13} />
-        Copy
-      </button>
+      <CopyButton path={path} label={label} />
     </div>
   );
 }

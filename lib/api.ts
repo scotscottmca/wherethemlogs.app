@@ -82,6 +82,20 @@ export async function searchApps(
 }
 
 /**
+ * Just what a plate prints about the app it belongs to - not the whole
+ * resolved record. `Plate` is sent to the browser as client component props
+ * (see `components/Plate.tsx`), so it must not carry fields the card never
+ * renders: aliases, notes, documentation, timestamps, the vendor's id and
+ * slug, or the app's log paths on other platforms. Those already exist in
+ * `ResolvedApp` for anything that needs them.
+ */
+export interface PlateApp {
+  name: string;
+  resolvedIconUrl: string | null;
+  vendor: { name: string };
+}
+
+/**
  * One plate per app per platform per variant.
  *
  * A label plate's zone band names one platform and its header names one
@@ -93,7 +107,7 @@ export async function searchApps(
  */
 export interface Plate {
   key: string;
-  app: ResolvedApp;
+  app: PlateApp;
   platform: Platform;
   variant?: string;
   logPaths: LogPath[];
@@ -117,10 +131,17 @@ export function toPlates(apps: ResolvedApp[]): Plate[] {
         else byVariant.set(key, [logPath]);
       }
 
+      // Trimmed once per app, not once per plate - the card's-eye view of it.
+      const plateApp: PlateApp = {
+        name: app.name,
+        resolvedIconUrl: app.resolvedIconUrl,
+        vendor: { name: app.vendor.name },
+      };
+
       for (const [variant, logPaths] of byVariant) {
         out.push({
           key: `${app.id}:${platform}:${variant}`,
-          app,
+          app: plateApp,
           platform,
           ...(variant ? { variant } : {}),
           logPaths,
