@@ -989,6 +989,43 @@ body:has(.consent) {
   display: inline-grid;
   gap: 0.2rem;
 }
+.sheet__toc {
+  margin-top: clamp(1.4rem, 2.5vw, 2rem);
+  display: grid;
+  gap: 0.5rem;
+}
+.sheet__toc a {
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: var(--rule) solid var(--bone-faint);
+  padding-bottom: 0.4rem;
+  width: fit-content;
+}
+.sheet__toc a:hover {
+  border-bottom-color: var(--ink);
+}
+.sheet code {
+  font-family: "Spline Sans Mono", monospace;
+  font-size: 0.85em;
+  background: var(--ink);
+  color: var(--bone);
+  padding: 0.1em 0.35em;
+}
+.sheet__code {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  background: var(--ink);
+  border: var(--rule-heavy) solid var(--ink);
+  overflow-x: auto;
+}
+.sheet__code code {
+  background: none;
+  padding: 0;
+  color: var(--bone);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre;
+}
 
 /* --- Responsive ---------------------------------------------------------- */
 
