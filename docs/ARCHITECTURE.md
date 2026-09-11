@@ -254,6 +254,13 @@ For a staging environment, set it to 0.
   reads the identity out of the injected header. Turning it on also requires a
   blob container and a SAS URL setting, which is a credential to rotate in
   exchange for nothing.
+- **The origin answers only Cloudflare.** The ingress allows Cloudflare's
+  published IPv4 ranges and refuses everything else, so the container's own
+  hostname cannot be used to bypass Cloudflare. This relies on the ingress
+  judging the connecting IP rather than `X-Forwarded-For`, which was verified
+  before the allowlist went in. Deploys fail if Cloudflare's published ranges
+  drift from the committed list, and the smoke test asserts the container
+  address refuses a direct request.
 - **Both deploy workflows share one concurrency group.** They run
   `az deployment group create` against the same resource group and the same
   template, so they queue rather than race. Interleaved, `deploy-infra` can read

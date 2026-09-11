@@ -92,6 +92,22 @@ Both this and customDomain must be set for the binding to exist.
 ''')
 param customDomainCertificateName string = ''
 
+@description('''
+CIDR ranges allowed to reach the ingress. Empty means anyone.
+
+Set to Cloudflare's published IPv4 ranges so the origin answers only
+Cloudflare. Without it the container's own hostname and the environment's IP
+both bypass Cloudflare entirely, which makes its WAF and DDoS protection
+optional for anyone who knows the address.
+
+This works because the ingress judges the IP the connection comes from, not
+X-Forwarded-For. That was verified on 2026-09-11 by allowing a single IP: a
+request through Cloudflare was refused, a direct one with a forged forwarded
+header was not. Were it the other way round, allowing Cloudflare's ranges would
+refuse every proxied visitor.
+''')
+param allowedIngressCidrs array = []
+
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
   location: location
@@ -181,6 +197,14 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
               }
             ]
           : []
+        ipSecurityRestrictions: [
+          for (cidr, i) in allowedIngressCidrs: {
+            name: 'allow-${i}'
+            description: 'Cloudflare edge'
+            ipAddressRange: cidr
+            action: 'Allow'
+          }
+        ]
       }
       secrets: authConfigured
         ? [

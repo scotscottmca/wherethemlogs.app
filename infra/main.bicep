@@ -80,6 +80,9 @@ param customDomain string = ''
 @description('Certificate already uploaded to the environment for customDomain. Both must be set to bind.')
 param customDomainCertificateName string = ''
 
+@description('CIDR ranges allowed to reach the ingress, e.g. Cloudflare\'s IPv4 ranges. Empty means anyone.')
+param allowedIngressCidrs array = []
+
 @description('Entra ID object IDs that should get Cosmos data-plane access for local development and seeding. Leave empty in CI.')
 param developerPrincipalIds array = []
 
@@ -206,6 +209,7 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     siteUrl: siteUrl
     customDomain: customDomain
     customDomainCertificateName: customDomainCertificateName
+    allowedIngressCidrs: allowedIngressCidrs
   }
   // The image pull happens as the app starts, so the grant has to be done.
   dependsOn: [acrPull, cosmosAccess, blobAccess]
@@ -226,6 +230,9 @@ module developerCosmosAccess 'modules/cosmos-role.bicep' = [
 output containerAppName string = web.?outputs.name ?? ''
 output identityClientId string = identity.outputs.clientId
 output siteUrl string = empty(web.?outputs.fqdn ?? '') ? '' : 'https://${web!.outputs.fqdn}'
+
+@description('The address people and health checks should use: the custom domain once set, else the container.')
+output publicUrl string = !empty(siteUrl) ? siteUrl : (empty(web.?outputs.fqdn ?? '') ? '' : 'https://${web!.outputs.fqdn}')
 output registryName string = registry.outputs.name
 output registryLoginServer string = registry.outputs.loginServer
 output cosmosAccountName string = data.outputs.accountName

@@ -490,6 +490,58 @@ az containerapp auth update -n ca-wtla-prod -g rg-wtla-prod `
   --proxy-convention Standard
 ```
 
+#### The origin only answers Cloudflare
+
+The container's ingress allows Cloudflare's published IPv4 ranges and nothing
+else (`allowedIngressCidrs` in `infra/main.parameters.json`). The container's
+own hostname and `20.76.241.92` refuse everything else with 403, so Cloudflare's
+WAF and DDoS protection cannot be sidestepped by anyone who knows the address.
+
+This depends on the ingress judging the IP a connection comes from rather than
+`X-Forwarded-For`. That was checked on 2026-09-11 by allowing a single IP: a
+request through Cloudflare was refused and a direct request carrying a forged
+forwarded header was not. Had it been the other way round, allowing Cloudflare's
+ranges would have refused every real visitor.
+
+IPv6 ranges are left out on purpose. The origin has only an IPv4 address, so
+Cloudflare always reaches it over IPv4.
+
+Health checks go through `wherethemlogs.app`. The deploy's smoke test also
+asserts that the container's own address refuses the runner, so a deploy that
+quietly reopened the origin would fail.
+
+**Cloudflare changes its ranges occasionally.** Both deploy workflows compare
+the committed list with the one Cloudflare publishes and fail on a mismatch,
+printing the difference, because a stale list means some Cloudflare edges get
+refused and some visitors get intermittent errors. To refresh it:
+
+```powershell
+(Invoke-RestMethod https://api.cloudflare.com/client/v4/ips).result.ipv4_cidrs
+```
+
+Paste the result into `allowedIngressCidrs` and push.
+
+**If the smoke test fails through Cloudflare with a 403 or 503 challenge**, a
+Cloudflare security feature such as Bot Fight Mode is challenging GitHub's
+runners. Add a WAF skip rule for `/api/health`, or exempt that path from the
+challenge.
+
+**To reach the container directly for debugging**, allow your own IP for the
+duration, then remove it. The next deploy removes it regardless, because the
+template is the source of truth:
+
+```powershell
+$ME = Invoke-RestMethod https://api.ipify.org
+az containerapp ingress access-restriction set -n ca-wtla-prod -g rg-wtla-prod `
+  --rule-name debug-me --ip-address "$ME/32" --action Allow
+# ... then:
+az containerapp ingress access-restriction remove -n ca-wtla-prod -g rg-wtla-prod `
+  --rule-name debug-me
+```
+
+The container-address callback in the Entra registration is now unreachable.
+It does no harm and can be removed whenever convenient.
+
 ## After the first run
 
 Merge a PR into `main`. Path filters decide what moves:
@@ -560,12 +612,15 @@ switch `backupPolicy` to `Continuous` for self-service point-in-time restore.
 
 ## Health
 
+Through the public address. The container's own hostname refuses anything that
+is not Cloudflare, so a 403 from it is the allowlist working, not an outage.
+
 ```powershell
 # Invoke-RestMethod rather than curl: PowerShell parses the JSON for you, and
 # an ampersand in a bare URL is a command separator, so the last one needs quotes.
-Invoke-RestMethod https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/live      # is the process answering
-Invoke-RestMethod https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/health    # can it reach Cosmos
-Invoke-RestMethod "https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/api/search?q=teams&platform=windows"
+Invoke-RestMethod https://wherethemlogs.app/api/live      # is the process answering
+Invoke-RestMethod https://wherethemlogs.app/api/health    # can it reach Cosmos
+Invoke-RestMethod "https://wherethemlogs.app/api/search?q=teams&platform=windows"
 ```
 
 Logs:

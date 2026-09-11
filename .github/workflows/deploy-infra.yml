@@ -83,6 +83,27 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # The origin refuses anything that is not Cloudflare, so a stale list of
+      # Cloudflare's ranges means some of its edges get a 403 from Azure and
+      # some visitors get errors, intermittently. Compare before deploying.
+      # An unreachable Cloudflare API warns rather than blocks: it cannot
+      # confirm drift, so it should not stop a deploy.
+      - name: Check Cloudflare's IP ranges are current
+        run: |
+          set -uo pipefail
+          committed=$(jq -r '.parameters.allowedIngressCidrs.value[]?' infra/main.parameters.json | sort)
+          if [ -z "$committed" ]; then echo "No ingress allowlist configured; nothing to check."; exit 0; fi
+          if ! live=$(curl -fsS -m 20 https://api.cloudflare.com/client/v4/ips | jq -r '.result.ipv4_cidrs[]' | sort) || [ -z "$live" ]; then
+            echo "::warning::Could not fetch Cloudflare's IP ranges; skipping the drift check."
+            exit 0
+          fi
+          if [ "$live" != "$committed" ]; then
+            echo "::error::Cloudflare's published IPv4 ranges no longer match allowedIngressCidrs in infra/main.parameters.json. Update the list, or some Cloudflare edges will be refused by the origin."
+            diff <(echo "$committed") <(echo "$live") || true
+            exit 1
+          fi
+          echo "Cloudflare ranges match ($(echo "$committed" | wc -l | tr -d ' ') entries)."
+
       - name: Deploy Bicep
         id: bicep
         run: |
