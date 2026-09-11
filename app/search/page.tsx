@@ -197,6 +197,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
           </details>
 
           <div className="resultsBody">
+            <h2 className="visually-hidden">Results</h2>
             {failed ? (
               <div className="void">
                 <h2 className="void__h">The catalogue is not answering</h2>
