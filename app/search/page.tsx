@@ -21,12 +21,14 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
-  const { q } = await searchParams;
+  const { q, platform, type } = await searchParams;
+  const filtered = Boolean(platform) || Boolean(type);
   return {
     title: q ? `“${q}” - results` : "Browse the index",
     description: q
       ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
       : undefined,
+    ...(filtered ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
