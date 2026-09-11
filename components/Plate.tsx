@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { IconFlag } from "./Icons";
 import { CopyButton } from "./CopyButton";
-import type { LogPath, Plate as PlateData, Platform } from "@/lib/api";
+import { PLATFORM_META, type LogPath, type Plate as PlateData, type Platform } from "@/lib/api";
 import { correctionUrl } from "@/lib/site";
 
 const ARCH = new Set(["x86", "x64", "arm64"]);
@@ -13,6 +14,10 @@ const ZONE_CODE: Record<Platform, string> = {
   macos: "MAC",
   linux: "LNX",
 };
+
+const PLATFORM_NAME: Record<Platform, string> = Object.fromEntries(
+  PLATFORM_META.map((p) => [p.id, p.name]),
+) as Record<Platform, string>;
 
 /**
  * The label plate. Zone band down the left, app in condensed caps, every path
@@ -71,7 +76,20 @@ export function Plate({
               decoding="async"
             />
           )}
-          <h3 className="plate__name">{app.name}</h3>
+          <h3 className="plate__name">
+            <Link href={`/apps/${app.slug}`} style={{ textDecoration: "none" }}>
+              {app.name}
+            </Link>
+            {/* Visible heading text stays just the app name (the zone band already
+                shows the platform); the hidden part gives each of an app's several
+                cards a distinct, non-repeating name for screen readers and search
+                engines. */}
+            <span className="visually-hidden">
+              {" - "}
+              {PLATFORM_NAME[platform]}
+              {variant ? ` (${variant})` : ""}
+            </span>
+          </h3>
           {variant && <span className="tag mono plate__variant">{variant}</span>}
           <span className="tag mono plate__vendor">{app.vendor.name}</span>
         </div>

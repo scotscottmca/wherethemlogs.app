@@ -175,6 +175,21 @@ input[type="search"]::-webkit-search-decoration {
   background: var(--hivis);
 }
 
+/* Present to assistive tech and search engines, invisible on screen. Used to
+   carry heading text that would otherwise repeat or duplicate what is
+   already shown visually. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* --- Page frame ---------------------------------------------------------- */
 
 .bleed {
