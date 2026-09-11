@@ -376,7 +376,7 @@ sign-in, so reloading will not pick it up.
 <summary>GitHub instead, if a tenant is ever inconvenient</summary>
 
 Create a GitHub OAuth app with callback
-`https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/.auth/login/github/callback`, store the secret as
+`https://wherethemlogs.app/.auth/login/github/callback`, store the secret as
 `github-client-secret`, and set `authProvider` to `github`, `authClientId` to
 the OAuth client id, and `adminGithubLogins` to a comma separated allowlist.
 
