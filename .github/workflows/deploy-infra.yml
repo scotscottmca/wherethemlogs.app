@@ -17,8 +17,13 @@ on:
         type: choice
         options: [whatif, deploy]
 
+# Both workflows run "az deployment group create" against the same resource
+# group and the same template, so they share one concurrency group and queue
+# instead of racing. Interleaved, deploy-infra can read the image that was
+# running when it started and write it back after deploy-app has moved on,
+# quietly reverting the application.
 concurrency:
-  group: infra-production
+  group: azure-deploy-production
   cancel-in-progress: false
 
 permissions:

@@ -230,7 +230,12 @@ resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = if (a
         }
     login: {
       preserveUrlFragmentsForLogins: false
-      tokenStore: { enabled: true }
+      // Off deliberately. The token store persists the provider's access and
+      // refresh tokens so an app can call downstream APIs as the signed-in
+      // user; this one only ever reads the identity out of the injected header.
+      // Enabling it also demands a blob container and a SAS URL setting, which
+      // is a credential to rotate in exchange for nothing.
+      tokenStore: { enabled: false }
     }
   }
 }

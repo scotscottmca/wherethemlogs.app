@@ -243,3 +243,13 @@ For a staging environment, set it to 0.
   workflow gates on.
 - **Search ranking lives in `lib/server/catalog.ts`.** The client does no
   scoring.
+- **The auth token store is off.** It persists the provider's access and refresh
+  tokens so an app can call downstream APIs as the signed-in user; this one only
+  reads the identity out of the injected header. Turning it on also requires a
+  blob container and a SAS URL setting, which is a credential to rotate in
+  exchange for nothing.
+- **Both deploy workflows share one concurrency group.** They run
+  `az deployment group create` against the same resource group and the same
+  template, so they queue rather than race. Interleaved, `deploy-infra` can read
+  the image that was running when it started and write it back after
+  `deploy-app` has moved on, quietly reverting the application.
