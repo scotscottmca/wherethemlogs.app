@@ -13,12 +13,20 @@ import { requestAppUrl } from "@/lib/site";
 // shell, and the catalogue is in the HTML a crawler receives.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-  openGraph: { url: "/" },
-};
-
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ platform?: string }>;
+}): Promise<Metadata> {
+  const { platform } = await searchParams;
+  return {
+    alternates: { canonical: "/" },
+    openGraph: { url: "/" },
+    ...(platform ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 export default async function Home({
   searchParams,
@@ -100,7 +108,7 @@ export default async function Home({
               <ul className="picks">
                 {recent.map((app) => (
                   <li key={app.id} className="pick">
-                    <Link className="pick__link" href={`/search?q=${encodeURIComponent(app.name)}`}>
+                    <Link className="pick__link" href={`/apps/${app.slug}`}>
                       <span className="pick__app">{app.name}</span>
                       <span className="pick__zones">
                         {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (

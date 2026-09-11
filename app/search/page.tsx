@@ -21,8 +21,10 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
-  const { q } = await searchParams;
+  const { q, platform, type } = await searchParams;
+  const filtered = Boolean(platform) || Boolean(type);
   const canonical = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
+
   return {
     title: q ? `“${q}” - results` : "Browse the index",
     description: q
@@ -30,6 +32,7 @@ export async function generateMetadata({
       : undefined,
     alternates: { canonical },
     openGraph: { url: canonical },
+    ...(filtered ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
