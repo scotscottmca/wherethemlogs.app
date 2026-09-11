@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/Chrome";
 import { Consent, ConsentReset } from "@/components/Consent";
-import { GITHUB_ISSUES } from "@/lib/site";
+import { GITHUB_ISSUES, PRIVACY_LAST_UPDATED, formatLongDate } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy & cookies",
@@ -32,7 +32,7 @@ export default function Privacy() {
 
             <div className="sheet__stamp">
               <span className="tag mono">Privacy notice · WTLA-01</span>
-              <span className="tag mono">Last updated 11 September 2026</span>
+              <span className="tag mono">Last updated {formatLongDate(PRIVACY_LAST_UPDATED)}</span>
             </div>
           </div>
 
