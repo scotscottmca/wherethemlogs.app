@@ -1004,6 +1004,15 @@ body:has(.consent) {
 .sheet__toc a:hover {
   border-bottom-color: var(--ink);
 }
+.sheet__anchor {
+  margin-left: 0.5rem;
+  color: var(--bone-faint);
+  text-decoration: none;
+  font-weight: 400;
+}
+.sheet__anchor:hover {
+  color: var(--hivis-deep);
+}
 .sheet code {
   font-family: "Spline Sans Mono", monospace;
   font-size: 0.85em;

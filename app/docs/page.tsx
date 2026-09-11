@@ -10,6 +10,18 @@ export const metadata: Metadata = {
     "How to request an application, flag a wrong path, and pull the catalogue into your own tools over the API or MCP.",
 };
 
+/** A section header carrying its own permalink, the way a rack bay carries its own location code. */
+function H2({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <h2 id={id}>
+      {children}
+      <a href={`#${id}`} className="sheet__anchor" aria-label="Link to this section">
+        #
+      </a>
+    </h2>
+  );
+}
+
 /** The other laminated sheet on the aisle wall - this one for the people asking things. */
 export default function Docs() {
   return (
@@ -48,7 +60,7 @@ export default function Docs() {
           </div>
 
           <div className="sheet__body">
-            <h2 id="requests">Raising a request</h2>
+            <H2 id="requests">Raising a request</H2>
             <p>
               There is no account and no form to sign into. Every request is a public
               GitHub issue, filed against the tracker rather than the site itself. The{" "}
@@ -71,7 +83,7 @@ export default function Docs() {
               machine you found it on.
             </p>
 
-            <h2 id="corrections">Reporting a wrong path, or adding an adjustment</h2>
+            <H2 id="corrections">Reporting a wrong path, or adding an adjustment</H2>
             <p>
               Every path on a result card carries a{" "}
               <strong>Wrong path? Add a variant</strong> link at the foot of its plate.
@@ -86,7 +98,7 @@ export default function Docs() {
               the same issue, and both get triaged the same way.
             </p>
 
-            <h2 id="api">The API</h2>
+            <H2 id="api">The API</H2>
             <p>
               The catalogue is also a read-only JSON API, anonymous, under{" "}
               <code className="mono">/api</code>. It is the same data the site searches -
@@ -150,7 +162,7 @@ export default function Docs() {
               above instead.
             </p>
 
-            <h2 id="mcp">The MCP server</h2>
+            <H2 id="mcp">The MCP server</H2>
             <p>
               The same catalogue is available as an{" "}
               <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">
