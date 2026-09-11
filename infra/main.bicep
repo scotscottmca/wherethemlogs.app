@@ -71,6 +71,9 @@ param authClientSecret string = ''
 @description('Comma separated GitHub logins allowed to administer the catalogue. Empty means nobody is.')
 param adminGithubLogins string = ''
 
+@description('The public origin once a custom domain is bound, e.g. https://wherethemlogs.app. Empty uses the app built-in default.')
+param siteUrl string = ''
+
 @description('Entra ID object IDs that should get Cosmos data-plane access for local development and seeding. Leave empty in CI.')
 param developerPrincipalIds array = []
 
@@ -194,6 +197,7 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     authTenantId: authTenantId
     authClientSecret: authClientSecret
     adminGithubLogins: adminGithubLogins
+    siteUrl: siteUrl
   }
   // The image pull happens as the app starts, so the grant has to be done.
   dependsOn: [acrPull, cosmosAccess, blobAccess]

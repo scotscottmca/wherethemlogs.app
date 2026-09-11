@@ -41,6 +41,14 @@ export function AisleBand({ trail, who }: { trail: Stop[]; who: string | null })
       })}
       <span className="zones__legend tag mono">
         {who ? `Signed in · ${who}` : "Not signed in"}
+        {who && (
+          // The platform owns the session, so signing out is its endpoint, not
+          // ours. A plain link rather than a form: it is a GET, and it has to
+          // work even when the bench itself is refusing you.
+          <a className="admSignOut tag mono" href="/.auth/logout?post_logout_redirect_uri=%2F">
+            Sign out
+          </a>
+        )}
       </span>
     </nav>
   );

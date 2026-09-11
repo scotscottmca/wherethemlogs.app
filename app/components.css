@@ -2012,3 +2012,27 @@ button.tog {
   font-size: 0.9rem;
   overflow-wrap: anywhere;
 }
+
+/* Sign out, in the band beside the identity it ends. */
+.admSignOut {
+  margin-left: 0.85rem;
+  padding-left: 0.85rem;
+  border-left: var(--rule) solid var(--ink-rule);
+  color: var(--bone-dim);
+  text-decoration: none;
+}
+.admSignOut:hover {
+  color: var(--hivis);
+  text-decoration: underline;
+}
+
+/* Two ways out of a refusal, side by side. */
+.void__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.void__acts .btn {
+  margin-top: 0;
+}

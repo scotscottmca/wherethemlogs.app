@@ -63,10 +63,20 @@ export default async function Forbidden({
             </p>
           )}
 
-          <Link className="btn tag mono" href="/">
-            Back to the index
-            <IconArrow size={15} />
-          </Link>
+          <div className="void__acts">
+            <Link className="btn tag mono" href="/">
+              Back to the index
+              <IconArrow size={15} />
+            </Link>
+            {principal && (
+              // The usual fix when the roles list is empty is a different
+              // account, so the way out has to be here and not only on a bench
+              // this visitor cannot reach.
+              <a className="btn btn--ghost tag mono" href="/.auth/logout?post_logout_redirect_uri=%2F">
+                Sign out
+              </a>
+            )}
+          </div>
         </div>
       </main>
       <Footer entryCount={null} />

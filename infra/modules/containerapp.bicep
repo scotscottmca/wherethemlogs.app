@@ -67,6 +67,15 @@ sufficient on its own.
 ''')
 param adminGithubLogins string = ''
 
+@description('''
+The public origin, for absolute URLs in metadata, robots and the sitemap.
+
+Empty falls back to the value compiled into the app, which cannot be derived
+here: the container app's own FQDN is not knowable from inside its declaration.
+Set it once a custom domain is bound.
+''')
+param siteUrl string = ''
+
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
   location: location
@@ -183,6 +192,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             // user-assigned identity is ambiguous and the SDK picks nothing.
             { name: 'AZURE_CLIENT_ID', value: identityClientId }
             { name: 'AUTH_PROVIDER', value: effectiveAuthProvider }
+            { name: 'NEXT_PUBLIC_SITE_URL', value: siteUrl }
             { name: 'ADMIN_GITHUB_LOGINS', value: adminGithubLogins }
           ]
           probes: appProbes

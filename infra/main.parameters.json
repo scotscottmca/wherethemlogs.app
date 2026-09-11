@@ -36,6 +36,9 @@
     },
     "adminGithubLogins": {
       "value": ""
+    },
+    "siteUrl": {
+      "value": "https://wherethemlogs.app"
     }
   }
 }

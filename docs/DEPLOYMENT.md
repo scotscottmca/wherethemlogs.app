@@ -388,6 +388,67 @@ value to allowlist.
 
 </details>
 
+### 8. Bind the custom domain
+
+`wherethemlogs.app` is an apex domain, so it needs an A record rather than a
+CNAME, plus a TXT record proving you own it.
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `20.76.241.92` |
+| TXT | `asuid` | `D41D304C76089783B3534CD4B3E7C9D51C07E909DB2826C331ACC7101FB7717B` |
+
+The A record points at the **environment's** static IP, which is shared by every
+app in it and stays put unless the environment is recreated. Read both values
+back rather than trusting this table if either has changed:
+
+```powershell
+az containerapp env show -n cae-wtla-prod-s7gilgc3beox2 -g rg-wtla-prod `
+  --query properties.staticIp -o tsv
+az containerapp show -n ca-wtla-prod -g rg-wtla-prod `
+  --query customDomainVerificationId -o tsv
+```
+
+Once DNS has propagated, bind it and let Azure issue a free managed certificate:
+
+```powershell
+az containerapp hostname add -n ca-wtla-prod -g rg-wtla-prod `
+  --hostname wherethemlogs.app
+
+az containerapp hostname bind -n ca-wtla-prod -g rg-wtla-prod `
+  --hostname wherethemlogs.app --environment cae-wtla-prod-s7gilgc3beox2 `
+  --validation-method HTTP
+```
+
+**Then add the new callback to the Entra registration**, or sign-in breaks the
+moment anyone uses the custom domain. The platform builds the callback from the
+host it was reached on, so a request to `wherethemlogs.app` posts back to a URI
+Entra has never seen. Keep both while you cut over:
+
+```powershell
+az ad app update --id $CLIENT_ID --web-redirect-uris `
+  "https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/.auth/login/aad/callback" `
+  "https://wherethemlogs.app/.auth/login/aad/callback"
+```
+
+`siteUrl` in `infra/main.parameters.json` is already
+`https://wherethemlogs.app`; it only feeds absolute URLs in the page metadata,
+`robots.txt` and the sitemap, so it is safe to set before DNS resolves.
+
+> **If anything sits in front of Container Apps** - Cloudflare's proxy, Front
+> Door, another reverse proxy - the platform's auth builds its redirect URIs
+> from the `Host` it sees, which is then the proxy's rather than the browser's.
+> That produces a redirect loop or a callback mismatch. Set the forward proxy
+> convention so it reads `X-Forwarded-Host` instead:
+>
+> ```powershell
+> az containerapp auth update -n ca-wtla-prod -g rg-wtla-prod `
+>   --proxy-convention Standard
+> ```
+>
+> Not needed when the domain terminates directly on Container Apps, which is
+> what the steps above set up.
+
 ## After the first run
 
 Merge a PR into `main`. Path filters decide what moves:
