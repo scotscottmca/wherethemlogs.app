@@ -44,7 +44,7 @@
       "value": "wherethemlogs.app"
     },
     "customDomainCertificateName": {
-      "value": ""
+      "value": "wherethemlogs-origin"
     }
   }
 }
