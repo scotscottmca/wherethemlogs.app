@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
@@ -13,6 +14,15 @@ import { requestAppUrl } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ platform?: string }>;
+}): Promise<Metadata> {
+  const { platform } = await searchParams;
+  return platform ? { robots: { index: false, follow: true } } : {};
+}
 
 export default async function Home({
   searchParams,
