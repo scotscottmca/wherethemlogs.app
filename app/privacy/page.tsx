@@ -31,8 +31,8 @@ export default function Privacy() {
             <div className="sheet__rule" role="presentation" />
 
             <div className="sheet__stamp">
-              <span className="tag mono">Notice WTLA-PR-01 · Seed build</span>
-              <span className="tag mono">Catalogue: demonstration data</span>
+              <span className="tag mono">Privacy notice · WTLA-01</span>
+              <span className="tag mono">Last updated 11 September 2026</span>
             </div>
           </div>
 
