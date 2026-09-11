@@ -21,19 +21,20 @@ export async function generateMetadata({
 }: {
   searchParams: Promise<SP>;
 }): Promise<Metadata> {
-  const { q } = await searchParams;
+  const { q, platform, type } = await searchParams;
+  const filtered = Boolean(platform) || Boolean(type);
 
   // Same call the page component makes for its unfiltered pool - it reads the
   // in-process snapshot, so this costs nothing extra. A query with zero
   // matches (or a catalogue that can't answer) renders a "nothing found"
   // page: still useful to a person, but a soft 404 to a crawler, so keep it
   // out of the index without changing the 200 status.
-  let noindex = false;
+  let noResults = false;
   try {
     const pool = await search({ q: (q ?? "").slice(0, 120), platform: "all", types: [] });
-    noindex = pool.results.length === 0;
+    noResults = pool.results.length === 0;
   } catch {
-    noindex = true;
+    noResults = true;
   }
 
   return {
@@ -41,7 +42,7 @@ export async function generateMetadata({
     description: q
       ? `Log file locations for ${q}, qualified by platform, installer type and architecture.`
       : undefined,
-    ...(noindex ? { robots: { index: false, follow: true } } : {}),
+    ...(filtered || noResults ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

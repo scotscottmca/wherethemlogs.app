@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
@@ -13,6 +14,15 @@ import { requestAppUrl } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 const ZONES = new Set<string>(PLATFORM_META.map((p) => p.id));
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ platform?: string }>;
+}): Promise<Metadata> {
+  const { platform } = await searchParams;
+  return platform ? { robots: { index: false, follow: true } } : {};
+}
 
 export default async function Home({
   searchParams,
@@ -94,7 +104,7 @@ export default async function Home({
               <ul className="picks">
                 {recent.map((app) => (
                   <li key={app.id} className="pick">
-                    <Link className="pick__link" href={`/search?q=${encodeURIComponent(app.name)}`}>
+                    <Link className="pick__link" href={`/apps/${app.slug}`}>
                       <span className="pick__app">{app.name}</span>
                       <span className="pick__zones">
                         {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (
