@@ -7,7 +7,7 @@
  * it is not one any more.
  */
 import type { LogPath, Platform, ResolvedApp, Scope } from "./model";
-import { PLATFORMS } from "./model";
+import { INSTALLER_TYPES, PLATFORMS, pathLines } from "./model";
 
 export type { LogPath, Platform, ResolvedApp, Scope };
 export { PLATFORMS };
@@ -153,4 +153,72 @@ export function toPlates(apps: ResolvedApp[]): Plate[] {
   }
 
   return out;
+}
+
+/**
+ * One plain-language sentence per platform, derived from the record.
+ *
+ * The plates below are the authority; this is the same fact written as prose,
+ * so someone skimming (or an answer engine quoting the page) gets the answer
+ * without parsing a table. The first path on a platform wins the sentence -
+ * that is the one the first plate prints, which is the catalogue's own order.
+ */
+export interface PlatformSummary {
+  platform: Platform;
+  name: string;
+  /** Self-contained and quotable on its own: "X logs to Y on Windows." */
+  answer: string;
+  /** What qualifies that answer: the other paths, the installs it applies to. */
+  detail: string;
+}
+
+export function platformSummaries(app: ResolvedApp): PlatformSummary[] {
+  const summaries: PlatformSummary[] = [];
+
+  for (const { id, name } of PLATFORM_META) {
+    const onPlatform = app.logPaths.filter((p) => p.platform === id);
+    if (!onPlatform.length) continue;
+
+    // A label can carry several files under one path field; the sentence takes
+    // the first line rather than printing a block of them mid-paragraph.
+    const first = pathLines(onPlatform[0].path)[0] ?? onPlatform[0].path;
+    const lineCount = onPlatform.reduce((n, p) => n + pathLines(p.path).length, 0);
+    const variants = [...new Set(onPlatform.flatMap((p) => (p.variant ? [p.variant] : [])))];
+    const installers = [
+      ...new Set(onPlatform.flatMap((p) => p.types.filter((t) => INSTALLER_TYPE_SET.has(t)))),
+    ];
+
+    const detail: string[] = [];
+    if (lineCount > 1) {
+      const others = lineCount - 1;
+      detail.push(
+        `${others} other ${name} log ${others === 1 ? "location is" : "locations are"} recorded below${
+          variants.length ? `, including paths for ${joinWords(variants)}` : ""
+        }.`,
+      );
+    }
+    if (installers.length) {
+      detail.push(
+        `These paths were verified for ${joinWords(installers)} installs - a different installer, or a portable copy, can put them somewhere else.`,
+      );
+    }
+
+    summaries.push({
+      platform: id,
+      name,
+      answer: `${app.name} logs to ${first} on ${name}.`,
+      detail: detail.join(" "),
+    });
+  }
+
+  return summaries;
+}
+
+/** Membership test for the installer half of a log path's `types`. */
+export const INSTALLER_TYPE_SET = new Set<string>(INSTALLER_TYPES);
+
+/** "a", "a and b", "a, b and c" - the way the copy reads it aloud. */
+function joinWords(words: string[]): string {
+  if (words.length < 2) return words[0] ?? "";
+  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
 }

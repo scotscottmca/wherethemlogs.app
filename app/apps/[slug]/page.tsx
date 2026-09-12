@@ -1,11 +1,14 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
-import { PLATFORM_META, toPlates } from "@/lib/api";
+import { INSTALLER_TYPE_SET, PLATFORM_META, platformSummaries, toPlates } from "@/lib/api";
+import { PLATFORM_GUIDE } from "@/lib/guides";
+import { appJsonLd } from "@/lib/jsonld";
 import { getSnapshot } from "@/lib/server/catalog";
-import { INSTALLER_TYPES, resolveApp, type ResolvedApp } from "@/lib/model";
+import { resolveApp, type ResolvedApp } from "@/lib/model";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +28,20 @@ function platformNames(app: ResolvedApp): string[] {
   return PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => m.name);
 }
 
-const INSTALLER_TYPE_SET = new Set<string>(INSTALLER_TYPES);
+/** The page's own words for itself - the metadata and the JSON-LD share them. */
+function describe(app: ResolvedApp): { title: string; description: string } {
+  const platforms = platformNames(app);
+  const installerTypes = app.types.filter((t) => INSTALLER_TYPE_SET.has(t));
+
+  return {
+    title: platforms.length
+      ? `${app.name} log file locations - ${platforms.join(", ")}`
+      : `${app.name} log file locations`,
+    description: `Log file locations for ${app.name}${
+      platforms.length ? ` on ${platforms.join(", ")}` : ""
+    }${installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""}.`,
+  };
+}
 
 export async function generateMetadata({
   params,
@@ -44,16 +60,7 @@ export async function generateMetadata({
 
   if (!app) return { title: "App not found" };
 
-  const platforms = platformNames(app);
-  const installerTypes = app.types.filter((t) => INSTALLER_TYPE_SET.has(t));
-
-  const title = platforms.length
-    ? `${app.name} log file locations - ${platforms.join(", ")}`
-    : `${app.name} log file locations`;
-
-  const description = `Log file locations for ${app.name}${
-    platforms.length ? ` on ${platforms.join(", ")}` : ""
-  }${installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""}.`;
+  const { title, description } = describe(app);
 
   return {
     title,
@@ -97,9 +104,16 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
   const plates = toPlates([app]);
   const pathCount = plates.reduce((n, p) => n + p.logPaths.length, 0);
   const platforms = platformNames(app);
+  const summaries = platformSummaries(app);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: appJsonLd(app, summaries, describe(app).description),
+        }}
+      />
       <Header />
       <main className="rack">
         <div className="picklist">
@@ -118,7 +132,9 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
 
         <div className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
           <p style={{ margin: 0 }}>
-            <span className="tag mono">{app.vendor.name}</span>
+            <Link className="tag mono" href={`/vendors/${app.vendor.slug}`}>
+              {app.vendor.name}
+            </Link>
             {app.documentation && (
               <>
                 {" · "}
@@ -141,6 +157,42 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
             </ul>
           )}
         </div>
+
+        {summaries.length > 0 && (
+          <section className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+            <h2 className="tag mono" style={{ margin: "0 0 .5rem" }}>
+              Where {app.name} keeps its logs
+            </h2>
+            {summaries.map((s) => (
+              <p key={s.platform} style={{ margin: "0 0 .5rem" }}>
+                {/* The answer sentence stands on its own, so it can be read,
+                    quoted or lifted without the table underneath. */}
+                <strong>{s.answer}</strong>
+                {s.detail && ` ${s.detail}`}
+              </p>
+            ))}
+            <p style={{ margin: 0 }}>
+              Paths are printed exactly as {app.name} writes them. Environment variables
+              like <code className="mono">%LOCALAPPDATA%</code> and{" "}
+              <code className="mono">$XDG_STATE_HOME</code> are never expanded, so a path
+              can be pasted straight into a shell. Where a path differs between installer
+              types or shipping flavours, each one is racked as its own card below -{" "}
+              <Link href="/guides/why-log-paths-differ">why that happens</Link>.
+            </p>
+            <p style={{ margin: ".5rem 0 0" }}>
+              {/* One guide per platform this app actually has paths on, for the
+                  reader who needs the convention rather than this one path. */}
+              Finding your way around{" "}
+              {summaries.map((s, i) => (
+                <span key={s.platform}>
+                  {i > 0 && (i === summaries.length - 1 ? " and " : ", ")}
+                  <Link href={`/guides/${PLATFORM_GUIDE[s.platform]}`}>{s.name}</Link>
+                </span>
+              ))}
+              .
+            </p>
+          </section>
+        )}
 
         {plates.length ? (
           <div className="resultsBody">
