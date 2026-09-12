@@ -15,7 +15,7 @@ app/                  pages, route handlers, middleware - Next.js 15
 components/  lib/     UI, shared model, server-only data access
 infra/                Azure resources - Bicep
 scripts/              seed data and the seeder
-docs/                 architecture, API reference, deployment
+docs/                 architecture, API reference, deployment, answer engines
 ```
 
 One application, one image. Pages are server-rendered from Cosmos; route
