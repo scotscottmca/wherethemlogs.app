@@ -5,6 +5,7 @@ import { Header, Footer } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { INSTALLER_TYPE_SET, PLATFORM_META, platformSummaries, toPlates } from "@/lib/api";
+import { PLATFORM_GUIDE } from "@/lib/guides";
 import { appJsonLd } from "@/lib/jsonld";
 import { getSnapshot } from "@/lib/server/catalog";
 import { resolveApp, type ResolvedApp } from "@/lib/model";
@@ -175,7 +176,20 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
               like <code className="mono">%LOCALAPPDATA%</code> and{" "}
               <code className="mono">$XDG_STATE_HOME</code> are never expanded, so a path
               can be pasted straight into a shell. Where a path differs between installer
-              types or shipping flavours, each one is racked as its own card below.
+              types or shipping flavours, each one is racked as its own card below -{" "}
+              <Link href="/guides/why-log-paths-differ">why that happens</Link>.
+            </p>
+            <p style={{ margin: ".5rem 0 0" }}>
+              {/* One guide per platform this app actually has paths on, for the
+                  reader who needs the convention rather than this one path. */}
+              Finding your way around{" "}
+              {summaries.map((s, i) => (
+                <span key={s.platform}>
+                  {i > 0 && (i === summaries.length - 1 ? " and " : ", ")}
+                  <Link href={`/guides/${PLATFORM_GUIDE[s.platform]}`}>{s.name}</Link>
+                </span>
+              ))}
+              .
             </p>
           </section>
         )}

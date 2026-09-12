@@ -17,6 +17,9 @@ export function Header() {
           <span className="tag mono hdr__bay">WTLA-01</span>
         </Link>
         <nav className="hdr__nav" aria-label="Primary">
+          <Link href="/guides" className="hdr__link tag mono">
+            Guides
+          </Link>
           <Link href="/docs" className="hdr__link tag mono">
             Docs
           </Link>
@@ -119,6 +122,7 @@ export function Footer({ entryCount }: { entryCount: number | null }) {
       <div className="foot__row">
         <nav className="foot__nav tag mono" aria-label="Footer">
           <Link href="/">Index</Link>
+          <Link href="/guides">Guides</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy &amp; cookies</Link>
           <a href={requestAppUrl()} target="_blank" rel="noopener noreferrer">
