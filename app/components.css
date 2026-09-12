@@ -1021,14 +1021,18 @@ body:has(.consent) {
   background: var(--ink);
   border: var(--rule-heavy) solid var(--ink);
   overflow-x: auto;
-}
-.sheet__code code {
-  background: none;
-  padding: 0;
+  /* On the pre itself, because some blocks hold raw text with no inner code. */
+  font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   color: var(--bone);
   font-size: 0.85rem;
   line-height: 1.6;
   white-space: pre;
+}
+.sheet__code code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
 }
 
 /* --- Responsive ---------------------------------------------------------- */
