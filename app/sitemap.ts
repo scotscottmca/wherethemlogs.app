@@ -23,11 +23,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const { apps } = await getSnapshot();
+    const { apps, vendors } = await getSnapshot();
     let newest: string | undefined;
+    // A vendor page is only as fresh as its newest app, and only exists at all
+    // when the vendor owns one - the same rule /vendors/[slug] renders by.
+    const vendorLastModified = new Map<string, string>();
     for (const app of apps) {
       entries.push({ url: `${siteUrl}/apps/${app.slug}`, lastModified: app.updatedAt });
       if (!newest || app.updatedAt > newest) newest = app.updatedAt;
+      const seen = vendorLastModified.get(app.vendorId);
+      if (!seen || app.updatedAt > seen) vendorLastModified.set(app.vendorId, app.updatedAt);
+    }
+    for (const [vendorId, lastModified] of vendorLastModified) {
+      const vendor = vendors.get(vendorId);
+      if (vendor) entries.push({ url: `${siteUrl}/vendors/${vendor.slug}`, lastModified });
     }
     // The home entry's lastModified is the newest app update - omitted, not
     // faked, when the catalogue can't be read at all.

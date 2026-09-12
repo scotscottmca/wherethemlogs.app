@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/Chrome";
@@ -118,7 +119,9 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
 
         <div className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
           <p style={{ margin: 0 }}>
-            <span className="tag mono">{app.vendor.name}</span>
+            <Link className="tag mono" href={`/vendors/${app.vendor.slug}`}>
+              {app.vendor.name}
+            </Link>
             {app.documentation && (
               <>
                 {" · "}
