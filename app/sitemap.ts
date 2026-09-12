@@ -15,6 +15,15 @@ export const dynamic = "force-dynamic";
  *
  * changeFrequency and priority are omitted: Google ignores both. lastModified
  * is what it actually uses to decide what to recrawl.
+ *
+ * No `images` either, however much Google Images would like them. Next writes
+ * an entry's elements in a fixed order - loc, image:image, then lastmod - and
+ * the sitemap 0.9 schema ends tUrl with `<xsd:any namespace="##other">`, so
+ * nothing in the sitemap namespace may follow an extension element. An entry
+ * carrying both an image and a lastmod fails validation, and Search Console
+ * rejects the file. Still true in Next 16.3.5. See the reopened image-sitemap
+ * issue: this comes back when Next emits lastmod first, or when the sitemap is
+ * hand-serialised.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
@@ -35,27 +44,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // when the vendor owns one - the same rule /vendors/[slug] renders by.
     const vendorLastModified = new Map<string, string>();
     for (const app of apps) {
-      // The icon an app actually shows: its own, or the vendor's when it has
-      // none - the same fallback resolveApp applies on read. No icon, no
-      // images key, rather than a placeholder URL Google would fetch and bin.
-      const icon = app.iconUrl ?? vendors.get(app.vendorId)?.iconUrl ?? null;
-      entries.push({
-        url: `${siteUrl}/apps/${app.slug}`,
-        lastModified: app.updatedAt,
-        ...(icon ? { images: [icon] } : {}),
-      });
+      entries.push({ url: `${siteUrl}/apps/${app.slug}`, lastModified: app.updatedAt });
       if (!newest || app.updatedAt > newest) newest = app.updatedAt;
       const seen = vendorLastModified.get(app.vendorId);
       if (!seen || app.updatedAt > seen) vendorLastModified.set(app.vendorId, app.updatedAt);
     }
     for (const [vendorId, lastModified] of vendorLastModified) {
       const vendor = vendors.get(vendorId);
-      if (!vendor) continue;
-      entries.push({
-        url: `${siteUrl}/vendors/${vendor.slug}`,
-        lastModified,
-        ...(vendor.iconUrl ? { images: [vendor.iconUrl] } : {}),
-      });
+      if (vendor) entries.push({ url: `${siteUrl}/vendors/${vendor.slug}`, lastModified });
     }
     // The home entry's lastModified is the newest app update - omitted, not
     // faked, when the catalogue can't be read at all.
