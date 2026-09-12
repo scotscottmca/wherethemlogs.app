@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
-import { PLATFORM_META, toPlates } from "@/lib/api";
+import { INSTALLER_TYPE_SET, PLATFORM_META, platformSummaries, toPlates } from "@/lib/api";
 import { getSnapshot } from "@/lib/server/catalog";
-import { INSTALLER_TYPES, resolveApp, type ResolvedApp } from "@/lib/model";
+import { resolveApp, type ResolvedApp } from "@/lib/model";
 
 export const dynamic = "force-dynamic";
 
@@ -25,8 +25,6 @@ async function loadApp(slug: string): Promise<ResolvedApp | null> {
 function platformNames(app: ResolvedApp): string[] {
   return PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => m.name);
 }
-
-const INSTALLER_TYPE_SET = new Set<string>(INSTALLER_TYPES);
 
 export async function generateMetadata({
   params,
@@ -98,6 +96,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
   const plates = toPlates([app]);
   const pathCount = plates.reduce((n, p) => n + p.logPaths.length, 0);
   const platforms = platformNames(app);
+  const summaries = platformSummaries(app);
 
   return (
     <>
@@ -144,6 +143,29 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
             </ul>
           )}
         </div>
+
+        {summaries.length > 0 && (
+          <section className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+            <h2 className="tag mono" style={{ margin: "0 0 .5rem" }}>
+              Where {app.name} keeps its logs
+            </h2>
+            {summaries.map((s) => (
+              <p key={s.platform} style={{ margin: "0 0 .5rem" }}>
+                {/* The answer sentence stands on its own, so it can be read,
+                    quoted or lifted without the table underneath. */}
+                <strong>{s.answer}</strong>
+                {s.detail && ` ${s.detail}`}
+              </p>
+            ))}
+            <p style={{ margin: 0 }}>
+              Paths are printed exactly as {app.name} writes them. Environment variables
+              like <code className="mono">%LOCALAPPDATA%</code> and{" "}
+              <code className="mono">$XDG_STATE_HOME</code> are never expanded, so a path
+              can be pasted straight into a shell. Where a path differs between installer
+              types or shipping flavours, each one is racked as its own card below.
+            </p>
+          </section>
+        )}
 
         {plates.length ? (
           <div className="resultsBody">
