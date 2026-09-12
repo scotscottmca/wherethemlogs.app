@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { GUIDES } from "@/lib/guides";
 import { getSnapshot } from "@/lib/server/catalog";
 import { PRIVACY_LAST_UPDATED } from "@/lib/site";
 
@@ -19,6 +20,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     { url: siteUrl },
     { url: `${siteUrl}/docs` },
+    { url: `${siteUrl}/guides` },
+    ...GUIDES.map((guide) => ({
+      url: `${siteUrl}/guides/${guide.slug}`,
+      lastModified: guide.updated,
+    })),
     { url: `${siteUrl}/privacy`, lastModified: PRIVACY_LAST_UPDATED },
   ];
 

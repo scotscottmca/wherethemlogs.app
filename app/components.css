@@ -914,6 +914,12 @@ body:has(.consent) {
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
+/* A guide's title is a whole question, not one word like "Docs", so it gets a
+   size the 21rem head column can actually hold. */
+.sheet__h1--long {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  line-height: 0.95;
+}
 .sheet__lede {
   margin: 1.25rem 0 0;
   font-size: clamp(1rem, 1.4vw, 1.2rem);
