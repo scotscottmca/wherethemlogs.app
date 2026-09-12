@@ -29,14 +29,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // when the vendor owns one - the same rule /vendors/[slug] renders by.
     const vendorLastModified = new Map<string, string>();
     for (const app of apps) {
-      entries.push({ url: `${siteUrl}/apps/${app.slug}`, lastModified: app.updatedAt });
+      // The icon an app actually shows: its own, or the vendor's when it has
+      // none - the same fallback resolveApp applies on read. No icon, no
+      // images key, rather than a placeholder URL Google would fetch and bin.
+      const icon = app.iconUrl ?? vendors.get(app.vendorId)?.iconUrl ?? null;
+      entries.push({
+        url: `${siteUrl}/apps/${app.slug}`,
+        lastModified: app.updatedAt,
+        ...(icon ? { images: [icon] } : {}),
+      });
       if (!newest || app.updatedAt > newest) newest = app.updatedAt;
       const seen = vendorLastModified.get(app.vendorId);
       if (!seen || app.updatedAt > seen) vendorLastModified.set(app.vendorId, app.updatedAt);
     }
     for (const [vendorId, lastModified] of vendorLastModified) {
       const vendor = vendors.get(vendorId);
-      if (vendor) entries.push({ url: `${siteUrl}/vendors/${vendor.slug}`, lastModified });
+      if (!vendor) continue;
+      entries.push({
+        url: `${siteUrl}/vendors/${vendor.slug}`,
+        lastModified,
+        ...(vendor.iconUrl ? { images: [vendor.iconUrl] } : {}),
+      });
     }
     // The home entry's lastModified is the newest app update - omitted, not
     // faked, when the catalogue can't be read at all.
