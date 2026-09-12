@@ -5,6 +5,7 @@ import { Header, Footer } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
 import { INSTALLER_TYPE_SET, PLATFORM_META, platformSummaries, toPlates } from "@/lib/api";
+import { appJsonLd } from "@/lib/jsonld";
 import { getSnapshot } from "@/lib/server/catalog";
 import { resolveApp, type ResolvedApp } from "@/lib/model";
 
@@ -26,6 +27,21 @@ function platformNames(app: ResolvedApp): string[] {
   return PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => m.name);
 }
 
+/** The page's own words for itself - the metadata and the JSON-LD share them. */
+function describe(app: ResolvedApp): { title: string; description: string } {
+  const platforms = platformNames(app);
+  const installerTypes = app.types.filter((t) => INSTALLER_TYPE_SET.has(t));
+
+  return {
+    title: platforms.length
+      ? `${app.name} log file locations - ${platforms.join(", ")}`
+      : `${app.name} log file locations`,
+    description: `Log file locations for ${app.name}${
+      platforms.length ? ` on ${platforms.join(", ")}` : ""
+    }${installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""}.`,
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -43,16 +59,7 @@ export async function generateMetadata({
 
   if (!app) return { title: "App not found" };
 
-  const platforms = platformNames(app);
-  const installerTypes = app.types.filter((t) => INSTALLER_TYPE_SET.has(t));
-
-  const title = platforms.length
-    ? `${app.name} log file locations - ${platforms.join(", ")}`
-    : `${app.name} log file locations`;
-
-  const description = `Log file locations for ${app.name}${
-    platforms.length ? ` on ${platforms.join(", ")}` : ""
-  }${installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""}.`;
+  const { title, description } = describe(app);
 
   return {
     title,
@@ -100,6 +107,12 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: appJsonLd(app, summaries, describe(app).description),
+        }}
+      />
       <Header />
       <main className="rack">
         <div className="picklist">
