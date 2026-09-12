@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Header, Footer, ZoneSwatch } from "@/components/Chrome";
 import { Consent } from "@/components/Consent";
 import { PLATFORM_META } from "@/lib/api";
+import { vendorJsonLd } from "@/lib/jsonld";
 import { getSnapshot } from "@/lib/server/catalog";
 import { resolveApp, type Platform, type ResolvedApp, type Vendor } from "@/lib/model";
 
@@ -45,6 +46,22 @@ async function loadVendor(slug: string): Promise<VendorPage | null> {
 const platformNames = (platforms: Platform[]) =>
   PLATFORM_META.filter((m) => platforms.includes(m.id)).map((m) => m.name);
 
+/** The page's own words for itself - the metadata and the JSON-LD share them. */
+function describe({ vendor, apps, platforms, pathCount }: VendorPage) {
+  const names = platformNames(platforms);
+
+  return {
+    title: `${vendor.name} log file locations - ${apps.length} ${
+      apps.length === 1 ? "app" : "apps"
+    }`,
+    description: `Where ${vendor.name} applications store their log files${
+      names.length ? ` on ${names.join(", ")}` : ""
+    }: ${apps.length === 1 ? "1 app" : `${apps.length} apps`}, ${
+      pathCount === 1 ? "1 verified log location" : `${pathCount} verified log locations`
+    }.`,
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -62,17 +79,8 @@ export async function generateMetadata({
 
   if (!page) return { title: "Vendor not found" };
 
-  const { vendor, apps, platforms } = page;
-  const names = platformNames(platforms);
-
-  const title = `${vendor.name} log file locations - ${apps.length} ${
-    apps.length === 1 ? "app" : "apps"
-  }`;
-  const description = `Where ${vendor.name} applications store their log files${
-    names.length ? ` on ${names.join(", ")}` : ""
-  }: ${apps.length === 1 ? "1 app" : `${apps.length} apps`}, ${
-    page.pathCount === 1 ? "1 verified log location" : `${page.pathCount} verified log locations`
-  }.`;
+  const { vendor } = page;
+  const { title, description } = describe(page);
 
   return {
     title,
@@ -118,6 +126,12 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: vendorJsonLd(vendor, apps, describe(page).description),
+        }}
+      />
       <Header />
       <main className="rack">
         <div className="picklist">
