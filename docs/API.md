@@ -150,7 +150,8 @@ Read endpoints send `cache-control: public, max-age=60, stale-while-revalidate=3
 The catalogue as an [MCP](https://modelcontextprotocol.io) server, for AI
 agents. Streamable HTTP, stateless: every request stands alone, there are no
 sessions, and responses are plain JSON rather than an event stream. `GET` and
-`DELETE` return `405`.
+`DELETE` return `405`. [docs/MCP.md](MCP.md) is the standalone version of this
+section, for linking at from outside this repository.
 
 | Tool | Arguments | Returns |
 | --- | --- | --- |
