@@ -11,7 +11,7 @@ Default scope if the user doesn't specify one: roughly 100 apps combined across 
 
 ## Step 1 - Work out what's already tracked
 
-Two sources, both required. Getting this wrong means proposing duplicates.
+Sources (a) and (b) are both required. Getting this wrong means proposing duplicates.
 
 **(a) The live public catalog**, via `curl`:
 ```bash
@@ -25,6 +25,8 @@ curl -s -o /dev/null -w "%{http_code}" "https://wherethemlogs.app/api/apps/<slug
 
 **(b) This repo's own working tree**, if the user has other uncommitted research files lying around (`scripts/log-research/`, per `CLAUDE.md`) or past `discovered-apps` JSON files - skim them so you don't re-propose something already sitting there unapplied.
 
+**(c) `scripts/log-research/blocked-sources.md`**, if it exists - the running list of sites past passes could not read (captcha, bot check, hard paywall). Pass it to the agents in step 2 so they stop burning search budget on the same walls.
+
 Build the full exclusion list before researching, not while researching.
 
 ## Step 2 - Research, in parallel
@@ -37,6 +39,7 @@ Spawn one background `Agent` (subagent_type: general-purpose) per platform - Win
 - Instruction to note the source URL for each path found, for step 3's `documentation` field.
 - Instruction to record, for every path, **whose data it is**: per-user (the literal path sits under one user's profile), per-machine (a shared, install-wide location), system (a log the OS itself owns, e.g. Windows event logs, `journalctl`, `/var/log/syslog`), or unknown. Unknown is a valid and common answer - say it rather than reasoning from the app's category.
 - Instruction to record whether a path is tied to a particular **build**: an architecture (a 32-bit install logging somewhere the 64-bit build does not) or an installer flavour (msi/exe/msix/appx, pkg/dmg/mas, deb/rpm/snap/flatpak/appimage). Only when a source actually distinguishes them. Most apps log to the same place whatever the build, so the usual answer is "not build-specific".
+- Instruction to record any source that **could not be read** - captcha, Cloudflare/bot interstitial, 403 to the fetcher, login or paywall wall - as `<domain> - <what blocked it> - <what was being looked up>`, and to move on to another source rather than retrying. This is reported back separately from the app findings.
 - The output format: one heading per app, a bullet per platform with the path in backticks and a short parenthetical note only when something needs enabling/flagging.
 
 This mirrors how this catalog's manual research batches have been built so far - see the conversation history in this project if you want the exact prompt template used previously.
@@ -66,6 +69,14 @@ node -e "JSON.parse(require('fs').readFileSync('FILE.json','utf8'))"
 
 Write the file to `scripts/log-research/discovered/<UTC-timestamp>.json` in the working tree (matching the `{"vendors": [...]}` shape from `docs/API.md`) - this directory already holds the owner's own uncommitted research files per `CLAUDE.md`, so this is consistent with existing repo conventions. **Do not `git add`, commit, or push it** - that's a separate action the user can ask for explicitly if they want a PR or commit.
 
+Append any blocked sources the agents reported to `scripts/log-research/blocked-sources.md` (create it if absent), one line each:
+
+```
+- <domain> - <what blocked it> - <UTC date> - <what was being looked up>
+```
+
+One line per domain per pass; if the domain is already listed, add the date to that line rather than a second entry. Same rule as the JSON: do not `git add` or commit it.
+
 Send the file to the user directly (`SendUserFile`) so they can review it or paste it into `/admin/import` (preview first - import without `?apply=true` - before applying, per `docs/API.md`).
 
-In your reply, summarize: total app count and rough platform breakdown, any vendor names used as a safe self-named fallback rather than a verified company (flag for a human glance), any app skipped a `documentation` link for and why, how many paths were left without a `scope` because it could not be confidently determined, and any "already tracked but found new info" cases from step 3.
+In your reply, summarize: total app count and rough platform breakdown, any vendor names used as a safe self-named fallback rather than a verified company (flag for a human glance), any app skipped a `documentation` link for and why, how many paths were left without a `scope` because it could not be confidently determined, any "already tracked but found new info" cases from step 3, and any sites that blocked the research (with whether a fact was lost or found elsewhere).
