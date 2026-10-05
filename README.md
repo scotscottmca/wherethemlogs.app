@@ -1,5 +1,8 @@
 # wherethemlogs.app
 
+[![Where Them Logs MCP connector - tool definition quality and endpoint health on Glama](https://glama.ai/mcp/connectors/app.wherethemlogs/log-locations/badges/score.svg)](https://glama.ai/mcp/connectors/app.wherethemlogs/log-locations)
+[![smithery badge](https://smithery.ai/badge/scott-8old/where-them-logs)](https://smithery.ai/servers/scott-8old/where-them-logs)
+
 A searchable index of application log file locations across Windows, macOS and Linux -
 every path qualified by installer type and architecture, printed exactly as the machine
 writes it.
