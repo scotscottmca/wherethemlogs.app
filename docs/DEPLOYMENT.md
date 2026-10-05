@@ -623,6 +623,68 @@ request leaves the edge - so `allowedIngressCidrs` and the custom domain
 binding are unaffected, and no deploy of either workflow is needed to turn it
 on.
 
+### 9. Turn on the request form
+
+`/request` and `/request/correction` let anyone file an addition or a correction
+without a GitHub account. The site files the issue itself, as a GitHub App, so
+it shows as `wherethemlogs[bot]`; the issue body is the same markdown the GitHub
+issue form produces, so the import-file bot comments on it as usual. Until all
+four values below are set the form stays off and both pages link to the GitHub
+forms instead, so this step can wait.
+
+**1. Create the GitHub App.** GitHub, Settings, Developer settings, GitHub Apps,
+New GitHub App:
+
+- Name `wherethemlogs` (the bot shows as `wherethemlogs[bot]`), homepage
+  `https://wherethemlogs.app`.
+- Webhook: untick **Active**. The site only calls GitHub; nothing calls back.
+- Repository permissions: **Issues: Read and write**. Nothing else.
+- Where can this App be installed: **Only on this account**.
+
+Create it, note the **App ID**, then **Generate a private key** (a `.pem`
+download). Install the App (Install App, your account) on **Only select
+repositories**: `wherethemlogs.app`.
+
+**2. Create the Turnstile widget.** Cloudflare, Turnstile, Add widget: hostname
+`wherethemlogs.app`, mode **Managed**. Note the site key and secret key.
+
+**3. Store the four values.** The private key goes in base64, so the multi-line
+PEM survives every hop to the container as one line:
+
+```powershell
+gh variable set REQUESTS_APP_ID --body "<app id>"
+gh secret set REQUESTS_APP_PRIVATE_KEY --body ([Convert]::ToBase64String([IO.File]::ReadAllBytes("wherethemlogs.private-key.pem")))
+gh variable set TURNSTILE_SITE_KEY --body "<site key>"
+gh secret set TURNSTILE_SECRET_KEY --body "<secret key>"
+```
+
+Then delete the `.pem` from your Downloads folder. GitHub can issue a new key
+at any time, so there is nothing to keep.
+
+**4. Deploy.** Both workflows pass the four values on every run. To switch the
+form on without waiting for a code change:
+
+```powershell
+gh workflow run deploy-infra.yml --ref main -f mode=deploy
+gh run watch
+```
+
+**5. Rate-limit the endpoint at Cloudflare.** Security, WAF, Rate limiting
+rules, one rule: when *URI Path* equals `/api/requests` and *Request Method*
+equals `POST`, count by IP, and block over the limit. The free plan counts over
+10 seconds; 2 requests per 10 seconds per IP stops a script without bothering a
+person. Turnstile, a honeypot field and strict validation already sit behind it
+in the app (`app/api/requests/route.ts`).
+
+**6. Check it.** File a test request at `https://wherethemlogs.app/request`. The
+issue should appear by `wherethemlogs[bot]` with the `addition` label, and the
+import-file bot should comment on it within a minute. Close it afterwards.
+
+To try the form locally, use Turnstile's test keys, which always pass:
+`TURNSTILE_SITE_KEY=1x00000000000000000000AA` and
+`TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`. Real issues are
+still filed, so point it at a test App or close what it opens.
+
 ## After the first run
 
 Merge a PR into `main`. Path filters decide what moves:

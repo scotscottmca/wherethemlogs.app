@@ -55,6 +55,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: node .github/scripts/issue-to-import.cjs
+      - run: node scripts/check-request-issue.mjs
       - run: npm run build
 
       # `next build` happily compiles route trees that crash at runtime - two

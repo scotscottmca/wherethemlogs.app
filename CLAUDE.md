@@ -12,11 +12,12 @@ npm run typecheck    # tsc --noEmit
 npm run build        # what CI runs, after typecheck (CI also builds and boots the Docker image, and lints Bicep)
 npx next start -p 3777
 node scripts/check-interchange.mjs [base-url] [file.json]   # export, re-import, assert zero writes; optionally preview a file
+node scripts/check-request-issue.mjs                         # request-form issues parse as the import-file bot expects
 npm run seed -- --endpoint https://<account>.documents.azure.com:443/
 node scripts/unseed.mjs --endpoint <same> [--yes]           # removes only records whose ids are in scripts/seed-data.json
 ```
 
-There is no lint script and no test framework. `scripts/check-interchange.mjs` is the one runnable check.
+There is no lint script and no test framework. `scripts/check-interchange.mjs` and `scripts/check-request-issue.mjs` are the runnable checks; CI runs the second, plus `.github/scripts/issue-to-import.cjs`'s self-check.
 
 - **Client components do not hydrate under `next dev`.** The CSP in `next.config.mjs` has no `'unsafe-eval'`, and dev mode needs it. To test type-ahead, the admin editors or the import screen, run `npm run build` and then `npx next start`.
 - **There is no local database.** The app talks to Cosmos DB with `DefaultAzureCredential`: key auth is disabled on the account, so run `az login` with an identity that holds the Cosmos data-plane role, and set `COSMOS_ENDPOINT`.
@@ -53,6 +54,7 @@ One Next.js 16 App Router app (`output: "standalone"`) runs as a single Azure Co
   - Both share one concurrency group, because each deploys the same template and they would otherwise race.
 - **Cloudflare sits in front of the site.** The container's ingress allows only Cloudflare's IPv4 ranges (`allowedIngressCidrs`), so the container's own URL returns 403 by design. Smoke tests and health checks go through the public URL.
   - The custom domain binding and its Cloudflare origin certificate are declared in Bicep, so a redeploy does not remove them.
+- **Requests** are GitHub issues. `/request` and `/request/correction` post to `app/api/requests`, which files the issue as the `wherethemlogs` GitHub App (`lib/server/github-app.ts`) after Turnstile and a honeypot. `lib/requests.ts` writes the body in the exact markdown of `.github/ISSUE_TEMPLATE/*.yml`, so `.github/workflows/import-file.yml` comments an import file on it either way; change a form label and both must change. Without the App and Turnstile keys the pages link to the GitHub forms.
 - **Analytics** is Google Analytics 4, loaded by `<Analytics />` (`components/Consent.tsx`, mounted in the root layout) only after the consent bar's Accept. Nothing from Google loads before an answer or after a Decline; the privacy page's button withdraws consent and deletes the `_ga` cookies. The CSP allows Google's hosts, but no request is made without consent.
 - **Credentials:** identity and role grants are given to the owner as commands to run. The Entra client secret exists only as the GitHub secret `AZURE_AAD_CLIENT_SECRET`.
 

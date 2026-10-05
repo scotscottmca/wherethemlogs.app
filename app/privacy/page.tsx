@@ -86,6 +86,12 @@ export default function Privacy() {
                 <td>Set only on Accept, for up to 2 years</td>
               </tr>
               <tr>
+                <td>What you write in a request form</td>
+                <td>A public GitHub issue, filed by the site</td>
+                <td>Adding or correcting an entry</td>
+                <td>As long as the issue exists</td>
+              </tr>
+              <tr>
                 <td>Server request logs</td>
                 <td>Our hosting provider</td>
                 <td>Security, abuse and error investigation</td>
@@ -139,12 +145,25 @@ export default function Privacy() {
 
           <h2>Contributions</h2>
           <p>
-            Corrections and new entries are handled as public issues on GitHub, under
-            GitHub&rsquo;s own privacy terms rather than ours. Anything you write in an issue
-            is public - do not paste real hostnames, usernames, tenant identifiers or
-            customer names into one.{" "}
+            Corrections and new entries are handled as public issues on GitHub. The{" "}
+            <Link href="/request">request form</Link> files the issue for you, so you need no
+            GitHub account: everything you type into it, including the optional GitHub
+            username, LinkedIn profile and X or Bluesky handle you add for credit, is published
+            on that issue. Do not paste real hostnames, usernames, tenant identifiers or
+            customer names into it. Filing on GitHub yourself works too, under GitHub&rsquo;s
+            own privacy terms.{" "}
             <a href={GITHUB_ISSUES} target="_blank" rel="noopener noreferrer">
               The issue tracker is here
+            </a>
+            .
+          </p>
+          <p>
+            The request form is protected by Cloudflare Turnstile, which checks that a person
+            is sending it. It runs only on the request pages. Turnstile reads signals from your
+            browser to tell people from bots and, per Cloudflare, does not use them for
+            advertising or to track you across sites.{" "}
+            <a href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer">
+              Cloudflare&rsquo;s Turnstile privacy addendum
             </a>
             .
           </p>

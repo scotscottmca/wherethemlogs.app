@@ -2,8 +2,9 @@
 
 Most contributions here are data: an application missing from
 **[Where Them Logs App](https://wherethemlogs.app)**, or a path in it that is
-wrong. Both are issues on this repository, opened from a form. No access to the
-code is needed.
+wrong. Both are issues on this repository. The quickest way in is the site's
+own [request form](https://wherethemlogs.app/request), which files the issue
+for you and needs no GitHub account; the GitHub forms below do the same job.
 
 ## What you can open
 

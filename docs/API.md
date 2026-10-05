@@ -147,6 +147,31 @@ you an admin?" cannot be gated on being one, or a signed-in non-admin receives a
 
 Read endpoints send `cache-control: public, max-age=60, stale-while-revalidate=300`.
 
+### `POST /api/requests`
+
+What the on-site request forms (`/request`, `/request/correction`) post to.
+Each accepted request becomes a public issue on the repository, filed by the
+site's GitHub App; the body matches the GitHub issue form's markdown, so the
+import-file workflow comments on it as usual. `lib/requests.ts` builds the
+issue and `scripts/check-request-issue.mjs` proves the bot can read it.
+
+| Field | |
+| --- | --- |
+| `kind` | `add` or `correction` |
+| `turnstile` | The Cloudflare Turnstile token from the form |
+| `website` | The honeypot: must be empty |
+| `credit` | Optional `{ github, linkedin, social }`, published on the issue |
+| add: `app`, `vendor`, `verification` | Required |
+| add: `paths` | `{ windows?, macos?, linux? }`, one path per line, at least one platform |
+| add: `aliases`, `variant`, `installers`, `architectures`, `scope`, `notes` | Optional; choices must be the form's own values |
+| correction: `app`, `platform`, `listed`, `problem`, `correct`, `verification` | Required |
+
+Answers `201 { number, url }`. A `400` names the field; `503 requests_off` means
+the App or Turnstile keys are not configured; `502` means GitHub refused. Text
+fields reject three backticks in a row, because every answer is printed inside
+a code fence so that nothing a visitor types can @mention anyone or render a
+link.
+
 ### `POST /api/mcp`
 
 The catalogue as an [MCP](https://modelcontextprotocol.io) server, for AI

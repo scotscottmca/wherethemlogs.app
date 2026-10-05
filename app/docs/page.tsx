@@ -50,11 +50,12 @@ export default function Docs() {
           <div className="sheet__body">
             <h2 id="requests">Raising a request</h2>
             <p>
-              There is no account and no form to sign into. Every request is a public
-              GitHub issue on the site&rsquo;s own repository. The{" "}
-              <strong>Request an app</strong> link in the header and footer opens a
-              prefilled issue for exactly that - add the application&rsquo;s name and it
-              becomes the issue title.
+              There is no account and nothing to sign into. Every request is a public
+              GitHub issue on the site&rsquo;s own repository, and the{" "}
+              <strong>Request an app</strong> link in the header and footer opens a form
+              that files it for you. A search that finds nothing offers the same form with
+              the name already filled in, and every path&rsquo;s{" "}
+              <strong>Wrong path?</strong> link opens the correction form.
             </p>
             <p>
               You can also open the tracker directly and pick a template by hand -

@@ -71,6 +71,20 @@ param authClientSecret string = ''
 @description('Comma separated GitHub logins allowed to administer the catalogue. Empty means nobody is.')
 param adminGithubLogins string = ''
 
+@description('GitHub App id that files on-site requests as issues. Empty leaves the request form off.')
+param requestsAppId string = ''
+
+@description('That App\'s private key, base64 of the PEM. From a GitHub secret in CI.')
+@secure()
+param requestsAppPrivateKey string = ''
+
+@description('Cloudflare Turnstile site key for the request form. Public.')
+param turnstileSiteKey string = ''
+
+@description('Cloudflare Turnstile secret key. From a GitHub secret in CI.')
+@secure()
+param turnstileSecretKey string = ''
+
 @description('The public origin once a custom domain is bound, e.g. https://wherethemlogs.app. Empty uses the app built-in default.')
 param siteUrl string = ''
 
@@ -206,6 +220,10 @@ module web 'modules/containerapp.bicep' = if (!empty(containerImage)) {
     authTenantId: authTenantId
     authClientSecret: authClientSecret
     adminGithubLogins: adminGithubLogins
+    requestsAppId: requestsAppId
+    requestsAppPrivateKey: requestsAppPrivateKey
+    turnstileSiteKey: turnstileSiteKey
+    turnstileSecretKey: turnstileSecretKey
     siteUrl: siteUrl
     customDomain: customDomain
     customDomainCertificateName: customDomainCertificateName

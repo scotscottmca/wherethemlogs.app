@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mark, IconExternal } from "./Icons";
+import { Mark } from "./Icons";
 import { PLATFORM_META, type Platform } from "@/lib/api";
 import { requestAppUrl } from "@/lib/site";
 
@@ -26,14 +26,8 @@ export function Header() {
           <Link href="/privacy" className="hdr__link tag mono">
             Privacy
           </Link>
-          <a
-            href={requestAppUrl()}
-            className="hdr__link hdr__link--req"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={requestAppUrl()} className="hdr__link hdr__link--req">
             <span className="tag mono">Request an app</span>
-            <IconExternal size={15} />
           </a>
         </nav>
       </div>
@@ -125,7 +119,7 @@ export function Footer({ entryCount }: { entryCount: number | null }) {
           <Link href="/guides">Guides</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy &amp; cookies</Link>
-          <a href={requestAppUrl()} target="_blank" rel="noopener noreferrer">
+          <a href={requestAppUrl()}>
             Request an app
           </a>
         </nav>
