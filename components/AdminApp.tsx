@@ -14,6 +14,8 @@ const WATCH = [
   { key: "iconUrl" as const, label: "Icon" },
   { key: "documentation" as const, label: "Documentation" },
   { key: "notes" as const, label: "Notes" },
+  { key: "enableLogging" as const, label: "Turn on logging" },
+  { key: "collectLogs" as const, label: "Collect logs" },
 ];
 
 interface Form {
@@ -24,6 +26,10 @@ interface Form {
   documentation: string;
   /** One note per line. */
   notes: string;
+  /** One step per line. */
+  enableLogging: string;
+  /** One step per line. */
+  collectLogs: string;
   vendorId: string;
 }
 
@@ -34,6 +40,8 @@ const formOf = (app: App | null, vendorId: string): Form => ({
   iconUrl: app?.iconUrl ?? null,
   documentation: app?.documentation ?? "",
   notes: (app?.notes ?? []).join("\n"),
+  enableLogging: (app?.enableLogging ?? []).join("\n"),
+  collectLogs: (app?.collectLogs ?? []).join("\n"),
   vendorId: app?.vendorId ?? vendorId,
 });
 
@@ -83,6 +91,8 @@ export function AppEditor({
           iconUrl: form.iconUrl,
           documentation: form.documentation,
           notes: splitLines(form.notes),
+          enableLogging: splitLines(form.enableLogging),
+          collectLogs: splitLines(form.collectLogs),
           ...(app ? { vendorId: form.vendorId } : { vendorId: vendor.id }),
         };
         return app ? patchApp(app.id, vendor.id, body, withEtag) : createApp(body);
@@ -172,7 +182,23 @@ export function AppEditor({
           value={form.notes}
           onChange={(v) => set("notes", v)}
           error={write.fields.notes}
-          hint="Optional. One note per line - how to switch logging on, or what the paths below do not cover."
+          hint="Optional. One note per line - what the paths below do not cover."
+        />
+        <Text
+          label="Turn on logging"
+          multiline
+          value={form.enableLogging}
+          onChange={(v) => set("enableLogging", v)}
+          error={write.fields.enableLogging}
+          hint="Optional. One step per line, in order - how to switch on verbose or debug logging. Put commands, keys and paths in `backticks`."
+        />
+        <Text
+          label="Collect logs"
+          multiline
+          value={form.collectLogs}
+          onChange={(v) => set("collectLogs", v)}
+          error={write.fields.collectLogs}
+          hint="Optional. One step per line, in order - shortcuts, support bundles or commands that gather the logs. Same `backticks` rule."
         />
         <IconField
           value={form.iconUrl}

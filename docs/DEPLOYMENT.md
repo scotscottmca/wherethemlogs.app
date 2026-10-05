@@ -111,11 +111,11 @@ gets a 403.
 az ad signed-in-user show --query id -o tsv
 ```
 
-Put it in `infra/main.parameters.json` under `developerPrincipalIds` **and commit
-it**. An object id is an identifier, not a credential. It has to be committed
-because the workflows deploy the file from the repository: leave it only in your
-working tree and a workflow run will not create the assignment, which is a
-confusing way to lose access you thought you had.
+Put it in the `DEVELOPER_PRINCIPAL_IDS` repository variable (step 4), as a JSON
+array: `["<object id>"]`. An object id is an identifier, not a credential, but
+it is yours, so it stays out of the public parameters file. The workflows pass
+the variable on every deploy: leave it unset and a workflow run will not create
+the assignment, which is a confusing way to lose access you thought you had.
 
 Then:
 
@@ -124,6 +124,7 @@ az deployment group create `
   --resource-group rg-wtla-prod `
   --template-file infra/main.bicep `
   --parameters infra/main.parameters.json `
+  --parameters developerPrincipalIds='["<object id>"]' `
   --query properties.outputs
 ```
 
@@ -155,6 +156,14 @@ needs.
 | Variable | `AZURE_RESOURCE_GROUP` | `rg-wtla-prod` |
 | Variable | `AZURE_CONTAINERAPP_NAME` | `containerAppName` output |
 | Variable | `AZURE_REGISTRY_NAME` | `registryName` output |
+| Variable | `AUTH_CLIENT_ID` | Entra application (client) id, step 7 |
+| Variable | `AUTH_TENANT_ID` | Entra directory (tenant) id, step 7 |
+| Variable | `DEVELOPER_PRINCIPAL_IDS` | JSON array of object ids, step 3 |
+
+The three sign-in and developer ids are passed to every deploy as parameters,
+rather than committed in `infra/main.parameters.json`. A deploy with
+`AUTH_CLIENT_ID` or `AUTH_TENANT_ID` empty stops before it starts, because the
+template would otherwise deploy with admin sign-in switched off.
 
 Setting them from the terminal instead:
 
@@ -165,7 +174,10 @@ gh secret set AZURE_SUBSCRIPTION_ID --body (az account show --query id -o tsv)
 
 gh variable set AZURE_RESOURCE_GROUP --body "rg-wtla-prod"
 gh variable set AZURE_CONTAINERAPP_NAME --body "ca-wtla-prod"
-gh variable set AZURE_REGISTRY_NAME --body "crwtlaprods7gilgc3be"
+gh variable set AZURE_REGISTRY_NAME --body "<registryName output>"
+gh variable set AUTH_CLIENT_ID --body "<application (client) id>"
+gh variable set AUTH_TENANT_ID --body "<directory (tenant) id>"
+gh variable set DEVELOPER_PRINCIPAL_IDS --body '["<object id>"]'
 ```
 
 Create a GitHub **environment** named `production`, so the deploy jobs and the
@@ -191,8 +203,11 @@ that the catalogue is empty.
 
 ```powershell
 npm install
-npm run seed -- --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/
+npm run seed -- --endpoint https://<cosmosAccountName>.documents.azure.com:443/
 ```
+
+`<cosmosAccountName>` is the output from step 3, or
+`az cosmosdb list -g rg-wtla-prod --query [].name -o tsv`.
 
 24 vendors, 33 apps, 86 log paths. Idempotent - re-running upserts by id. It
 never deletes, so a record dropped from `scripts/seed-data.json` stays in the
@@ -200,8 +215,8 @@ database.
 
 `Forbidden` here means the identity has no Cosmos data-plane role. The script
 prints the principal that was refused and the exact command to grant it. To fix
-it permanently rather than for this machine, add the id to
-`developerPrincipalIds` and redeploy the infrastructure.
+it permanently rather than for this machine, add the id to the
+`DEVELOPER_PRINCIPAL_IDS` variable and redeploy the infrastructure.
 
 #### Replacing the seed with the real catalogue
 
@@ -209,8 +224,8 @@ The seed is sample data. To swap it for the real index, first download a backup
 from **Import / export** in the admin portal, then remove the seed:
 
 ```powershell
-node scripts/unseed.mjs --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/
-node scripts/unseed.mjs --endpoint https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/ --yes
+node scripts/unseed.mjs --endpoint https://<cosmosAccountName>.documents.azure.com:443/
+node scripts/unseed.mjs --endpoint https://<cosmosAccountName>.documents.azure.com:443/ --yes
 ```
 
 The first run only lists what it would delete. The second deletes every vendor
@@ -320,13 +335,9 @@ secrets**, New client secret. Copy the **Value** column, not the Secret ID.
 > reads as a sudden inexplicable outage. Note the date now, or move to a
 > certificate, which the same `az ad app credential reset` can issue.
 
-Set these in `infra/main.parameters.json` and redeploy the infrastructure:
-
-```json
-"authProvider":  { "value": "aad" },
-"authClientId":  { "value": "<application (client) id>" },
-"authTenantId":  { "value": "<directory (tenant) id>" }
-```
+Set `authProvider` to `aad` in `infra/main.parameters.json`, put the two ids in
+the `AUTH_CLIENT_ID` and `AUTH_TENANT_ID` repository variables (step 4), and
+redeploy the infrastructure.
 
 Auth switches on only when the provider, the client id **and** the secret are
 all present. Two of the three leaves it off rather than half-configured, and the
@@ -344,6 +355,8 @@ az deployment group create `
   --template-file infra/main.bicep `
   --parameters infra/main.parameters.json `
   --parameters authClientSecret=$SECRET `
+  --parameters authClientId=<application (client) id> authTenantId=<directory (tenant) id> `
+  --parameters developerPrincipalIds='["<object id>"]' `
   --query properties.outputs
 ```
 
@@ -392,8 +405,8 @@ sign-in, so reloading will not pick it up.
 
 Create a GitHub OAuth app with callback
 `https://wherethemlogs.app/.auth/login/github/callback`, store the secret as
-`github-client-secret`, and set `authProvider` to `github`, `authClientId` to
-the OAuth client id, and `adminGithubLogins` to a comma separated allowlist.
+`github-client-secret`, and set `authProvider` to `github`, the `AUTH_CLIENT_ID`
+variable to the OAuth client id, and `adminGithubLogins` to a comma separated allowlist.
 
 GitHub authenticates anyone with an account and carries no roles, so that
 allowlist is the entire lock. An empty list refuses everyone. Strangers can
@@ -429,7 +442,7 @@ openssl pkcs12 -export -out origin.pfx -inkey origin.key -in origin.pem `
   -passout "pass:$PFX_PASSWORD"
 
 az containerapp env certificate upload -g rg-wtla-prod `
-  -n cae-wtla-prod-s7gilgc3beox2 `
+  -n <container apps environment name> `
   --certificate-name wherethemlogs-origin `
   --certificate-file origin.pfx --password $PFX_PASSWORD
 
@@ -446,7 +459,8 @@ proxy - that is the `FailedARecordValidation` error. Set the apex record to
 **DNS only** and confirm:
 
 ```powershell
-dig +short wherethemlogs.app A     # must return 20.76.241.92
+dig +short wherethemlogs.app A     # must return the environment's static IP
+az containerapp env show -g rg-wtla-prod -n <container apps environment name> --query properties.staticIp -o tsv
 ```
 
 The `asuid` TXT record must also be present; it already is.
@@ -470,7 +484,7 @@ sign-in breaks the moment anyone uses the domain:
 
 ```powershell
 az ad app update --id $CLIENT_ID --web-redirect-uris `
-  "https://ca-wtla-prod.proudgrass-36ed8d55.westeurope.azurecontainerapps.io/.auth/login/aad/callback" `
+  "https://<container app fqdn>/.auth/login/aad/callback" `
   "https://wherethemlogs.app/.auth/login/aad/callback"
 ```
 
@@ -509,7 +523,7 @@ az containerapp auth update -n ca-wtla-prod -g rg-wtla-prod `
 
 The container's ingress allows Cloudflare's published IPv4 ranges and nothing
 else (`allowedIngressCidrs` in `infra/main.parameters.json`). The container's
-own hostname and `20.76.241.92` refuse everything else with 403, so Cloudflare's
+own hostname and the environment's static IP refuse everything else with 403, so Cloudflare's
 WAF and DDoS protection cannot be sidestepped by anyone who knows the address.
 
 This depends on the ingress judging the IP a connection comes from rather than
@@ -630,13 +644,13 @@ npm install
 
 # PowerShell has no inline "VAR=x command" prefix, so set them on the session.
 $env:LOCAL_ADMIN_BYPASS = "true"
-$env:COSMOS_ENDPOINT    = "https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/"
+$env:COSMOS_ENDPOINT    = "https://<cosmosAccountName>.documents.azure.com:443/"
 $env:COSMOS_DATABASE    = "wtla"
 
 npm run dev            # http://localhost:3777
 ```
 
-Needs `az login` with an account listed in `developerPrincipalIds`.
+Needs `az login` with an account listed in the `DEVELOPER_PRINCIPAL_IDS` variable.
 
 `LOCAL_ADMIN_BYPASS=true` short-circuits the role check so admin routes are
 reachable without a signed-in principal. No deployed configuration sets it - the
@@ -647,7 +661,7 @@ To exercise the container as it actually ships:
 ```powershell
 docker build -t wtla:local .
 docker run --rm -p 3888:3000 `
-  -e COSMOS_ENDPOINT=https://cosmos-wtla-prod-s7gilgc3beox2.documents.azure.com:443/ `
+  -e COSMOS_ENDPOINT=https://<cosmosAccountName>.documents.azure.com:443/ `
   -e COSMOS_DATABASE=wtla `
   wtla:local
 ```

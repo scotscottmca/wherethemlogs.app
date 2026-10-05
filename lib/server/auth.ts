@@ -121,6 +121,10 @@ const ROLE_CLAIMS = new Set([
 ]);
 
 export function getPrincipal(request: Request): ClientPrincipal | null {
+  // The platform only strips a client-sent principal header when its auth is
+  // switched on. With no provider deployed, the header is whatever the caller
+  // typed, so it is never trusted.
+  if ((process.env.AUTH_PROVIDER ?? "none") === "none") return null;
   const header = request.headers.get("x-ms-client-principal");
   if (!header) return null;
 

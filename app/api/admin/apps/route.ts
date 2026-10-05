@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
       iconUrl: input.iconUrl ?? null,
       ...(input.documentation ? { documentation: input.documentation } : {}),
       ...(input.notes?.length ? { notes: input.notes } : {}),
+      ...(input.enableLogging?.length ? { enableLogging: input.enableLogging } : {}),
+      ...(input.collectLogs?.length ? { collectLogs: input.collectLogs } : {}),
       logPaths: [],
       createdAt: now,
       updatedAt: now,

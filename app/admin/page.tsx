@@ -40,6 +40,9 @@ export default async function StockControl() {
           }
           actions={
             <>
+              <Link href="/admin/share" className="btn btn--ghost tag mono">
+                Log path of the day
+              </Link>
               <Link href="/admin/import" className="btn btn--ghost tag mono">
                 Import / export
               </Link>

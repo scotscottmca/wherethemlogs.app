@@ -21,6 +21,8 @@ const slim = (app: ResolvedApp) => ({
   vendor: app.vendor.name,
   documentation: app.documentation,
   notes: app.notes,
+  enableLogging: app.enableLogging,
+  collectLogs: app.collectLogs,
   logs: app.logPaths.map((p) => ({
     platform: p.platform,
     what: p.label,

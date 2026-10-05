@@ -75,7 +75,7 @@ names into one.
 
 ## Before this goes live
 
-- [ ] Register the Entra ID app, add the `admin` app role, and set `authClientId` / `authTenantId`. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
+- [ ] Register the Entra ID app, add the `admin` app role, and set the `AUTH_CLIENT_ID` / `AUTH_TENANT_ID` repository variables. Until then `/admin` has nowhere to send you. [docs/DEPLOYMENT.md § 7](docs/DEPLOYMENT.md).
 - [x] Choose the analytics provider - Google Analytics 4, loaded only after Accept (`components/Consent.tsx`).
 - [ ] Replace the seed catalogue with the real index - `/admin/import` takes the research JSON.
 - [x] Build the admin UI on top of the CRUD API.

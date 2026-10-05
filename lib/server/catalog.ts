@@ -62,6 +62,8 @@ function score(app: App, needle: string): number {
   let best = 0;
   for (const hay of haystacks) {
     if (hay === needle) best = Math.max(best, 100);
+    // A whole word ("teams" in "Microsoft Teams") beats the start of a longer one ("TeamSpeak").
+    else if (hay.split(/[\s-]+/).includes(needle)) best = Math.max(best, 90);
     else if (hay.startsWith(needle)) best = Math.max(best, 80 - (hay.length - needle.length) * 0.2);
     else if (hay.split(/[\s-]+/).some((w) => w.startsWith(needle))) best = Math.max(best, 65);
     else if (hay.includes(needle)) best = Math.max(best, 55);

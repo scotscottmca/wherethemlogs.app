@@ -2132,3 +2132,11 @@ button.tog {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
+
+/* Log path of the day: the post's controls, under its text. */
+.share__acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
