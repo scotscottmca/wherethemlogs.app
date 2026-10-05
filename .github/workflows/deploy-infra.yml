@@ -54,6 +54,11 @@ jobs:
           AUTH_CLIENT_ID: ${{ vars.AUTH_CLIENT_ID }}
           AUTH_TENANT_ID: ${{ vars.AUTH_TENANT_ID }}
           DEVELOPER_PRINCIPAL_IDS: ${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}
+          # The on-site request form. Unset leaves it off; see docs/DEPLOYMENT.md.
+          REQUESTS_APP_ID: ${{ vars.REQUESTS_APP_ID }}
+          REQUESTS_APP_PRIVATE_KEY: ${{ secrets.REQUESTS_APP_PRIVATE_KEY }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
           set -euo pipefail
           current=$(az containerapp show \
@@ -79,6 +84,10 @@ jobs:
             --parameters "authClientId=$AUTH_CLIENT_ID" \
             --parameters "authTenantId=$AUTH_TENANT_ID" \
             --parameters "developerPrincipalIds=$DEVELOPER_PRINCIPAL_IDS" \
+            --parameters "requestsAppId=$REQUESTS_APP_ID" \
+            --parameters "requestsAppPrivateKey=$REQUESTS_APP_PRIVATE_KEY" \
+            --parameters "turnstileSiteKey=$TURNSTILE_SITE_KEY" \
+            --parameters "turnstileSecretKey=$TURNSTILE_SECRET_KEY" \
             "${extra[@]}"
 
   deploy:
@@ -128,6 +137,11 @@ jobs:
           AUTH_CLIENT_ID: ${{ vars.AUTH_CLIENT_ID }}
           AUTH_TENANT_ID: ${{ vars.AUTH_TENANT_ID }}
           DEVELOPER_PRINCIPAL_IDS: ${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}
+          # The on-site request form. Unset leaves it off; see docs/DEPLOYMENT.md.
+          REQUESTS_APP_ID: ${{ vars.REQUESTS_APP_ID }}
+          REQUESTS_APP_PRIVATE_KEY: ${{ secrets.REQUESTS_APP_PRIVATE_KEY }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
         run: |
           set -euo pipefail
 
@@ -162,6 +176,10 @@ jobs:
             --parameters "authClientId=$AUTH_CLIENT_ID" \
             --parameters "authTenantId=$AUTH_TENANT_ID" \
             --parameters "developerPrincipalIds=$DEVELOPER_PRINCIPAL_IDS" \
+            --parameters "requestsAppId=$REQUESTS_APP_ID" \
+            --parameters "requestsAppPrivateKey=$REQUESTS_APP_PRIVATE_KEY" \
+            --parameters "turnstileSiteKey=$TURNSTILE_SITE_KEY" \
+            --parameters "turnstileSecretKey=$TURNSTILE_SECRET_KEY" \
             "${extra[@]}" \
             --query properties.outputs -o json | tee outputs.json
 

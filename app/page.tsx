@@ -157,14 +157,9 @@ export default async function Home({
         </div>
 
         <p className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
-          Missing something? Requests are tracked as GitHub issues - one issue per
-          application, with the platform and installer type in the title.{" "}
-          <a
-            href={requestAppUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "var(--hivis)" }}
-          >
+          Missing something? Fill in the request form and it becomes a public GitHub
+          issue - no GitHub account needed.{" "}
+          <a href={requestAppUrl()} style={{ color: "var(--hivis)" }}>
             Open a request.
           </a>
         </p>

@@ -68,6 +68,18 @@ sufficient on its own.
 param adminGithubLogins string = ''
 
 @description('''
+The on-site request form: the GitHub App that files the issues and the
+Turnstile keys that guard it. All four or nothing: with any missing, the form
+stays off and the request pages link to GitHub instead.
+''')
+param requestsAppId string = ''
+@secure()
+param requestsAppPrivateKey string = ''
+param turnstileSiteKey string = ''
+@secure()
+param turnstileSecretKey string = ''
+
+@description('''
 The public origin, for absolute URLs in metadata, robots and the sitemap.
 
 Empty falls back to the value compiled into the app, which cannot be derived
@@ -134,6 +146,8 @@ var bindCustomDomain = !empty(customDomain) && !empty(customDomainCertificateNam
 
 var authConfigured = authProvider != 'none' && !empty(authClientId) && !empty(authClientSecret)
 var authSecretName = authProvider == 'github' ? 'github-client-secret' : 'aad-client-secret'
+
+var requestsConfigured = !empty(requestsAppId) && !empty(requestsAppPrivateKey) && !empty(turnstileSiteKey) && !empty(turnstileSecretKey)
 var effectiveAuthProvider = authConfigured ? authProvider : 'none'
 
 var appProbes = [
@@ -206,14 +220,22 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           }
         ]
       }
-      secrets: authConfigured
-        ? [
-            {
-              name: authSecretName
-              value: authClientSecret
-            }
-          ]
-        : []
+      secrets: concat(
+        authConfigured
+          ? [
+              {
+                name: authSecretName
+                value: authClientSecret
+              }
+            ]
+          : [],
+        requestsConfigured
+          ? [
+              { name: 'requests-app-private-key', value: requestsAppPrivateKey }
+              { name: 'turnstile-secret-key', value: turnstileSecretKey }
+            ]
+          : []
+      )
       registries: [
         {
           server: registryLoginServer
@@ -234,7 +256,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             cpu: json('0.5')
             memory: '1Gi'
           }
-          env: [
+          env: concat([
             { name: 'NODE_ENV', value: 'production' }
             { name: 'PORT', value: '3000' }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
@@ -249,7 +271,14 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             { name: 'AUTH_PROVIDER', value: effectiveAuthProvider }
             { name: 'NEXT_PUBLIC_SITE_URL', value: siteUrl }
             { name: 'ADMIN_GITHUB_LOGINS', value: adminGithubLogins }
-          ]
+          ], requestsConfigured
+            ? [
+                { name: 'REQUESTS_APP_ID', value: requestsAppId }
+                { name: 'REQUESTS_APP_PRIVATE_KEY', secretRef: 'requests-app-private-key' }
+                { name: 'TURNSTILE_SITE_KEY', value: turnstileSiteKey }
+                { name: 'TURNSTILE_SECRET_KEY', secretRef: 'turnstile-secret-key' }
+              ]
+            : [])
           probes: appProbes
         }
       ]

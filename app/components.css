@@ -2187,3 +2187,36 @@ button.tog {
   background: var(--ink);
   padding: 0 0.3em;
 }
+
+/* Request forms. The honeypot is off-screen rather than display:none, which
+   some bots skip; people and screen readers never reach it. */
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.reqPledge {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  color: var(--bone);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding-top: 0.45rem;
+  cursor: pointer;
+}
+.reqPledge input {
+  margin-top: 0.25rem;
+  accent-color: var(--hivis);
+}
+.reqActs {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  margin: 1.25rem 0 2rem;
+}
+.reqActs .frow__bad a {
+  color: inherit;
+}

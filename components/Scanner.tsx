@@ -205,8 +205,6 @@ export function Scanner({
               <a
                 className="btn tag mono"
                 href={requestAppUrl(q.trim())}
-                target="_blank"
-                rel="noopener noreferrer"
                 style={{ color: "var(--ink)" }}
               >
                 Request “{q.trim()}”

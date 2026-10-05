@@ -29,11 +29,13 @@ export default {
               "default-src 'self'",
               // Next's hydration inlines its bootstrap payload. Google's tag
               // is only ever requested after an Accept (components/Consent.tsx).
-              "script-src 'self' 'unsafe-inline' https://*.googletagmanager.com",
+              // Turnstile loads only on the request pages (components/RequestForm.tsx).
+              "script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https://*.blob.core.windows.net https://*.google-analytics.com https://*.googletagmanager.com",
               "font-src 'self'",
-              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+              "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://challenges.cloudflare.com",
+              "frame-src https://challenges.cloudflare.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

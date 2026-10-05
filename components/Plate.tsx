@@ -116,8 +116,6 @@ export function Plate({
           <a
             className="plate__flag tag mono"
             href={correctionUrl(app.name, ZONE_CODE[platform])}
-            target="_blank"
-            rel="noopener noreferrer"
           >
             <IconFlag size={13} />
             Wrong path? Add a variant

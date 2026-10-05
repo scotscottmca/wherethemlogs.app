@@ -302,8 +302,6 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                   <a
                     className="btn tag mono"
                     href={requestAppUrl(q || undefined)}
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
                     {q ? `Request “${q}”` : "Request an application"}
                     <IconArrow size={15} />
