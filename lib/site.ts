@@ -1,11 +1,8 @@
 /**
- * The code lives in one repository and requests live in another.
- *
- * The tracker is public so anyone can ask for an application or flag a wrong
- * path without access to the source. Every "request" and "wrong path" link on
- * the site points there, not at the code.
+ * Requests and corrections are issues on the site's own public repository.
+ * Every "request" and "wrong path" link on the site points at its tracker.
  */
-export const GITHUB_ISSUES_REPO = "https://github.com/scotscottmca/wherethemlogs.app-issues";
+export const GITHUB_ISSUES_REPO = "https://github.com/scotscottmca/wherethemlogs.app";
 
 export const GITHUB_ISSUES = `${GITHUB_ISSUES_REPO}/issues`;
 

@@ -1,0 +1,29 @@
+name: Import file
+
+# Comments on an "Add an application" issue with the JSON for the admin portal's
+# import screen, or with what is missing. An edit re-runs it and updates that comment.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  comment:
+    # The add form always renders this heading, even when the box is empty.
+    if: contains(github.event.issue.body, '### Windows log paths')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { comment, MARKER } = require("./.github/scripts/issue-to-import.cjs");
+            const body = comment(context.payload.issue.body ?? "");
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
+            const mine = comments.find((c) => c.user.type === "Bot" && c.body.startsWith(MARKER));
+            if (mine) await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            else await github.rest.issues.createComment({ ...context.repo, issue_number, body });
