@@ -48,6 +48,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: What-if
+        # Through the environment, not pasted into the script: a JSON array's
+        # quotes would end the shell string they were pasted into.
+        env:
+          AUTH_CLIENT_ID: ${{ vars.AUTH_CLIENT_ID }}
+          AUTH_TENANT_ID: ${{ vars.AUTH_TENANT_ID }}
+          DEVELOPER_PRINCIPAL_IDS: ${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}
         run: |
           set -euo pipefail
           current=$(az containerapp show \
@@ -60,7 +66,7 @@ jobs:
 
           # The sign-in ids live in repository variables, not the parameters file.
           # Empty, the template would deploy with admin sign-in switched off.
-          [ -n "${{ vars.AUTH_CLIENT_ID }}" ] && [ -n "${{ vars.AUTH_TENANT_ID }}" ] || {
+          [ -n "$AUTH_CLIENT_ID" ] && [ -n "$AUTH_TENANT_ID" ] || {
             echo "::error::Set the AUTH_CLIENT_ID and AUTH_TENANT_ID repository variables (docs/DEPLOYMENT.md)."
             exit 1
           }
@@ -70,9 +76,9 @@ jobs:
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
             --parameters "authClientSecret=${{ secrets.AZURE_AAD_CLIENT_SECRET }}" \
-            --parameters "authClientId=${{ vars.AUTH_CLIENT_ID }}" \
-            --parameters "authTenantId=${{ vars.AUTH_TENANT_ID }}" \
-            --parameters "developerPrincipalIds=${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}" \
+            --parameters "authClientId=$AUTH_CLIENT_ID" \
+            --parameters "authTenantId=$AUTH_TENANT_ID" \
+            --parameters "developerPrincipalIds=$DEVELOPER_PRINCIPAL_IDS" \
             "${extra[@]}"
 
   deploy:
@@ -116,6 +122,12 @@ jobs:
 
       - name: Deploy Bicep
         id: bicep
+        # Through the environment, not pasted into the script: a JSON array's
+        # quotes would end the shell string they were pasted into.
+        env:
+          AUTH_CLIENT_ID: ${{ vars.AUTH_CLIENT_ID }}
+          AUTH_TENANT_ID: ${{ vars.AUTH_TENANT_ID }}
+          DEVELOPER_PRINCIPAL_IDS: ${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}
         run: |
           set -euo pipefail
 
@@ -136,7 +148,7 @@ jobs:
 
           # The sign-in ids live in repository variables, not the parameters file.
           # Empty, the template would deploy with admin sign-in switched off.
-          [ -n "${{ vars.AUTH_CLIENT_ID }}" ] && [ -n "${{ vars.AUTH_TENANT_ID }}" ] || {
+          [ -n "$AUTH_CLIENT_ID" ] && [ -n "$AUTH_TENANT_ID" ] || {
             echo "::error::Set the AUTH_CLIENT_ID and AUTH_TENANT_ID repository variables (docs/DEPLOYMENT.md)."
             exit 1
           }
@@ -147,9 +159,9 @@ jobs:
             --template-file infra/main.bicep \
             --parameters infra/main.parameters.json \
             --parameters "authClientSecret=${{ secrets.AZURE_AAD_CLIENT_SECRET }}" \
-            --parameters "authClientId=${{ vars.AUTH_CLIENT_ID }}" \
-            --parameters "authTenantId=${{ vars.AUTH_TENANT_ID }}" \
-            --parameters "developerPrincipalIds=${{ vars.DEVELOPER_PRINCIPAL_IDS || '[]' }}" \
+            --parameters "authClientId=$AUTH_CLIENT_ID" \
+            --parameters "authTenantId=$AUTH_TENANT_ID" \
+            --parameters "developerPrincipalIds=$DEVELOPER_PRINCIPAL_IDS" \
             "${extra[@]}" \
             --query properties.outputs -o json | tee outputs.json
 
