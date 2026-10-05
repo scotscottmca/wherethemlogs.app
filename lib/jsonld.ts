@@ -31,6 +31,21 @@ const crumbs = (trail: { name: string; path: string }[]) => ({
   })),
 });
 
+/** The same steps the page lists, numbered in one answer, backticks dropped. */
+const stepsQuestion = (name: string, steps?: string[]) =>
+  steps?.length
+    ? [
+        {
+          "@type": "Question",
+          name,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: steps.map((s, i) => `${i + 1}. ${s.replaceAll("`", "")}`).join(" "),
+          },
+        },
+      ]
+    : [];
+
 export function appJsonLd(
   app: ResolvedApp,
   summaries: PlatformSummary[],
@@ -57,14 +72,18 @@ export function appJsonLd(
         url: `${siteUrl}/vendors/${app.vendor.slug}`,
       },
     },
-    mainEntity: summaries.map((s) => ({
-      "@type": "Question",
-      name: `Where does ${app.name} store its log files on ${s.name}?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: s.detail ? `${s.answer} ${s.detail}` : s.answer,
-      },
-    })),
+    mainEntity: [
+      ...summaries.map((s) => ({
+        "@type": "Question",
+        name: `Where does ${app.name} store its log files on ${s.name}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: s.detail ? `${s.answer} ${s.detail}` : s.answer,
+        },
+      })),
+      ...stepsQuestion(`How do I turn on debug logging for ${app.name}?`, app.enableLogging),
+      ...stepsQuestion(`How do I collect ${app.name} logs?`, app.collectLogs),
+    ],
     breadcrumb: crumbs([
       { name: "Home", path: "/" },
       { name: app.vendor.name, path: `/vendors/${app.vendor.slug}` },

@@ -62,8 +62,15 @@ export interface App {
   iconUrl: string | null;
   /** A vendor page on where the logs are or how to collect them. */
   documentation?: string;
-  /** Free-text caveats: how to switch logging on, what the path does not cover. */
+  /** Free-text caveats: what the paths do not cover. */
   notes?: string[];
+  /**
+   * Steps to switch on verbose or debug logging, in order. Text in backticks is
+   * a command, key or path, set in mono on the page.
+   */
+  enableLogging?: string[];
+  /** Steps to gather the logs for a ticket: shortcuts, bundles, commands. Same form. */
+  collectLogs?: string[];
   logPaths: LogPath[];
   createdAt: string;
   updatedAt: string;

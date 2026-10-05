@@ -48,6 +48,8 @@ App {
   iconUrl: string | null   // null MEANS "inherit the vendor's icon"
   documentation?: string   // https; the vendor's own page on its logs
   notes?: string[]         // free-text caveats, one per entry
+  enableLogging?: string[] // steps to switch on verbose or debug logging, in order
+  collectLogs?: string[]   // steps to gather the logs: shortcuts, bundles, commands
   logPaths: LogPath[]      // embedded
   createdAt: string
   updatedAt: string
@@ -213,7 +215,7 @@ once.
 | Method | Route | Notes |
 | --- | --- | --- |
 | `GET` | `/api/admin/apps` | `?vendorId=` narrows to one partition - cheap. Without it, cross-partition. |
-| `POST` | `/api/admin/apps` | `{ vendorId, name, slug?, aliases?, iconUrl?, documentation?, notes? }`. `404`s the vendor if it does not exist. Created with `logPaths: []`. |
+| `POST` | `/api/admin/apps` | `{ vendorId, name, slug?, aliases?, iconUrl?, documentation?, notes?, enableLogging?, collectLogs? }`. `404`s the vendor if it does not exist. Created with `logPaths: []`. |
 | `GET` | `/api/admin/apps/{id}` | `?vendorId=` skips a lookup |
 | `PATCH` | `/api/admin/apps/{id}` | Partial. `logPaths` is ignored here - use the log path endpoints. |
 | `DELETE` | `/api/admin/apps/{id}` | Takes its log paths with it. No orphans possible. |
@@ -268,7 +270,9 @@ The admin portal drives both from `/admin/import`. The file is vendors > apps > 
             { "os": "windows", "path": "%PROGRAMDATA%\\Contoso\\Agent\\agent.log", "what": "Agent log" },
             { "os": "all", "path": "~/.contoso/agent/" }
           ],
-          "notes": ["Verbose logging is off until switched on in Settings."]
+          "notes": ["The agent writes nothing until it has enrolled."],
+          "enableLogging": ["Open Settings > Diagnostics.", "Set `Log level` to `Verbose` and restart the agent."],
+          "collectLogs": ["Run `contoso-agent collect --zip` and attach the zip it prints."]
         },
         {
           "name": "Contoso Agent Classic",
@@ -302,7 +306,7 @@ material describes them together; two names that are one tightly coupled tool
 | --- | --- | --- |
 | `os` | `platform` | `windows`, `macos`, `linux`, or `all` - which is stored as one path per platform |
 | `what` | `label` | A new path with no `what` is labelled `Logs` |
-| `documentation`, `notes` | the same | On the app |
+| `documentation`, `notes`, `enableLogging`, `collectLogs` | the same | On the app. The two step lists are up to 20 lines of 500 characters; text in backticks prints in mono |
 
 An export also writes the optional keys that make a round trip lossless: vendor
 `slug` (only when it is not the name's), `website`, `icon`; app `slug`,

@@ -11,6 +11,7 @@ import type { ImportPlan } from "../admin";
  *
  * The shape is the research format the catalogue was gathered in (`os`, `path`,
  * `what`, `documentation`, `notes`), so a research pass imports as it stands.
+ * `enableLogging` and `collectLogs` are app keys under their model names.
  * Everything else the store holds rides along as optional keys, which is what
  * makes an export followed by an import of the same file change nothing.
  *
@@ -39,6 +40,8 @@ export interface FileApp {
   documentation?: string;
   logs?: FileLog[];
   notes?: string[];
+  enableLogging?: string[];
+  collectLogs?: string[];
 }
 
 export interface FileVendor {
@@ -91,6 +94,8 @@ function fileApp(a: App): FileApp {
       ...(p.scope ? { scope: p.scope } : {}),
     })),
     ...(a.notes?.length ? { notes: a.notes } : {}),
+    ...(a.enableLogging?.length ? { enableLogging: a.enableLogging } : {}),
+    ...(a.collectLogs?.length ? { collectLogs: a.collectLogs } : {}),
   };
 }
 
@@ -128,6 +133,7 @@ const pathShape = (p: LogPath) =>
 const appShape = (a: App) =>
   JSON.stringify([
     a.vendorId, a.name, a.slug, a.aliases, a.iconUrl, a.documentation ?? null, a.notes ?? [],
+    a.enableLogging ?? [], a.collectLogs ?? [],
     a.logPaths.map(pathShape),
   ]);
 
@@ -225,6 +231,7 @@ export function planImport(
           present(fa, {
             name: "name", slug: "slug", aliases: "aliases", icon: "iconUrl",
             documentation: "documentation", notes: "notes",
+            enableLogging: "enableLogging", collectLogs: "collectLogs",
           }),
           { partial: true },
         ),
@@ -254,6 +261,8 @@ export function planImport(
             iconUrl: appIn.iconUrl ?? null,
             ...(appIn.documentation ? { documentation: appIn.documentation } : {}),
             ...(appIn.notes?.length ? { notes: appIn.notes } : {}),
+            ...(appIn.enableLogging?.length ? { enableLogging: appIn.enableLogging } : {}),
+            ...(appIn.collectLogs?.length ? { collectLogs: appIn.collectLogs } : {}),
             logPaths,
             createdAt: now,
             updatedAt: now,

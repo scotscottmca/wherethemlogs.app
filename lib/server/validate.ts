@@ -77,6 +77,16 @@ export interface AppInput {
   iconUrl: string | null;
   documentation?: string;
   notes?: string[];
+  enableLogging?: string[];
+  collectLogs?: string[];
+}
+
+/** A list of short lines: notes, or a set of steps. */
+function lines(value: unknown, field: string): string[] {
+  const out = strArray(value, field, 20);
+  const long = out.findIndex((n) => n.length > 500);
+  if (long >= 0) throw badRequest(`"${field}[${long}]" is longer than 500 characters.`);
+  return out;
 }
 
 export function parseApp(body: unknown, { partial = false } = {}): Partial<AppInput> {
@@ -100,11 +110,9 @@ export function parseApp(body: unknown, { partial = false } = {}): Partial<AppIn
   if (b.documentation !== undefined) {
     out.documentation = httpsUrl(b.documentation, "documentation") ?? undefined;
   }
-  if (b.notes !== undefined) {
-    out.notes = strArray(b.notes, "notes", 20);
-    const long = out.notes.findIndex((n) => n.length > 500);
-    if (long >= 0) throw badRequest(`"notes[${long}]" is longer than 500 characters.`);
-  }
+  if (b.notes !== undefined) out.notes = lines(b.notes, "notes");
+  if (b.enableLogging !== undefined) out.enableLogging = lines(b.enableLogging, "enableLogging");
+  if (b.collectLogs !== undefined) out.collectLogs = lines(b.collectLogs, "collectLogs");
 
   return out;
 }

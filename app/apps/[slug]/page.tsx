@@ -12,6 +12,27 @@ import { resolveApp, type ResolvedApp } from "@/lib/model";
 
 export const dynamic = "force-dynamic";
 
+/** A step's `backticked` runs are commands, keys or paths: set in mono, verbatim. */
+function withCode(step: string): React.ReactNode[] {
+  return step.split("`").map((part, i) => (i % 2 ? <code key={i} className="mono">{part}</code> : part));
+}
+
+function Steps({ heading, steps }: { heading: string; steps?: string[] }) {
+  if (!steps?.length) return null;
+  return (
+    <section className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+      <h2 className="tag mono" style={{ margin: "0 0 .5rem" }}>
+        {heading}
+      </h2>
+      <ol style={{ margin: 0 }}>
+        {steps.map((step, i) => (
+          <li key={i}>{withCode(step)}</li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 /**
  * Same lookup as app/api/apps/[slug]/route.ts, against the same in-process
  * snapshot - a server component, so it is called directly rather than over
@@ -28,18 +49,35 @@ function platformNames(app: ResolvedApp): string[] {
   return PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => m.name);
 }
 
-/** The page's own words for itself - the metadata and the JSON-LD share them. */
+/** Roughly where Google cuts a snippet off. */
+const DESCRIPTION_BUDGET = 160;
+
+/**
+ * The page's own words for itself - the metadata and the JSON-LD share them.
+ * The description is the answer itself ("Slack logs to ... on Windows."), so the
+ * path shows in the search result: as many platform sentences as fit the
+ * snippet, and always at least the first.
+ */
 function describe(app: ResolvedApp): { title: string; description: string } {
   const platforms = platformNames(app);
   const installerTypes = app.types.filter((t) => INSTALLER_TYPE_SET.has(t));
+
+  let description = "";
+  for (const { answer } of platformSummaries(app)) {
+    const next = description ? `${description} ${answer}` : answer;
+    if (description && next.length > DESCRIPTION_BUDGET) break;
+    description = next;
+  }
 
   return {
     title: platforms.length
       ? `${app.name} log file locations - ${platforms.join(", ")}`
       : `${app.name} log file locations`,
-    description: `Log file locations for ${app.name}${
-      platforms.length ? ` on ${platforms.join(", ")}` : ""
-    }${installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""}.`,
+    description:
+      description ||
+      `Log file locations for ${app.name}${
+        installerTypes.length ? `, covering ${installerTypes.join(", ")} installs` : ""
+      }.`,
   };
 }
 
@@ -208,6 +246,9 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
             </p>
           </div>
         )}
+
+        <Steps heading={`How to turn on debug logging for ${app.name}`} steps={app.enableLogging} />
+        <Steps heading={`How to collect ${app.name} logs`} steps={app.collectLogs} />
       </main>
 
       <Footer entryCount={null} />
