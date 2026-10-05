@@ -1486,7 +1486,6 @@ textarea.frow__in {
   font-size: 0.7rem;
   line-height: 1.5;
   color: var(--bone-faint);
-  max-width: 68ch;
 }
 
 /* Rejected: bone label stock over painted steel. Cyan confirms, bone corrects -
@@ -2219,4 +2218,65 @@ button.tog {
 }
 .reqActs .frow__bad a {
   color: inherit;
+}
+
+/* Request form sections. Each block is a box with a raised header band; the
+   platform blocks are native <details>, closed until opened. */
+.reqSection {
+  border: var(--rule) solid var(--ink-rule);
+  margin: 0 0 1rem;
+  padding-bottom: clamp(0.9rem, 1.6vw, 1.25rem);
+}
+.reqSection__h {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.75rem clamp(0.9rem, 1.6vw, 1.25rem);
+  background: var(--ink-raised);
+  border-bottom: var(--rule) solid var(--ink-rule);
+  color: var(--bone);
+  font-size: inherit;
+  font-weight: inherit;
+}
+.reqSection__note {
+  font-size: 0.72rem;
+  color: var(--hivis);
+}
+details.reqSection:not([open]) {
+  padding-bottom: 0;
+}
+details.reqSection:not([open]) > .reqSection__h {
+  border-bottom: 0;
+}
+details > summary.reqSection__h {
+  cursor: pointer;
+  list-style: none;
+}
+details > summary.reqSection__h::-webkit-details-marker {
+  display: none;
+}
+details > summary.reqSection__h:hover {
+  color: var(--hivis);
+}
+details > summary.reqSection__h:focus-visible {
+  outline: 2px solid var(--hivis);
+  outline-offset: -2px;
+}
+.reqSection__chev {
+  margin-left: auto;
+  transition: transform 0.15s ease;
+}
+details[open] > summary .reqSection__chev {
+  transform: rotate(180deg);
+}
+.reqLead {
+  margin: 1.5rem 0 0.6rem;
+  color: var(--bone-dim);
+  font-size: 0.9rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reqSection__chev {
+    transition: none;
+  }
 }

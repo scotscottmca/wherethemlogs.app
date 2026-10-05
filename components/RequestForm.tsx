@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Field, Fields, Toggles } from "./AdminField";
-import { IconArrow } from "./Icons";
+import { IconArrow, IconChevron } from "./Icons";
 import {
   ARCHITECTURES,
   CORRECTION_KINDS,
@@ -143,6 +143,43 @@ function Line({
   );
 }
 
+/**
+ * One block of the form. A collapsible one is a native <details>, closed by
+ * default: the platforms an app does not run on stay out of the way.
+ */
+function Section({
+  title,
+  note,
+  collapsible = false,
+  children,
+}: {
+  title: string;
+  note?: string;
+  collapsible?: boolean;
+  children: React.ReactNode;
+}) {
+  const head = (
+    <>
+      <span className="tag mono">{title}</span>
+      {note && <span className="reqSection__note mono">{note}</span>}
+    </>
+  );
+  return collapsible ? (
+    <details className="reqSection">
+      <summary className="reqSection__h">
+        {head}
+        <IconChevron size={16} className="reqSection__chev" />
+      </summary>
+      {children}
+    </details>
+  ) : (
+    <section className="reqSection">
+      <h2 className="reqSection__h">{head}</h2>
+      {children}
+    </section>
+  );
+}
+
 type Sent = { number: number; url: string };
 
 /**
@@ -259,79 +296,121 @@ export function RequestForm({
     );
   }
 
+  const verify = (
+    <Section title="How did you verify this?">
+      <Fields>
+        <Area label="Verified by" value={verification} onChange={setVerification} max={LIMITS.prose} required hint="Your own machine is a fine answer. A vendor documentation link is better." />
+      </Fields>
+    </Section>
+  );
+
+  const about = (
+    <Section title="About the submitter" note="Optional. For credit; published on the issue.">
+      <Fields>
+        <Line label="GitHub username" value={github} onChange={setGithub} max={LIMITS.github} mono placeholder="octocat" hint="Shown as a link to your GitHub profile." />
+        <Line label="LinkedIn" value={linkedin} onChange={setLinkedin} max={LIMITS.linkedin} mono placeholder="https://www.linkedin.com/in/your-name" />
+        <Line label="X or Bluesky" value={social} onChange={setSocial} max={LIMITS.social} mono placeholder="@name or name.bsky.social" />
+      </Fields>
+    </Section>
+  );
+
   return (
     <form onSubmit={submit} noValidate>
       {kind === "add" ? (
-        <Fields>
-          <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Visual Studio Code" hint="The name people would search for." />
-          <Line label="Vendor" value={vendor} onChange={setVendor} max={LIMITS.name} required placeholder="Microsoft" />
-          <Line label="Also known as" value={aliases} onChange={setAliases} max={LIMITS.aliases} placeholder="vscode, code" hint="Optional. Comma separated." />
-          <Line label="Variant" value={variant} onChange={setVariant} max={LIMITS.variant} placeholder="Classic (v1)" hint="Optional. Only if the app ships in flavours that log to different places." />
-          {PLATFORM_FIELDS.map((p) => (
-            <div key={p.id}>
-              <Area
-                label={`${p.name} log paths`}
-                value={paths[p.id]}
-                onChange={(v) => setPaths((all) => ({ ...all, [p.id]: v }))}
-                max={LIMITS.paths}
-                mono
-                placeholder={p.id === "windows" ? "%APPDATA%\\Code\\logs\\ | Session logs" : p.id === "macos" ? "~/Library/Application Support/Code/logs/ | Session logs" : "~/.config/Code/logs/ | Session logs"}
-                hint="One path per line, exactly as written, environment variables unexpanded. Add ` | ` and a few words to say what it holds. Leave empty if the app does not run here."
+        <>
+          <Section title="The application">
+            <Fields>
+              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Visual Studio Code" hint="The name people would search for." />
+              <Line label="Vendor" value={vendor} onChange={setVendor} max={LIMITS.name} required placeholder="Microsoft" />
+              <Line label="Also known as" value={aliases} onChange={setAliases} max={LIMITS.aliases} placeholder="vscode, code" hint="Optional. Comma separated." />
+              <Line label="Variant" value={variant} onChange={setVariant} max={LIMITS.variant} placeholder="Classic (v1)" hint="Optional. Only if the app ships in flavours that log to different places." />
+              <Toggles
+                label="Architecture"
+                multi
+                options={ARCHITECTURES.map((a) => ({ id: a, label: a }))}
+                value={architectures}
+                onChange={setArchitectures}
+                hint="Optional. Leave all off if you are not sure."
               />
               <Toggles
-                label={`${p.name} installer`}
-                multi
-                options={p.installers.map((t) => ({ id: t, label: t }))}
-                value={installers[p.id]}
-                onChange={(next) => setInstallers((all) => ({ ...all, [p.id]: next }))}
-                hint="Optional. Which installer types these paths hold true for."
+                label="Scope"
+                options={SCOPES.map((s) => ({ id: s, label: s }))}
+                value={scope ? [scope] : []}
+                onChange={(next) => setScope(next[0] === scope ? undefined : next[0])}
+                hint="Optional. Press again to clear."
               />
-            </div>
-          ))}
-          <Toggles
-            label="Architecture"
-            multi
-            options={ARCHITECTURES.map((a) => ({ id: a, label: a }))}
-            value={architectures}
-            onChange={setArchitectures}
-            hint="Optional. Leave all off if you are not sure."
-          />
-          <Toggles
-            label="Scope"
-            options={SCOPES.map((s) => ({ id: s, label: s }))}
-            value={scope ? [scope] : []}
-            onChange={(next) => setScope(next[0] === scope ? undefined : next[0])}
-            hint="Optional. Press again to clear."
-          />
-          <Area label="How did you verify this?" value={verification} onChange={setVerification} max={LIMITS.prose} required hint="Your own machine is a fine answer. A vendor documentation link is better." />
-          <Area label="Anything else" value={notes} onChange={setNotes} max={LIMITS.prose} hint="Optional. A flag that has to be set, a version it changed in, a folder that only appears after a crash." />
-        </Fields>
+            </Fields>
+          </Section>
+
+          <p className="reqLead">
+            Log paths: open each platform the app runs on. At least one path is needed.
+          </p>
+          {PLATFORM_FIELDS.map((p) => {
+            const count = paths[p.id].split("\n").filter((l) => l.trim()).length;
+            return (
+              <Section
+                key={p.id}
+                title={p.name}
+                collapsible
+                note={count ? `${count} path${count === 1 ? "" : "s"}` : undefined}
+              >
+                <Fields>
+                  <Area
+                    label="Log paths"
+                    value={paths[p.id]}
+                    onChange={(v) => setPaths((all) => ({ ...all, [p.id]: v }))}
+                    max={LIMITS.paths}
+                    mono
+                    placeholder={p.id === "windows" ? "%APPDATA%\\Code\\logs\\ | Session logs" : p.id === "macos" ? "~/Library/Application Support/Code/logs/ | Session logs" : "~/.config/Code/logs/ | Session logs"}
+                    hint="One path per line, exactly as written, environment variables unexpanded. Add ` | ` and a few words to say what it holds."
+                  />
+                  <Toggles
+                    label="Installer"
+                    multi
+                    options={p.installers.map((t) => ({ id: t, label: t }))}
+                    value={installers[p.id]}
+                    onChange={(next) => setInstallers((all) => ({ ...all, [p.id]: next }))}
+                    hint="Optional. Which installer types these paths hold true for."
+                  />
+                </Fields>
+              </Section>
+            );
+          })}
+
+          {verify}
+
+          <Section title="Anything else">
+            <Fields>
+              <Area label="Notes" value={notes} onChange={setNotes} max={LIMITS.prose} hint="Optional. A flag that has to be set, a version it changed in, a folder that only appears after a crash." />
+            </Fields>
+          </Section>
+        </>
       ) : (
-        <Fields>
-          <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Microsoft Teams" />
-          <Toggles
-            label="Platform *"
-            options={PLATFORM_NAMES.map((p) => ({ id: p, label: p }))}
-            value={platform ? [platform] : []}
-            onChange={(next) => setPlatform(next[0])}
-          />
-          <Area label="What the index says" value={listed} onChange={setListed} max={LIMITS.paths} mono required rows={2} />
-          <Toggles
-            label="What is wrong *"
-            options={CORRECTION_KINDS.map((k) => ({ id: k, label: k }))}
-            value={problem ? [problem] : []}
-            onChange={(next) => setProblem(next[0])}
-          />
-          <Area label="What it should say" value={correct} onChange={setCorrect} max={LIMITS.paths} mono required rows={2} hint="Exactly as written, environment variables unexpanded." />
-          <Area label="How did you verify this?" value={verification} onChange={setVerification} max={LIMITS.prose} required />
-        </Fields>
+        <>
+          <Section title="The path">
+            <Fields>
+              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Microsoft Teams" />
+              <Toggles
+                label="Platform *"
+                options={PLATFORM_NAMES.map((p) => ({ id: p, label: p }))}
+                value={platform ? [platform] : []}
+                onChange={(next) => setPlatform(next[0])}
+              />
+              <Area label="What the index says" value={listed} onChange={setListed} max={LIMITS.paths} mono required rows={2} />
+              <Toggles
+                label="What is wrong *"
+                options={CORRECTION_KINDS.map((k) => ({ id: k, label: k }))}
+                value={problem ? [problem] : []}
+                onChange={(next) => setProblem(next[0])}
+              />
+              <Area label="What it should say" value={correct} onChange={setCorrect} max={LIMITS.paths} mono required rows={2} hint="Exactly as written, environment variables unexpanded." />
+            </Fields>
+          </Section>
+          {verify}
+        </>
       )}
 
-      <Fields>
-        <Line label="GitHub username" value={github} onChange={setGithub} max={LIMITS.github} mono placeholder="octocat" hint="Optional, for credit. Shown on the public issue as a link to your profile." />
-        <Line label="LinkedIn" value={linkedin} onChange={setLinkedin} max={LIMITS.linkedin} mono placeholder="https://www.linkedin.com/in/your-name" hint="Optional, for credit. Shown on the public issue." />
-        <Line label="X or Bluesky" value={social} onChange={setSocial} max={LIMITS.social} mono placeholder="@name or name.bsky.social" hint="Optional, for credit. Shown on the public issue." />
-      </Fields>
+      {about}
 
       {/* People never see this field; a bot filling in every input does. */}
       <div className="hp" aria-hidden="true">
@@ -341,8 +420,9 @@ export function RequestForm({
         </label>
       </div>
 
+      <Section title="Before you submit">
       <Fields>
-        <Field label="Before you submit">
+        <Field label="Redaction">
           <label className="reqPledge">
             <input type="checkbox" checked={pledge} onChange={(e) => setPledge(e.target.checked)} />
             <span>{REDACTION_PLEDGE} This becomes a public GitHub issue.</span>
@@ -352,6 +432,7 @@ export function RequestForm({
           <div ref={turnstile.box} />
         </Field>
       </Fields>
+      </Section>
 
       <div className="reqActs">
         <button type="submit" className="btn tag mono" disabled={busy}>
