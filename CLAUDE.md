@@ -24,7 +24,7 @@ There is no lint script and no test framework. `scripts/check-interchange.mjs` i
 
 ## Architecture
 
-One Next.js 15 App Router app (`output: "standalone"`) runs as a single Azure Container App. The data lives in Cosmos DB (serverless), and icons in Blob storage.
+One Next.js 16 App Router app (`output: "standalone"`) runs as a single Azure Container App. The data lives in Cosmos DB (serverless), and icons in Blob storage.
 
 - **Server components never call this app's own API.** They import from `lib/server/*` directly. The route handlers under `app/api/` exist for the browser (the search type-ahead and every admin write) and for AI agents: `app/api/mcp` is a stateless MCP server over the same `search()` and snapshot.
 - **Model (`lib/model.ts`): Vendor > App > LogPath.**
@@ -42,7 +42,7 @@ One Next.js 15 App Router app (`output: "standalone"`) runs as a single Azure Co
 - **Auth** uses Container Apps built-in auth with Entra ID, single tenant with user assignment required.
   - The app reads the platform's `x-ms-client-principal` header in `lib/server/auth.ts`.
   - An admin is anyone holding the Entra `admin` app role, or anyone on the `ADMIN_GITHUB_LOGINS` allowlist.
-  - `middleware.ts` gates `/admin/*` and `/api/admin/*`, and every admin handler calls `requireAdmin` again.
+  - `proxy.ts` gates `/admin/*` and `/api/admin/*`, and every admin handler calls `requireAdmin` again.
 - **Import and export (`lib/server/interchange.ts`)** use the research file format: vendors > apps > logs, with log keys `os`, `path`, `what`.
   - `planImport` is a pure function run against the snapshot. `applyImport` then writes one record at a time; it is not transactional.
   - Rules: a missing key keeps the stored value, an empty one clears it, and an app's `logs` list replaces that app's paths.

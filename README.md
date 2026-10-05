@@ -11,7 +11,7 @@ unknown vintage.
 ## Layout
 
 ```
-app/                  pages, route handlers, middleware - Next.js 15
+app/                  pages, route handlers, proxy - Next.js 16
 components/  lib/     UI, shared model, server-only data access
 infra/                Azure resources - Bicep
 scripts/              seed data and the seeder

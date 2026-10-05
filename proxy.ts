@@ -9,7 +9,7 @@ import { isAdmin } from "@/lib/server/auth";
  * /api/admin re-check with `requireAdmin()` - this is the friendly redirect,
  * that is the lock.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (isAdmin(request)) return NextResponse.next();
 
   const isApi = request.nextUrl.pathname.startsWith("/api/");
