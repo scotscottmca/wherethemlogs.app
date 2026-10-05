@@ -20,11 +20,9 @@ function withCode(step: string): React.ReactNode[] {
 function Steps({ heading, steps }: { heading: string; steps?: string[] }) {
   if (!steps?.length) return null;
   return (
-    <section className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
-      <h2 className="tag mono" style={{ margin: "0 0 .5rem" }}>
-        {heading}
-      </h2>
-      <ol style={{ margin: 0 }}>
+    <section className="appPanel">
+      <h2 className="tag mono appPanel__h">{heading}</h2>
+      <ol>
         {steps.map((step, i) => (
           <li key={i}>{withCode(step)}</li>
         ))}
@@ -197,19 +195,17 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
         </div>
 
         {summaries.length > 0 && (
-          <section className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
-            <h2 className="tag mono" style={{ margin: "0 0 .5rem" }}>
-              Where {app.name} keeps its logs
-            </h2>
+          <section className="appPanel">
+            <h2 className="tag mono appPanel__h">Where {app.name} keeps its logs</h2>
             {summaries.map((s) => (
-              <p key={s.platform} style={{ margin: "0 0 .5rem" }}>
+              <p key={s.platform}>
                 {/* The answer sentence stands on its own, so it can be read,
                     quoted or lifted without the table underneath. */}
                 <strong>{s.answer}</strong>
                 {s.detail && ` ${s.detail}`}
               </p>
             ))}
-            <p style={{ margin: 0 }}>
+            <p className="appPanel__aside">
               Paths are printed exactly as {app.name} writes them. Environment variables
               like <code className="mono">%LOCALAPPDATA%</code> and{" "}
               <code className="mono">$XDG_STATE_HOME</code> are never expanded, so a path
@@ -217,7 +213,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
               types or shipping flavours, each one is racked as its own card below -{" "}
               <Link href="/guides/why-log-paths-differ">why that happens</Link>.
             </p>
-            <p style={{ margin: ".5rem 0 0" }}>
+            <p className="appPanel__aside">
               {/* One guide per platform this app actually has paths on, for the
                   reader who needs the convention rather than this one path. */}
               Finding your way around{" "}

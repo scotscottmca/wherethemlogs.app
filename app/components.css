@@ -2140,3 +2140,45 @@ button.tog {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* App page reading panels: where the logs are, how to turn logging on, how to
+   collect them. The one-step tonal lift (ink-raised) with a cyan rule down the
+   left, full bone text for contrast, and the full width of the rack so lines
+   wrap with the window. Long paths break anywhere rather than overflow. */
+.appPanel {
+  margin: 0 0 1rem;
+  padding: 1rem clamp(0.9rem, 1.6vw, 1.25rem) 1.1rem;
+  background: var(--ink-raised);
+  border: var(--rule) solid var(--ink-rule);
+  border-left: var(--rule-heavy) solid var(--hivis);
+  color: var(--bone);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.appPanel__h {
+  margin: 0 0 0.6rem;
+  color: var(--bone-dim);
+}
+.appPanel p {
+  margin: 0 0 0.6rem;
+}
+.appPanel p:last-child,
+.appPanel ol {
+  margin-bottom: 0;
+}
+.appPanel ol {
+  margin-top: 0;
+  padding-left: 1.4rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.appPanel__aside {
+  color: var(--bone-dim);
+  font-size: 0.85rem;
+}
+.appPanel code {
+  color: var(--bone);
+  background: var(--ink);
+  padding: 0 0.3em;
+}
