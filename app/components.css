@@ -2156,6 +2156,11 @@ button.tog {
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
+/* The step panels come after the path cards; a clear break says "new section". */
+.resultsBody + .appPanel,
+.void + .appPanel {
+  margin-top: 1.5rem;
+}
 .appPanel__h {
   margin: 0 0 0.6rem;
   color: var(--bone-dim);
