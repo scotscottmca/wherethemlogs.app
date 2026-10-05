@@ -79,7 +79,7 @@ names into one.
 - [x] Choose the analytics provider - Google Analytics 4, loaded only after Accept (`components/Consent.tsx`).
 - [ ] Replace the seed catalogue with the real index - `/admin/import` takes the research JSON.
 - [x] Build the admin UI on top of the CRUD API.
-- [ ] Decide whether the repo goes public - every "request an app" link points at its issue tracker.
+- [x] Make the repo public - requests and corrections are issues here, from the forms in `.github/ISSUE_TEMPLATE/`.
 
 ## Infrastructure
 

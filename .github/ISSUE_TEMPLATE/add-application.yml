@@ -1,0 +1,150 @@
+name: Add an application
+description: An application is missing from the index
+title: "Add: "
+labels: ["addition"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Paste paths **verbatim**. Environment variables stay unexpanded, and
+        anything identifying gets redacted - `C:\Users\<username>\...` is as
+        useful to us as the real thing.
+
+  - type: textarea
+    id: app
+    attributes:
+      label: Application
+      description: The name people would search for.
+      placeholder: Visual Studio Code
+    validations:
+      required: true
+
+  - type: textarea
+    id: vendor
+    attributes:
+      label: Vendor
+      placeholder: Microsoft
+    validations:
+      required: true
+
+  - type: textarea
+    id: aliases
+    attributes:
+      label: Also known as
+      description: Comma separated. What else might someone type?
+      placeholder: vscode, code
+
+  - type: textarea
+    id: variant
+    attributes:
+      label: Variant
+      description: Only if the app ships in more than one flavour that logs to different places.
+      placeholder: Classic (v1)
+
+  - type: markdown
+    attributes:
+      value: |
+        **Log paths.** One per line, in the box for its platform. To say what a
+        path holds, follow it with ` | ` and a few words. Leave a platform empty
+        if the app does not run there. At least one path is needed.
+
+        Under each box, tick the installer types those paths hold true for.
+        Leave them all unticked if you are not sure.
+
+  - type: textarea
+    id: windows
+    attributes:
+      label: Windows log paths
+      render: text
+      placeholder: |
+        %APPDATA%\Code\logs\ | Session logs
+
+  - type: checkboxes
+    id: windows-installer
+    attributes:
+      label: Windows installer type
+      options:
+        - label: msi
+        - label: exe
+        - label: msix
+        - label: appx
+
+  - type: textarea
+    id: macos
+    attributes:
+      label: macOS log paths
+      render: text
+      placeholder: |
+        ~/Library/Application Support/Code/logs/ | Session logs
+
+  - type: checkboxes
+    id: macos-installer
+    attributes:
+      label: macOS installer type
+      options:
+        - label: pkg
+        - label: dmg
+        - label: mas
+
+  - type: textarea
+    id: linux
+    attributes:
+      label: Linux log paths
+      render: text
+      placeholder: |
+        ~/.config/Code/logs/ | Session logs
+
+  - type: checkboxes
+    id: linux-installer
+    attributes:
+      label: Linux installer type
+      options:
+        - label: deb
+        - label: rpm
+        - label: snap
+        - label: flatpak
+        - label: appimage
+
+  - type: checkboxes
+    id: architecture
+    attributes:
+      label: Architecture
+      description: Tick as many as apply.
+      options:
+        - label: x86
+        - label: x64
+        - label: arm64
+        - label: Not sure
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      description: Tick one.
+      options:
+        - label: per-user
+        - label: per-machine
+        - label: system
+        - label: Not sure
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: How did you verify this?
+      description: Your own machine is a fine answer. A vendor documentation link is better. A forum post of unknown vintage is the problem this index exists to solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Conditions the path depends on - a flag that has to be set, a version it changed in, a folder that only appears after a crash.
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before you submit
+      options:
+        - label: I have redacted hostnames, usernames, tenant identifiers and customer names.
+          required: true

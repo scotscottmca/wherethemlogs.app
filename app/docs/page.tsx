@@ -51,7 +51,7 @@ export default function Docs() {
             <h2 id="requests">Raising a request</h2>
             <p>
               There is no account and no form to sign into. Every request is a public
-              GitHub issue, filed against the tracker rather than the site itself. The{" "}
+              GitHub issue on the site&rsquo;s own repository. The{" "}
               <strong>Request an app</strong> link in the header and footer opens a
               prefilled issue for exactly that - add the application&rsquo;s name and it
               becomes the issue title.

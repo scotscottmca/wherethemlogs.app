@@ -108,7 +108,7 @@ installer type (msi, exe, msix, pkg, dmg, deb, rpm, snap, flatpak, appimage),
 architecture, and where it sits relative to the user (`per-user`,
 `per-machine`, `system`).
 
-A wrong or missing path is a [public issue](https://github.com/scotscottmca/wherethemlogs.app-issues/issues) -
+A wrong or missing path is a [public issue](https://github.com/scotscottmca/wherethemlogs.app/issues) -
 no account with this site needed.
 
 The same data is on the [HTTP API](API.md) if a JSON endpoint suits better

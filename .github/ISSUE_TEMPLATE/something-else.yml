@@ -1,0 +1,24 @@
+name: Something else
+description: A bug on the site, or anything the other two templates do not fit
+labels: ["triage"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: If it is a bug, say what you did, what you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: where
+    attributes:
+      label: Where
+      description: The page, or the search you ran.
+      placeholder: /search?q=teams&platform=windows
+
+  - type: textarea
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Firefox 142 on Windows 11
