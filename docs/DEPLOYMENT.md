@@ -615,7 +615,7 @@ Merge a PR into `main`. Path filters decide what moves:
 
 | You changed | What deploys |
 | --- | --- |
-| `app/`, `components/`, `lib/`, `public/`, `middleware.ts`, `next.config.mjs`, `Dockerfile`, root `package*.json` | a new container revision |
+| `app/`, `components/`, `lib/`, `public/`, `proxy.ts`, `next.config.mjs`, `Dockerfile`, root `package*.json` | a new container revision |
 | `infra/` | Bicep, incremental |
 
 Every PR runs CI: typecheck, `next build`, a container build, and a boot check

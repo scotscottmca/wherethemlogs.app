@@ -16,7 +16,7 @@ flowchart LR
 
   subgraph CA["Azure Container Apps"]
     AUTH["Built-in auth<br/>Entra ID, anonymous allowed"]
-    NEXT["Next.js 15 standalone<br/>pages · route handlers · middleware"]
+    NEXT["Next.js 16 standalone<br/>pages · route handlers · proxy"]
     AUTH --> NEXT
   end
 
@@ -147,15 +147,15 @@ invalidation - not a shorter TTL.
 | Surface | Who gets in | Enforced by |
 | --- | --- | --- |
 | The site, `/api/search`, `/api/summary`, `/api/vendors`, `/api/apps/{slug}`, `/api/me` | Anyone | Nothing. It is a public reference. |
-| `/admin/*` (portal, not yet built) | `admin` role | `middleware.ts` |
-| `/api/admin/*` | `admin` role | `middleware.ts`, **and** `requireAdmin()` in each handler |
+| `/admin/*` (portal, not yet built) | `admin` role | `proxy.ts` |
+| `/api/admin/*` | `admin` role | `proxy.ts`, **and** `requireAdmin()` in each handler |
 
 Container Apps' built-in authentication signs the visitor in and injects the
 principal as `x-ms-client-principal`. The platform strips any client-supplied
 copy of that header, so what the app reads is what the platform wrote.
 
 `unauthenticatedClientAction` is `AllowAnonymous`, because the catalogue is
-public. The middleware decides what the admin surface needs: a signed-in
+public. The proxy decides what the admin surface needs: a signed-in
 non-admin gets the `/403` page with a 403; anyone else is redirected to the
 configured provider's login.
 
@@ -194,7 +194,7 @@ guess. That endpoint is deliberately not under `/api/admin`: an endpoint whose
 job is to answer "are you an admin?" cannot be gated on being one.
 
 `requireAdmin()` in each handler is defence in depth - a route added under
-`/api/admin/` that someone forgets to match in middleware still fails closed.
+`/api/admin/` that someone forgets to match in the proxy still fails closed.
 
 ## Cost
 

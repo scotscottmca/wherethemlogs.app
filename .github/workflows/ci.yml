@@ -33,7 +33,7 @@ jobs:
               - 'components/**'
               - 'lib/**'
               - 'public/**'
-              - 'middleware.ts'
+              - 'proxy.ts'
               - 'next.config.mjs'
               - 'tsconfig.json'
               - 'package.json'
