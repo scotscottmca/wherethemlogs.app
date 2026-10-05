@@ -75,6 +75,67 @@
   color: var(--ink);
 }
 
+/* Share: an icon cell at the head of the nav, and a menu that drops below it. */
+.share {
+  position: relative;
+  display: flex;
+}
+.share__btn {
+  background: transparent;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  color: var(--bone-dim);
+  cursor: pointer;
+}
+.share__btn[aria-expanded="true"] {
+  background: var(--ink-raised);
+  color: var(--hivis);
+}
+.share__btn:focus-visible,
+.share__item:focus-visible {
+  outline: 2px solid var(--hivis);
+  outline-offset: -2px;
+}
+.share__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 15rem;
+  padding: 0.35rem 0;
+  background: var(--ink-raised);
+  border: var(--rule) solid var(--ink-rule);
+}
+.share__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 0;
+  color: var(--bone);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.share__item:hover,
+.share__item:focus-visible {
+  background: var(--ink);
+  color: var(--hivis);
+}
+.share__item svg {
+  flex: none;
+}
+.share__rule {
+  height: var(--rule);
+  margin: 0.35rem 0;
+  background: var(--ink-rule);
+}
+
 /* --- Zone banding (platform filter) -------------------------------------- */
 
 .zones {
@@ -1110,6 +1171,14 @@ body:has(.consent) {
   .hdr__link {
     flex: 1 1 0;
     justify-content: center;
+  }
+  /* The share icon keeps its own width; the text links share the rest. */
+  .share {
+    flex: none;
+  }
+  .share__btn {
+    flex: none;
+    padding-inline: 1rem;
   }
   .hdr__link:first-child {
     border-left: 0;

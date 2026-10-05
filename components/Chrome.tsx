@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mark } from "./Icons";
 import { PLATFORM_META, type Platform } from "@/lib/api";
 import { requestAppUrl } from "@/lib/site";
+import { ShareMenu } from "./ShareMenu";
 
 export function Header() {
   return (
@@ -17,6 +18,7 @@ export function Header() {
           <span className="tag mono hdr__bay">WTLA-01</span>
         </Link>
         <nav className="hdr__nav" aria-label="Primary">
+          <ShareMenu />
           <Link href="/guides" className="hdr__link tag mono">
             Guides
           </Link>
