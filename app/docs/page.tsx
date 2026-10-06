@@ -15,7 +15,7 @@ export default function Docs() {
   return (
     <>
       <Header />
-      <main className="sheet">
+      <main id="main" tabIndex={-1} className="sheet">
         <div className="sheet__inner">
           <div className="sheet__head">
             <h1 className="sheet__h1">Docs</h1>
@@ -63,7 +63,7 @@ export default function Docs() {
               if you want to check whether someone already asked.{" "}
               <a href={GITHUB_ISSUES} target="_blank" rel="noopener noreferrer">
                 Browse the issue tracker
-              </a>
+              <span className="visually-hidden"> (opens in a new tab)</span></a>
               .
             </p>
             <p>
@@ -156,7 +156,7 @@ export default function Docs() {
               The same catalogue is available as an{" "}
               <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">
                 MCP
-              </a>{" "}
+              <span className="visually-hidden"> (opens in a new tab)</span></a>{" "}
               server at <code className="mono">/api/mcp</code>, for agents rather than
               browsers. It speaks Streamable HTTP and is stateless - every call stands
               alone, there is no session to open first, and a response is plain JSON

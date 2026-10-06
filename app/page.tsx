@@ -78,7 +78,7 @@ export default async function Home({
         hrefFor={(p) => (p === "all" ? "/" : `/?platform=${p}`)}
       />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="sign">
           <h1 className="sign__h">
             Where them logs at

@@ -29,7 +29,7 @@ export default async function ImportExport() {
         who={who?.userDetails ?? null}
       />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <BayHead
           name="Import and export"
           back={{ label: "Catalogue", href: "/admin" }}

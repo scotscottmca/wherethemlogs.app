@@ -137,7 +137,7 @@ function Draft({
               rel="noopener noreferrer"
             >
               {t.label}
-            </a>
+            <span className="visually-hidden"> (opens in a new tab)</span></a>
           ))}
           {status && (
             <span className="frow__hint mono" role="status">

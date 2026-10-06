@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Field, Fields, Toggles } from "./AdminField";
 import { IconArrow, IconChevron } from "./Icons";
 import {
@@ -76,6 +76,7 @@ function Area({
   mono = false,
   placeholder,
   required = false,
+  invalid = false,
 }: {
   label: string;
   value: string;
@@ -86,21 +87,25 @@ function Area({
   mono?: boolean;
   placeholder?: string;
   required?: boolean;
+  invalid?: boolean;
 }) {
-  const id = useId();
   return (
-    <Field label={required ? `${label} *` : label} hint={hint} htmlFor={id}>
-      <textarea
-        id={id}
-        className={`frow__in${mono ? " mono" : ""}`}
-        value={value}
-        rows={rows}
-        maxLength={max}
-        placeholder={placeholder}
-        spellCheck={!mono}
-        required={required}
-        onChange={(e) => onChange(e.target.value)}
-      />
+    <Field label={required ? `${label} *` : label} hint={hint}>
+      {({ id, describedBy }) => (
+        <textarea
+          id={id}
+          aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
+          className={`frow__in${mono ? " mono" : ""}`}
+          value={value}
+          rows={rows}
+          maxLength={max}
+          placeholder={placeholder}
+          spellCheck={!mono}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
     </Field>
   );
 }
@@ -114,6 +119,7 @@ function Line({
   mono = false,
   placeholder,
   required = false,
+  invalid = false,
 }: {
   label: string;
   value: string;
@@ -123,22 +129,26 @@ function Line({
   mono?: boolean;
   placeholder?: string;
   required?: boolean;
+  invalid?: boolean;
 }) {
-  const id = useId();
   return (
-    <Field label={required ? `${label} *` : label} hint={hint} htmlFor={id}>
-      <input
-        id={id}
-        type="text"
-        className={`frow__in${mono ? " mono" : ""}`}
-        value={value}
-        maxLength={max}
-        placeholder={placeholder}
-        autoComplete="off"
-        spellCheck={!mono}
-        required={required}
-        onChange={(e) => onChange(e.target.value)}
-      />
+    <Field label={required ? `${label} *` : label} hint={hint}>
+      {({ id, describedBy }) => (
+        <input
+          id={id}
+          aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
+          type="text"
+          className={`frow__in${mono ? " mono" : ""}`}
+          value={value}
+          maxLength={max}
+          placeholder={placeholder}
+          autoComplete="off"
+          spellCheck={!mono}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
     </Field>
   );
 }
@@ -223,30 +233,39 @@ export function RequestForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState<Sent | null>(null);
+  // After the first attempt, each missing field is marked as well as listed.
+  const [tried, setTried] = useState(false);
+  const alert = useRef<HTMLParagraphElement>(null);
   const turnstile = useTurnstile(siteKey, setToken);
 
-  const missing =
+  useEffect(() => {
+    if (error) alert.current?.focus();
+  }, [error]);
+
+  const need: { key: string; ok: boolean; name: string }[] =
     kind === "add"
       ? [
-          !app.trim() && "the application",
-          !vendor.trim() && "the vendor",
-          !Object.values(paths).some((p) => p.trim()) && "at least one log path",
-          !verification.trim() && "how you verified it",
+          { key: "app", ok: Boolean(app.trim()), name: "the application" },
+          { key: "vendor", ok: Boolean(vendor.trim()), name: "the vendor" },
+          { key: "paths", ok: Object.values(paths).some((p) => p.trim()), name: "at least one log path" },
+          { key: "verification", ok: Boolean(verification.trim()), name: "how you verified it" },
         ]
       : [
-          !app.trim() && "the application",
-          !platform && "the platform",
-          !listed.trim() && "what the index says",
-          !problem && "what is wrong",
-          !correct.trim() && "what it should say",
-          !verification.trim() && "how you verified it",
+          { key: "app", ok: Boolean(app.trim()), name: "the application" },
+          { key: "platform", ok: Boolean(platform), name: "the platform" },
+          { key: "listed", ok: Boolean(listed.trim()), name: "what the index says" },
+          { key: "problem", ok: Boolean(problem), name: "what is wrong" },
+          { key: "correct", ok: Boolean(correct.trim()), name: "what it should say" },
+          { key: "verification", ok: Boolean(verification.trim()), name: "how you verified it" },
         ];
-  const gaps = missing.filter(Boolean) as string[];
+  const gaps = need.filter((n) => !n.ok);
+  const bad = (key: string) => tried && gaps.some((g) => g.key === key);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setTried(true);
     setError("");
-    if (gaps.length) return setError(`Still needed: ${gaps.join(", ")}.`);
+    if (gaps.length) return setError(`Still needed: ${gaps.map((g) => g.name).join(", ")}.`);
     if (!pledge) return setError("Tick the box to confirm you have redacted anything identifying.");
     if (!token) return setError("Complete the human check first.");
 
@@ -299,7 +318,7 @@ export function RequestForm({
   const verify = (
     <Section title="How did you verify this?">
       <Fields>
-        <Area label="Verified by" value={verification} onChange={setVerification} max={LIMITS.prose} required hint="Your own machine is a fine answer. A vendor documentation link is better." />
+        <Area label="Verified by" value={verification} onChange={setVerification} max={LIMITS.prose} required invalid={bad("verification")} hint="Your own machine is a fine answer. A vendor documentation link is better." />
       </Fields>
     </Section>
   );
@@ -316,12 +335,15 @@ export function RequestForm({
 
   return (
     <form onSubmit={submit} noValidate>
+      <p className="reqLead" style={{ marginTop: 0 }}>
+        Fields marked * are required.
+      </p>
       {kind === "add" ? (
         <>
           <Section title="The application">
             <Fields>
-              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Visual Studio Code" hint="The name people would search for." />
-              <Line label="Vendor" value={vendor} onChange={setVendor} max={LIMITS.name} required placeholder="Microsoft" />
+              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required invalid={bad("app")} placeholder="Visual Studio Code" hint="The name people would search for." />
+              <Line label="Vendor" value={vendor} onChange={setVendor} max={LIMITS.name} required invalid={bad("vendor")} placeholder="Microsoft" />
               <Line label="Also known as" value={aliases} onChange={setAliases} max={LIMITS.aliases} placeholder="vscode, code" hint="Optional. Comma separated." />
               <Line label="Variant" value={variant} onChange={setVariant} max={LIMITS.variant} placeholder="Classic (v1)" hint="Optional. Only if the app ships in flavours that log to different places." />
               <Toggles
@@ -361,6 +383,7 @@ export function RequestForm({
                     onChange={(v) => setPaths((all) => ({ ...all, [p.id]: v }))}
                     max={LIMITS.paths}
                     mono
+                    invalid={bad("paths")}
                     placeholder={p.id === "windows" ? "%APPDATA%\\Code\\logs\\ | Session logs" : p.id === "macos" ? "~/Library/Application Support/Code/logs/ | Session logs" : "~/.config/Code/logs/ | Session logs"}
                     hint="One path per line, exactly as written, environment variables unexpanded. Add ` | ` and a few words to say what it holds."
                   />
@@ -389,21 +412,21 @@ export function RequestForm({
         <>
           <Section title="The path">
             <Fields>
-              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required placeholder="Microsoft Teams" />
+              <Line label="Application" value={app} onChange={setApp} max={LIMITS.name} required invalid={bad("app")} placeholder="Microsoft Teams" />
               <Toggles
                 label="Platform *"
                 options={PLATFORM_NAMES.map((p) => ({ id: p, label: p }))}
                 value={platform ? [platform] : []}
                 onChange={(next) => setPlatform(next[0])}
               />
-              <Area label="What the index says" value={listed} onChange={setListed} max={LIMITS.paths} mono required rows={2} />
+              <Area label="What the index says" value={listed} onChange={setListed} max={LIMITS.paths} mono required invalid={bad("listed")} rows={2} />
               <Toggles
                 label="What is wrong *"
                 options={CORRECTION_KINDS.map((k) => ({ id: k, label: k }))}
                 value={problem ? [problem] : []}
                 onChange={(next) => setProblem(next[0])}
               />
-              <Area label="What it should say" value={correct} onChange={setCorrect} max={LIMITS.paths} mono required rows={2} hint="Exactly as written, environment variables unexpanded." />
+              <Area label="What it should say" value={correct} onChange={setCorrect} max={LIMITS.paths} mono required invalid={bad("correct")} rows={2} hint="Exactly as written, environment variables unexpanded." />
             </Fields>
           </Section>
           {verify}
@@ -440,7 +463,7 @@ export function RequestForm({
           <IconArrow size={15} />
         </button>
         {error && (
-          <p className="frow__bad mono" role="alert">
+          <p ref={alert} tabIndex={-1} className="frow__bad mono" role="alert">
             {error}{" "}
             <a href={fallbackUrl} target="_blank" rel="noopener noreferrer">
               Or file it on GitHub.

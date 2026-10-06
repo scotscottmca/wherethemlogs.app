@@ -31,6 +31,8 @@ export function Consent() {
       /* Choice applies to this visit only. */
     }
     setOpen(false);
+    // The pressed button is about to unmount; keep focus in the page.
+    document.getElementById("main")?.focus({ preventScroll: true });
     // <Analytics /> loads Google Analytics on "granted", and only then.
     window.dispatchEvent(new CustomEvent<Choice>(CONSENT_EVENT, { detail: choice }));
   };

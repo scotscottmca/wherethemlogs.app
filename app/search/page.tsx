@@ -136,7 +136,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
       <Header />
       <ZoneTabs active={platform} counts={counts} hrefFor={(p) => buildHref({ q, platform: p, types })} />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="picklist">
           <div>
             {q ? (
@@ -199,7 +199,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                       key={z.id}
                       className="tog tag mono"
                       href={buildHref({ q, platform: z.id, types })}
-                      aria-pressed={platform === z.id}
+                      aria-current={platform === z.id ? "true" : undefined}
                       style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
                     >
                       <ZoneSwatch zone={z.id} size={10} />
@@ -227,7 +227,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                           key={t}
                           className="tog tag mono"
                           href={buildHref({ q, platform, types: next })}
-                          aria-pressed={on}
+                          aria-current={on ? "true" : undefined}
                         >
                           {t}
                         </Link>

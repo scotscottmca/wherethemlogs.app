@@ -15,7 +15,7 @@
       "bone-faint": { "role": "neutral", "displayName": "Faint Stock", "canonical": "#8a8779", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
       "zone-win": { "role": "tertiary", "displayName": "Cobalt (WIN zone)", "canonical": "#2952cc", "tonalRamp": ["#0a1433", "#132466", "#1c3899", "#2952cc", "#4f75e0", "#7d9aeb", "#adc0f3", "#dde5fa"] },
       "zone-mac": { "role": "tertiary", "displayName": "Bone (MAC zone)", "canonical": "#e8e4da", "tonalRamp": ["#26251f", "#3d3b33", "#55534a", "#6f6c61", "#8a8779", "#a8a496", "#c8c4b8", "#e8e4da"] },
-      "zone-lnx": { "role": "tertiary", "displayName": "Hazard Red (LNX zone)", "canonical": "#d8442f", "tonalRamp": ["#33100b", "#5c1d14", "#8a2b1e", "#b23726", "#d8442f", "#e57460", "#f0a396", "#f9d6cf"] }
+      "zone-lnx": { "role": "tertiary", "displayName": "Hazard Red (LNX zone)", "canonical": "#e4533b", "tonalRamp": ["#33100b", "#5c1d14", "#8a2b1e", "#b23726", "#d8442f", "#e57460", "#f0a396", "#f9d6cf"] }
     },
     "typographyMeta": {
       "display": { "displayName": "Aisle Sign", "purpose": "The one shouted line per page, Archivo 900 at width 62%, uppercase, hard to the left margin." },

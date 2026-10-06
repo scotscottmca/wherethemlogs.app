@@ -20,31 +20,71 @@ export function Fields({ children }: { children: React.ReactNode }) {
   return <div className="fields">{children}</div>;
 }
 
+/** What a control inside a Field needs: its id, and the ids of the hint and error it should cite. */
+export interface FieldIds {
+  id: string;
+  describedBy?: string;
+}
+
+/**
+ * Pass `htmlFor` with the control's own id, or pass a function as children and
+ * take the id from it. With neither, the label is a plain span: a label element
+ * that labels nothing is noise to a screen reader. `group` names a set of
+ * buttons (the toggles) after the label, since a label cannot point at a div.
+ */
 export function Field({
   label,
   hint,
   error,
   htmlFor,
+  group = false,
   children,
 }: {
   label: string;
   hint?: React.ReactNode;
   error?: string;
   htmlFor?: string;
-  children: React.ReactNode;
+  group?: boolean;
+  children: React.ReactNode | ((ids: FieldIds) => React.ReactNode);
 }) {
+  const auto = useId();
+  const id = htmlFor ?? auto;
+  const labelId = `${id}-label`;
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  const describedBy = [hint && hintId, error && errorId].filter(Boolean).join(" ") || undefined;
+  const control = htmlFor !== undefined || typeof children === "function";
+  // The server quotes the JSON key ('"enableLogging" is required'). The row is
+  // already labelled, so print that label where the key was.
+  const message = error?.replace(/^"[A-Za-z]+(?:\[\d+\])?"/, label);
+
   return (
     <div className="frow" data-bad={error ? "true" : undefined}>
-      <label className="tag mono frow__label" htmlFor={htmlFor}>
-        {label}
-      </label>
-      <div className="frow__cell">
-        {children}
-        {hint && <p className="frow__hint mono">{hint}</p>}
+      {control ? (
+        <label id={labelId} className="tag mono frow__label" htmlFor={id}>
+          {label}
+        </label>
+      ) : (
+        <span id={labelId} className="tag mono frow__label">
+          {label}
+        </span>
+      )}
+      <div
+        className="frow__cell"
+        role={group ? "group" : undefined}
+        aria-labelledby={group ? labelId : undefined}
+        aria-describedby={group ? describedBy : undefined}
+      >
+        {typeof children === "function" ? children({ id, describedBy }) : children}
+        {hint && (
+          <p id={hintId} className="frow__hint mono">
+            {hint}
+          </p>
+        )}
         {error && (
-          <p className="frow__bad mono" role="alert">
+          <p id={errorId} className="frow__bad mono" role="alert">
             <span className="frow__badTag">Rejected</span>
-            {error}
+            {message}
           </p>
         )}
       </div>
@@ -62,6 +102,7 @@ export function Text({
   placeholder,
   maxLength,
   multiline = false,
+  required = false,
 }: {
   label: string;
   value: string;
@@ -73,14 +114,14 @@ export function Text({
   placeholder?: string;
   maxLength?: number;
   multiline?: boolean;
+  required?: boolean;
 }) {
-  const id = useId();
   const shared = {
-    id,
     value,
     placeholder,
     maxLength,
     "aria-invalid": error ? (true as const) : undefined,
+    "aria-required": required || undefined,
     className: `frow__in${mono ? " mono" : ""}`,
     spellCheck: !mono,
     autoComplete: "off" as const,
@@ -89,17 +130,21 @@ export function Text({
   };
 
   return (
-    <Field label={label} hint={hint} error={error} htmlFor={id}>
-      {multiline ? (
-        <textarea {...shared} rows={2} />
-      ) : (
-        <input
-          {...shared}
-          type="text"
-          autoCapitalize={mono ? "off" : undefined}
-          autoCorrect={mono ? "off" : undefined}
-        />
-      )}
+    <Field label={label} hint={hint} error={error}>
+      {({ id, describedBy }) =>
+        multiline ? (
+          <textarea {...shared} id={id} aria-describedby={describedBy} rows={2} />
+        ) : (
+          <input
+            {...shared}
+            id={id}
+            aria-describedby={describedBy}
+            type="text"
+            autoCapitalize={mono ? "off" : undefined}
+            autoCorrect={mono ? "off" : undefined}
+          />
+        )
+      }
     </Field>
   );
 }
@@ -127,7 +172,7 @@ export function Toggles<T extends string>({
   multi?: boolean;
 }) {
   return (
-    <Field label={label} hint={hint} error={error}>
+    <Field label={label} hint={hint} error={error} group>
       <div className="frow__set">
         {options.map((option) => {
           const on = value.includes(option.id);
@@ -158,11 +203,15 @@ export function Toggles<T extends string>({
 
 /* --- State printed in place ----------------------------------------------- */
 
-/** The confirmed reading, in the plate's own voice. Never a toast. */
-export function Reading({ children }: { children: React.ReactNode }) {
+/**
+ * The confirmed reading, in the plate's own voice. Never a toast. Render it
+ * from the start and fill it later: a live region that appears with its text
+ * already inside is not reliably announced.
+ */
+export function Reading({ children }: { children?: React.ReactNode }) {
   return (
-    <span className="admRead mono" role="status">
-      <IconCheck size={13} />
+    <span className={children ? "admRead mono" : undefined} role="status">
+      {children && <IconCheck size={13} />}
       {children}
     </span>
   );
@@ -217,7 +266,7 @@ const BLANK: WriteState = {
   saved: null,
 };
 
-const stamp = () =>
+export const stamp = () =>
   new Date().toLocaleTimeString(undefined, { hour12: false }).padStart(8, "0");
 
 /**
@@ -311,6 +360,17 @@ export function Superseded<T extends Record<string, unknown>>({
   );
   const [failed, setFailed] = useState(false);
 
+  // Every button here unmounts itself. Hand focus to the first control left in
+  // the record so a keyboard user is not dropped at the top of the document.
+  const then = (act: () => void) => {
+    const section = (document.activeElement as HTMLElement | null)?.closest("section");
+    act();
+    setTimeout(
+      () => section?.querySelector<HTMLElement>("input, textarea, select, button:not(:disabled)")?.focus(),
+      0,
+    );
+  };
+
   useEffect(() => {
     let live = true;
     reread<unknown>(url)
@@ -348,7 +408,7 @@ export function Superseded<T extends Record<string, unknown>>({
       <Notice
         code="Gone"
         actions={
-          <button type="button" className="btn tag mono" onClick={() => onKeepMine(theirs.etag)}>
+          <button type="button" className="btn tag mono" onClick={() => then(() => onKeepMine(theirs.etag))}>
             Write it back
           </button>
         }
@@ -399,13 +459,13 @@ export function Superseded<T extends Record<string, unknown>>({
         )}
 
         <div className="admNotice__acts">
-          <button type="button" className="btn tag mono" onClick={() => onKeepMine(theirs.etag)}>
+          <button type="button" className="btn tag mono" onClick={() => then(() => onKeepMine(theirs.etag))}>
             Keep mine, save over theirs
           </button>
           <button
             type="button"
             className="btn btn--ghost tag mono"
-            onClick={() => onTakeTheirs(record, theirs.etag)}
+            onClick={() => then(() => onTakeTheirs(record, theirs.etag))}
           >
             <IconCorner size={14} />
             Take theirs, discard mine
@@ -420,8 +480,9 @@ export function Superseded<T extends Record<string, unknown>>({
 
 /**
  * Two presses, in place. The first arms the control and prints what the second
- * one will do; it disarms itself after eight seconds. No dialog - nothing in
- * this world floats over the page.
+ * one will do; "Keep it" disarms it, and so does nothing else - a timer would
+ * pull the state out from under a slow decision. No dialog - nothing in this
+ * world floats over the page.
  */
 export function DeletePress({
   what,
@@ -433,19 +494,22 @@ export function DeletePress({
   onDelete: () => void;
 }) {
   const [armed, setArmed] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idle = useRef<HTMLButtonElement>(null);
+  const touched = useRef(false);
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  // Disarming unmounts the focused button; land back on the one that replaces it.
+  useEffect(() => {
+    if (!armed && touched.current) idle.current?.focus();
+  }, [armed]);
 
   const arm = () => {
+    touched.current = true;
     setArmed(true);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setArmed(false), 8000);
   };
 
   if (!armed) {
     return (
-      <button type="button" className="admDel tag mono" onClick={arm} disabled={busy}>
+      <button ref={idle} type="button" className="admDel tag mono" onClick={arm} disabled={busy}>
         <IconFlag size={13} />
         Delete {what}
       </button>
@@ -521,7 +585,7 @@ export function IconField({
 
   return (
     <>
-      <Field label="Icon source" error={error}>
+      <Field label="Icon source" error={error} group>
         <div className="frow__set">
           <button
             type="button"
@@ -548,44 +612,56 @@ export function IconField({
       </Field>
 
       {own ? (
-        <Field label="Icon URL" error={uploadError ?? undefined}>
-          <div className="admIcon">
-            {value ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className="admIcon__img" src={value} alt="" width={34} height={34} />
-            ) : (
-              <span className="admIcon__img admIcon__img--empty" aria-hidden />
-            )}
-            <input
-              type="text"
-              className="frow__in mono"
-              value={value ?? ""}
-              spellCheck={false}
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              placeholder="https://…"
-              onChange={(e) => onChange(e.target.value)}
-            />
-          </div>
-          <label className="admUp tag mono">
-            <input
-              type="file"
-              className="sr"
-              accept={ICON_TYPES.join(",")}
-              disabled={uploading}
-              onChange={(e) => {
-                void pick(e.target.files?.[0]);
-                e.target.value = "";
-              }}
-            />
-            {uploading ? "Uploading…" : "Upload a file"}
-          </label>
-          <p className="frow__hint mono">
-            {value ? "" : "Nothing uploaded yet. "}SVG, PNG, WebP or JPEG, up to{" "}
-            {ICON_MAX_BYTES / 1024} KB. The upload returns the URL and writes it here; the
-            record is only changed when you save.
-          </p>
+        <Field
+          label="Icon URL"
+          error={uploadError ?? undefined}
+          hint={
+            <>
+              {value ? "" : "Nothing uploaded yet. "}SVG, PNG, WebP or JPEG, up to{" "}
+              {ICON_MAX_BYTES / 1024} KB. The upload returns the URL and writes it here; the
+              record is only changed when you save.
+            </>
+          }
+        >
+          {({ id, describedBy }) => (
+            <>
+              <div className="admIcon">
+                {value ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="admIcon__img" src={value} alt="" width={34} height={34} />
+                ) : (
+                  <span className="admIcon__img admIcon__img--empty" aria-hidden />
+                )}
+                <input
+                  id={id}
+                  aria-describedby={describedBy}
+                  aria-invalid={uploadError ? true : undefined}
+                  type="text"
+                  className="frow__in mono"
+                  value={value ?? ""}
+                  spellCheck={false}
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  placeholder="https://…"
+                  onChange={(e) => onChange(e.target.value)}
+                />
+              </div>
+              <label className="admUp tag mono">
+                <input
+                  type="file"
+                  className="sr"
+                  accept={ICON_TYPES.join(",")}
+                  disabled={uploading}
+                  onChange={(e) => {
+                    void pick(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+                {uploading ? "Uploading…" : "Upload a file"}
+              </label>
+            </>
+          )}
         </Field>
       ) : (
         inherit.preview && (

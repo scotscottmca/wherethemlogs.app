@@ -4,6 +4,23 @@
 
 /* --- Header -------------------------------------------------------------- */
 
+.skip {
+  position: absolute;
+  top: -100px;
+  left: var(--gutter);
+  z-index: 50;
+  padding: 0.6rem 1rem;
+  background: var(--hivis);
+  color: var(--ink);
+  text-decoration: none;
+}
+.skip:focus {
+  top: 0.5rem;
+}
+main:focus {
+  outline: none;
+}
+
 .hdr {
   display: flex;
   align-items: center;
@@ -49,6 +66,7 @@
   align-items: center;
   padding: 0.55rem 0.9rem;
   text-decoration: none;
+  white-space: nowrap;
   border-left: var(--rule) solid var(--ink-rule);
   transition: background 120ms linear, color 120ms linear;
 }
@@ -188,9 +206,6 @@
 .zone[aria-current="true"] .tag {
   color: inherit;
 }
-.zone__count {
-  opacity: 0.72;
-}
 
 .zones__legend {
   margin-left: auto;
@@ -293,7 +308,7 @@
   color: var(--hivis-ink);
 }
 .scan__bar:focus-within {
-  outline: 3px solid var(--bone);
+  outline: 3px solid var(--ink);
   outline-offset: -3px;
 }
 
@@ -341,6 +356,27 @@
 }
 .scan__clear:hover {
   background: var(--ink);
+  color: var(--hivis);
+}
+/* Anything focused inside the cyan bar: the global cyan ring would vanish here. */
+.scan__clear:focus-visible,
+.scan__hintBtn:focus-visible {
+  outline-color: var(--ink);
+}
+.scan__hintBtn {
+  background: transparent;
+  border: 1.5px solid var(--hivis-ink);
+  color: var(--hivis-ink);
+  padding: 0.15rem 0.4rem;
+  line-height: 1;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.scan__hintBtn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
   color: var(--hivis);
 }
 
@@ -656,9 +692,7 @@
 .pick__q {
   font-family: "Spline Sans Mono", monospace;
   font-size: 0.92rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .rackNote {
   padding: 1.1rem clamp(0.9rem, 1.6vw, 1.25rem) 1.4rem;
@@ -734,16 +768,6 @@
 .filters__chevron {
   color: var(--bone-faint);
 }
-/* On a wide viewport the rail is always open; the toggle is a narrow-screen device. */
-@media (min-width: 1081px) {
-  .filters__summary {
-    cursor: default;
-    pointer-events: none;
-  }
-  .filters__chevron {
-    display: none;
-  }
-}
 
 .filters__group {
   border-bottom: var(--rule) solid var(--ink-rule);
@@ -767,7 +791,8 @@
   border-color: var(--bone-dim);
   color: var(--bone);
 }
-.tog[aria-pressed="true"] {
+.tog[aria-pressed="true"],
+.tog[aria-current="true"] {
   background: var(--hivis);
   border-color: var(--hivis);
   color: var(--ink);
@@ -834,6 +859,25 @@
 .btn--ghost:hover {
   background: var(--ink-raised);
   border-color: var(--bone-dim);
+}
+
+/* Small text links get enough block padding to make a 24px target outright. */
+.plate__flag,
+.ahead__all,
+.picklist__refine,
+.filters__clear,
+.foot__nav a {
+  padding-block: 0.25rem;
+}
+.foot__nav a {
+  display: inline-block;
+}
+/* The row's live region exists before it has anything to say, so it is announced. */
+.prow__copyStatus:empty {
+  display: none;
+}
+.rackHead h2 {
+  margin: 0;
 }
 
 /* --- Footer -------------------------------------------------------------- */
@@ -1024,6 +1068,13 @@ body:has(.consent) {
 .sheet .tag {
   color: #55534a;
 }
+.sheet .btn.tag {
+  color: var(--ink);
+}
+/* The cyan ring is 1.4:1 on bone; ink is 14.7:1. */
+.sheet :focus-visible {
+  outline-color: var(--ink);
+}
 .sheet__table {
   width: 100%;
   border-collapse: collapse;
@@ -1166,11 +1217,22 @@ body:has(.consent) {
   }
   .hdr__nav {
     flex: 1 0 100%;
+    flex-wrap: wrap;
     border-top: var(--rule) solid var(--ink-rule);
   }
   .hdr__link {
-    flex: 1 1 0;
+    flex: 1 1 auto;
     justify-content: center;
+  }
+  /* The zone strip wraps rather than scrolling off the edge with no scrollbar. */
+  .zones {
+    flex-wrap: wrap;
+  }
+  .zone {
+    flex: 1 1 auto;
+    justify-content: center;
+    border-bottom: var(--rule) solid var(--ink-rule);
+    margin-bottom: calc(-1 * var(--rule));
   }
   /* The share icon keeps its own width; the text links share the rest. */
   .share {
@@ -1243,9 +1305,7 @@ body:has(.consent) {
   letter-spacing: 0.01em;
   text-transform: uppercase;
   line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .pick__zones {
@@ -1385,16 +1445,8 @@ body:has(.consent) {
   font-weight: 500;
   letter-spacing: 0.1em;
 }
-/* Wide: the rail is always open, the same way the results filters are, and the
-   space the toggle used takes the legend for the count column instead. */
+/* Wide: the count column gets its legend. The toggle works at every width. */
 @media (min-width: 1081px) {
-  .admRail__sum {
-    cursor: default;
-    pointer-events: none;
-  }
-  .admRail__chev {
-    display: none;
-  }
   .admRail__legend {
     display: inline;
   }
@@ -1438,7 +1490,6 @@ body:has(.consent) {
 }
 .admRail__meta {
   color: inherit;
-  opacity: 0.72;
 }
 
 .admWork {
@@ -1509,7 +1560,7 @@ body:has(.consent) {
   font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
   font-size: 0.95rem;
   line-height: 1.45;
-  border-bottom: var(--rule) solid var(--ink-rule);
+  border-bottom: var(--rule) solid var(--bone-faint);
 }
 .frow__in.mono {
   font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;

@@ -32,7 +32,7 @@ export default async function Forbidden({
   return (
     <>
       <Header />
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="void" style={{ paddingInline: 0 }}>
           <p className="tag mono" style={{ margin: 0 }}>
             {unconfigured ? "Error 503" : "Error 403"}

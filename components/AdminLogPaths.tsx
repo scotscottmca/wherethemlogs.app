@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DeletePress, Field, Fields, Notice, Reading, Superseded, Text, Toggles, useWrite } from "./AdminField";
+import { DeletePress, Field, Fields, Notice, Reading, Superseded, Text, Toggles, stamp, useWrite } from "./AdminField";
 import { ZoneSwatch } from "./Chrome";
 import { IconArrow, IconPlus } from "./Icons";
 import { PLATFORM_META, TYPE_GROUPS, type Platform } from "@/lib/api";
@@ -66,22 +66,42 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
   const router = useRouter();
   const [etag, setEtag] = useState<string | undefined>(app._etag);
   const [open, setOpen] = useState<string | null>(null);
+  // Printed here, not in the editor: the editor closes on save, which would
+  // take the confirmation with it.
+  const [saved, setSaved] = useState<string | null>(null);
+  const root = useRef<HTMLElement>(null);
+  const opener = useRef<string | null>(null);
+
+  // An editor replaces the control that opened it. When it closes, focus goes
+  // back to that control rather than falling to the top of the document.
+  useEffect(() => {
+    if (open !== null || !opener.current) return;
+    root.current?.querySelector<HTMLElement>(`[data-edit="${opener.current}"]`)?.focus();
+    opener.current = null;
+  }, [open]);
+
+  const show = (id: string) => {
+    opener.current = id;
+    setOpen(id);
+  };
 
   const done = (nextEtag: string | undefined) => {
     setEtag(nextEtag);
+    setSaved(stamp());
     setOpen(null);
     router.refresh();
   };
 
   return (
-    <section className="admRecord" aria-label="Log paths">
+    <section className="admRecord" aria-label="Log paths" ref={root}>
       <div className="rackHead admRecord__head">
-        <span className="tag mono">
+        <h2 className="tag mono">
           Log paths · {String(app.logPaths.length).padStart(2, "0")}
-        </span>
+        </h2>
         <span className="tag mono admRecord__hint">
           Stored byte for byte - variables are never expanded
         </span>
+        <Reading>{saved && `Saved ${saved}`}</Reading>
       </div>
 
       {app.logPaths.length ? (
@@ -102,7 +122,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
                 key={logPath.id}
                 logPath={logPath}
                 index={i}
-                onEdit={() => setOpen(logPath.id)}
+                onEdit={() => show(logPath.id)}
               />
             ),
           )}
@@ -128,7 +148,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
           onCancel={() => setOpen(null)}
         />
       ) : (
-        <button type="button" className="admAdd tag mono" onClick={() => setOpen("new")}>
+        <button type="button" className="admAdd tag mono" data-edit="new" onClick={() => show("new")}>
           <IconPlus size={16} />
           Add a log path
         </button>
@@ -156,7 +176,13 @@ function LogPathRow({
         <div className="plate__top">
           <h3 className="plate__name">{logPath.label}</h3>
           {logPath.variant && <span className="tag mono plate__variant">{logPath.variant}</span>}
-          <button type="button" className="admPath__edit tag mono" onClick={onEdit}>
+          <button
+            type="button"
+            className="admPath__edit tag mono"
+            data-edit={logPath.id}
+            aria-label={`Edit ${logPath.label}`}
+            onClick={onEdit}
+          >
             Edit this path
             <IconArrow size={13} />
           </button>
@@ -210,6 +236,12 @@ function LogPathEditor({
 }) {
   const write = useWrite();
   const [form, setForm] = useState<Form>(() => formOf(logPath));
+  const root = useRef<HTMLElement>(null);
+
+  // The editor took the place of the button that opened it; start typing here.
+  useEffect(() => {
+    root.current?.querySelector<HTMLElement>(".fields input, .fields textarea, .fields button")?.focus();
+  }, []);
 
   const set = <K extends keyof Form>(key: K, value: Form[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -239,7 +271,7 @@ function LogPathEditor({
     );
 
   return (
-    <article className="plate admPath admPath--edit">
+    <article className="plate admPath admPath--edit" ref={root} aria-busy={write.busy}>
       <div className="plate__zone" data-zone={form.platform}>
         <span className="plate__zoneCode">{ZONE_CODE[form.platform]}</span>
       </div>
@@ -247,7 +279,6 @@ function LogPathEditor({
       <div className="plate__body">
         <div className="admPath__head">
           <span className="tag mono">{logPath ? "Editing this path" : "New log path"}</span>
-          {write.saved && <Reading>Saved {write.saved}</Reading>}
         </div>
 
         {write.superseded && (
@@ -292,37 +323,45 @@ function LogPathEditor({
             error={write.fields.label}
             maxLength={80}
             placeholder="Client logs"
-            hint="What the file is, in the words a person would use. It heads the entry."
+            required
+            hint="Required. What the file is, in the words a person would use. It heads the entry."
           />
 
           <Field
             label="Path"
             error={write.fields.path}
-            hint="One path per line - list several files under this label by putting each on its own line. Up to 4096 characters, stored exactly as typed. %LOCALAPPDATA%, ~/Library/Logs and $XDG_STATE_HOME are never expanded."
+            hint="Required. One path per line - list several files under this label by putting each on its own line. Up to 4096 characters, stored exactly as typed. %LOCALAPPDATA%, ~/Library/Logs and $XDG_STATE_HOME are never expanded."
           >
-            <textarea
-              className="frow__in mono"
-              value={form.path}
-              rows={Math.min(Math.max(lines.length, 1) + 1, 14)}
-              spellCheck={false}
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              maxLength={4096}
-              placeholder={"%LOCALAPPDATA%\\Vendor\\App\\logs\\"}
-              onChange={(e) => set("path", e.target.value)}
-              aria-invalid={write.fields.path ? true : undefined}
-            />
-            {stored && (
-              <div className="admProof">
-                <p className="admProof__code tag mono">Stored as</p>
-                <code className="prow__path">{stored}</code>
-                <p className="tag mono admProof__len">
-                  {lines.length > 1 && `${lines.length} paths · `}
-                  {stored.length} characters
-                  {trimmed && " · spaces at the edges of each line and blank lines are dropped on save"}
-                </p>
-              </div>
+            {({ id, describedBy }) => (
+              <>
+                <textarea
+                  id={id}
+                  aria-describedby={describedBy}
+                  aria-required
+                  className="frow__in mono"
+                  value={form.path}
+                  rows={Math.min(Math.max(lines.length, 1) + 1, 14)}
+                  spellCheck={false}
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  maxLength={4096}
+                  placeholder={"%LOCALAPPDATA%\\Vendor\\App\\logs\\"}
+                  onChange={(e) => set("path", e.target.value)}
+                  aria-invalid={write.fields.path ? true : undefined}
+                />
+                {stored && (
+                  <div className="admProof">
+                    <p className="admProof__code tag mono">Stored as</p>
+                    <code className="prow__path">{stored}</code>
+                    <p className="tag mono admProof__len">
+                      {lines.length > 1 && `${lines.length} paths · `}
+                      {stored.length} characters
+                      {trimmed && " · spaces at the edges of each line and blank lines are dropped on save"}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </Field>
 

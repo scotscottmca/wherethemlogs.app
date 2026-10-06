@@ -17,7 +17,7 @@ export default function Privacy() {
   return (
     <>
       <Header />
-      <main className="sheet">
+      <main id="main" tabIndex={-1} className="sheet">
         <div className="sheet__inner">
           <div className="sheet__head">
             <h1 className="sheet__h1">
@@ -80,6 +80,12 @@ export default function Privacy() {
                 <td>Last 8, until you clear them</td>
               </tr>
               <tr>
+                <td>Keyboard shortcut choice</td>
+                <td>Your browser (local storage)</td>
+                <td>Remembering that you switched the / search shortcut off</td>
+                <td>Until you clear site data</td>
+              </tr>
+              <tr>
                 <td>Analytics cookies (<span className="mono">_ga</span>, <span className="mono">_ga_CG11KY5XE3</span>)</td>
                 <td>Your browser, read by Google Analytics</td>
                 <td>Counting which applications get looked up</td>
@@ -115,7 +121,7 @@ export default function Privacy() {
             country, including in the United States.{" "}
             <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">
               How Google uses this data
-            </a>
+            <span className="visually-hidden"> (opens in a new tab)</span></a>
             .
           </p>
           <p>
@@ -154,7 +160,7 @@ export default function Privacy() {
             own privacy terms.{" "}
             <a href={GITHUB_ISSUES} target="_blank" rel="noopener noreferrer">
               The issue tracker is here
-            </a>
+            <span className="visually-hidden"> (opens in a new tab)</span></a>
             .
           </p>
           <p>
@@ -164,7 +170,7 @@ export default function Privacy() {
             advertising or to track you across sites.{" "}
             <a href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer">
               Cloudflare&rsquo;s Turnstile privacy addendum
-            </a>
+            <span className="visually-hidden"> (opens in a new tab)</span></a>
             .
           </p>
 

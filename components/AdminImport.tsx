@@ -52,7 +52,7 @@ export function CatalogueTransfer() {
     <>
       <section className="admRecord" aria-label="Export">
         <div className="rackHead admRecord__head">
-          <span className="tag mono">Export</span>
+          <h2 className="tag mono">Export</h2>
           <span className="tag mono admRecord__hint">JSON · vendors &gt; apps &gt; logs</span>
         </div>
         <div className="admRemove">
@@ -69,12 +69,8 @@ export function CatalogueTransfer() {
 
       <section className="admRecord" aria-label="Import">
         <div className="rackHead admRecord__head">
-          <span className="tag mono">Import</span>
-          {applied !== null && (
-            <Reading>
-              Imported · {applied} write{applied === 1 ? "" : "s"}
-            </Reading>
-          )}
+          <h2 className="tag mono">Import</h2>
+          <Reading>{applied !== null && `Imported · ${applied} write${applied === 1 ? "" : "s"}`}</Reading>
         </div>
         <div className="admRemove">
           <p className="admRemove__p">

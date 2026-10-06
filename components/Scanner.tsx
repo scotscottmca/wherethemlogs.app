@@ -6,7 +6,7 @@ import Link from "next/link";
 import { IconSearch, IconClose, IconArrow } from "./Icons";
 import { Plate } from "./Plate";
 import { pushRecent } from "@/lib/recent";
-import { requestAppUrl } from "@/lib/site";
+import { SLASH_KEY, requestAppUrl } from "@/lib/site";
 import { searchApps, toPlates, type Plate as PlateData, type Platform } from "@/lib/api";
 
 type State = "idle" | "loading" | "ready" | "error";
@@ -38,8 +38,27 @@ export function Scanner({
   const [cursor, setCursor] = useState(0);
 
   // "/" focuses the field from anywhere, the way every tool this audience
-  // already lives in behaves.
+  // already lives in behaves. A single-key shortcut has to be switchable off
+  // (WCAG 2.1.4), so the hint carries the switch and the choice is remembered.
+  const [slash, setSlash] = useState(true);
   useEffect(() => {
+    try {
+      setSlash(window.localStorage.getItem(SLASH_KEY) !== "off");
+    } catch {
+      /* Storage blocked: the shortcut stays on for this visit. */
+    }
+  }, []);
+  const toggleSlash = () => {
+    const next = !slash;
+    setSlash(next);
+    try {
+      window.localStorage.setItem(SLASH_KEY, next ? "on" : "off");
+    } catch {
+      /* Applies to this visit only. */
+    }
+  };
+  useEffect(() => {
+    if (!slash) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
       const el = document.activeElement;
@@ -49,7 +68,7 @@ export function Scanner({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [slash]);
 
   useEffect(() => {
     const term = q.trim();
@@ -155,7 +174,7 @@ export function Scanner({
           }}
           onKeyDown={onKeyDown}
           aria-describedby={`${listId}-hint`}
-          aria-controls={`${listId}-rack`}
+          aria-controls={showRack ? `${listId}-rack` : undefined}
         />
         {q && (
           <button type="button" className="scan__clear" onClick={() => { setTouched(true); setQ(""); }} aria-label="Clear the field">
@@ -163,16 +182,24 @@ export function Scanner({
           </button>
         )}
         <span className="scan__hint tag mono" id={`${listId}-hint`}>
-          <span>Press</span>
-          <kbd className="scan__key">/</kbd>
-          <span>to search ·</span>
+          {slash && (
+            <>
+              <span>Press</span>
+              <kbd className="scan__key">/</kbd>
+              <span>to search ·</span>
+            </>
+          )}
           <kbd className="scan__key">↵</kbd>
           <span>for all results</span>
+          <button type="button" className="scan__hintBtn" aria-pressed={slash} onClick={toggleSlash}>
+            / shortcut {slash ? "on" : "off"}
+          </button>
         </span>
       </form>
 
       {showRack && (
         <div className="ahead" id={`${listId}-rack`}>
+          <h2 className="visually-hidden">Suggestions</h2>
           <div className="ahead__head">
             <span className="tag mono" role="status">
               {flash ?? (

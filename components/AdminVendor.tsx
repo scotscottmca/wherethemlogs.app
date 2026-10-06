@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DeletePress, Fields, IconField, Notice, Reading, Superseded, Text, useWrite } from "./AdminField";
@@ -68,10 +68,10 @@ export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
     );
 
   return (
-    <section className="admRecord" aria-label={vendor ? "Vendor record" : "New vendor"}>
+    <section className="admRecord" aria-label={vendor ? "Vendor record" : "New vendor"} aria-busy={write.busy}>
       <div className="rackHead admRecord__head">
-        <span className="tag mono">{vendor ? "Vendor record" : "New vendor"}</span>
-        {write.saved && <Reading>Saved {write.saved}</Reading>}
+        <h2 className="tag mono">{vendor ? "Vendor record" : "New vendor"}</h2>
+        <Reading>{write.saved && `Saved ${write.saved}`}</Reading>
       </div>
 
       {write.superseded && vendor && (
@@ -102,6 +102,8 @@ export function VendorEditor({ vendor }: { vendor: Vendor | null }) {
           error={write.fields.name}
           maxLength={120}
           placeholder="Microsoft"
+          required
+          hint="Required."
         />
         <Text
           label="Slug"
@@ -172,6 +174,7 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
   const router = useRouter();
   const write = useWrite();
   const [held, setHeld] = useState<{ id: string; name: string }[] | null>(null);
+  const root = useRef<HTMLElement>(null);
 
   // The manifest outlives the failed write that produced it: the cascade press
   // starts a new write, and the list must still be on screen while it runs.
@@ -191,9 +194,9 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
   const blocking = held;
 
   return (
-    <section className="admRecord" aria-label="Delete this vendor">
+    <section className="admRecord" aria-label="Delete this vendor" ref={root}>
       <div className="rackHead admRecord__head">
-        <span className="tag mono">Delete this vendor</span>
+        <h2 className="tag mono">Delete this vendor</h2>
       </div>
 
       {blocking ? (
@@ -235,6 +238,8 @@ export function VendorDelete({ vendor, appCount }: { vendor: Vendor; appCount: n
                 onClick={() => {
                   setHeld(null);
                   write.clear();
+                  // This button is about to unmount; land on the delete control it reveals.
+                  setTimeout(() => root.current?.querySelector<HTMLElement>(".admDel")?.focus(), 0);
                 }}
                 disabled={write.busy}
               >

@@ -105,7 +105,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
     return (
       <>
         <Header />
-        <main className="rack">
+        <main id="main" tabIndex={-1} className="rack">
           <div className="void">
             <h2 className="void__h">The catalogue is not answering</h2>
             <p className="void__p">
@@ -133,7 +133,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
         }}
       />
       <Header />
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="picklist">
           <div>
             <h1 className="void__h" style={{ margin: 0 }}>
@@ -163,7 +163,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
                   style={{ color: "var(--hivis)" }}
                 >
                   Vendor website
-                </a>
+                <span className="visually-hidden"> (opens in a new tab)</span></a>
                 .
               </>
             )}

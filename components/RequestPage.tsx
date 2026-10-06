@@ -29,7 +29,7 @@ export function RequestPage({
   return (
     <>
       <Header />
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="picklist">
           <div>
             <h1 className="void__h" style={{ margin: 0 }}>
@@ -68,7 +68,7 @@ export function RequestPage({
               <a className="btn tag mono" href={fallbackUrl} target="_blank" rel="noopener noreferrer">
                 Open the GitHub form
                 <IconArrow size={15} />
-              </a>
+              <span className="visually-hidden"> (opens in a new tab)</span></a>
             </div>
           </div>
         )}

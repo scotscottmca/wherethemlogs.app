@@ -1,12 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Header, Footer } from "@/components/Chrome";
 import { IconArrow } from "@/components/Icons";
+
+export const metadata: Metadata = { title: "Page not found" };
 
 export default function NotFound() {
   return (
     <>
       <Header />
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <div className="void" style={{ paddingInline: 0 }}>
           <p className="tag mono" style={{ margin: 0 }}>
             Error 404

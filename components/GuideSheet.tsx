@@ -24,7 +24,7 @@ export function GuideSheet({
   return (
     <>
       <Header />
-      <main className="sheet">
+      <main id="main" tabIndex={-1} className="sheet">
         <div className="sheet__inner">
           <div className="sheet__head">
             <h1 className="sheet__h1 sheet__h1--long">{guide.title}</h1>

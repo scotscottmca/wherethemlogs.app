@@ -64,6 +64,8 @@ export const RECENT_KEY = "wtla.recent";
 export const CONSENT_KEY = "wtla.consent";
 /** Fired on window when the visitor answers, so analytics can load without a reload. */
 export const CONSENT_EVENT = "wtla:consent";
+/** "off" when the visitor has switched the "/" search shortcut off. */
+export const SLASH_KEY = "wtla.slash";
 export const GA_ID = "G-CG11KY5XE3";
 
 /**
@@ -71,7 +73,7 @@ export const GA_ID = "G-CG11KY5XE3";
  * page text and the sitemap's <lastmod> for /privacy both read this, so they
  * cannot drift apart. Update this when the privacy page content changes.
  */
-export const PRIVACY_LAST_UPDATED = new Date("2026-10-05T00:00:00.000Z");
+export const PRIVACY_LAST_UPDATED = new Date("2026-10-06T00:00:00.000Z");
 
 /** Renders a Date as "11 September 2026", independent of server locale/timezone. */
 export function formatLongDate(date: Date): string {

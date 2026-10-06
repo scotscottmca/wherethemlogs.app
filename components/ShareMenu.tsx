@@ -97,7 +97,13 @@ export function ShareMenu() {
   };
 
   return (
-    <div className="share" ref={wrap}>
+    <div
+      className="share"
+      ref={wrap}
+      onBlur={(e) => {
+        if (open && !wrap.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       <button
         ref={button}
         type="button"
