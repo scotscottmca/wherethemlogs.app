@@ -107,10 +107,10 @@ export function AppEditor({
     );
 
   return (
-    <section className="admRecord" aria-label={app ? "App record" : "New app"}>
+    <section className="admRecord" aria-label={app ? "App record" : "New app"} aria-busy={write.busy}>
       <div className="rackHead admRecord__head">
-        <span className="tag mono">{app ? "App record" : `New app in ${vendor.name}`}</span>
-        {write.saved && <Reading>Saved {write.saved}</Reading>}
+        <h2 className="tag mono">{app ? "App record" : `New app in ${vendor.name}`}</h2>
+        <Reading>{write.saved && `Saved ${write.saved}`}</Reading>
       </div>
 
       {write.superseded && app && (
@@ -141,6 +141,8 @@ export function AppEditor({
           error={write.fields.name}
           maxLength={160}
           placeholder="Microsoft Teams"
+          required
+          hint="Required."
         />
         <Text
           label="Slug"
@@ -223,20 +225,24 @@ export function AppEditor({
                 : "The vendor this app belongs to."
             }
           >
-            <span className="admSelectWrap">
-              <select
-                className="frow__in admSelect mono"
-                value={form.vendorId}
-                onChange={(e) => set("vendorId", e.target.value)}
-              >
-                {vendors.map((v) => (
-                  <option key={v.id} value={v.id}>
-                    {v.name}
-                  </option>
-                ))}
-              </select>
-              <IconChevron size={14} className="admSelectWrap__mark" />
-            </span>
+            {({ id, describedBy }) => (
+              <span className="admSelectWrap">
+                <select
+                  id={id}
+                  aria-describedby={describedBy}
+                  className="frow__in admSelect mono"
+                  value={form.vendorId}
+                  onChange={(e) => set("vendorId", e.target.value)}
+                >
+                  {vendors.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+                <IconChevron size={14} className="admSelectWrap__mark" />
+              </span>
+            )}
           </Field>
         )}
       </Fields>
@@ -268,7 +274,7 @@ export function AppDelete({ app, vendorId }: { app: App; vendorId: string }) {
   return (
     <section className="admRecord" aria-label="Delete this app">
       <div className="rackHead admRecord__head">
-        <span className="tag mono">Delete this app</span>
+        <h2 className="tag mono">Delete this app</h2>
       </div>
       <div className="admRemove">
         <p className="admRemove__p">

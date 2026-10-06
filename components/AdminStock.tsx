@@ -54,7 +54,7 @@ export function StockList({ rows }: { rows: StockRow[] }) {
             <IconClose size={17} />
           </button>
         )}
-        <span className="scan__hint tag mono">
+        <span className="scan__hint tag mono" role="status">
           {shown.length === rows.length
             ? `${String(rows.length).padStart(3, "0")} apps`
             : `${String(shown.length).padStart(3, "0")} of ${rows.length}`}
@@ -70,8 +70,14 @@ export function StockList({ rows }: { rows: StockRow[] }) {
               href={`/admin/v/${row.vendorId}/a/${row.id}`}
             >
               <span className="admStock__name">{row.name}</span>
-              <span className="tag mono admStock__vendor">{row.vendorName}</span>
-              <span className="mono admStock__slug">{row.slug}</span>
+              <span className="tag mono admStock__vendor">
+                <span className="visually-hidden">Vendor: </span>
+                {row.vendorName}
+              </span>
+              <span className="mono admStock__slug">
+                <span className="visually-hidden">Slug: </span>
+                {row.slug}
+              </span>
               <ZoneTags platforms={row.platforms} />
               <span className="tag mono admStock__count">
                 {String(row.logPathCount).padStart(2, "0")} paths

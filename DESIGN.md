@@ -13,7 +13,7 @@ colors:
   bone-faint: "#8a8779"
   zone-win: "#2952cc"
   zone-mac: "#e8e4da"
-  zone-lnx: "#d8442f"
+  zone-lnx: "#e4533b"
 typography:
   display:
     fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"

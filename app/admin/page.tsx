@@ -30,7 +30,7 @@ export default async function StockControl() {
     <>
       <AisleBand trail={[{ label: "Catalogue" }]} who={who?.userDetails ?? null} />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <BayHead
           name="Catalogue"
           facts={

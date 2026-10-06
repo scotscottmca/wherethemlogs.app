@@ -73,7 +73,7 @@ export default async function ShareOfTheDay({
           trail={[{ label: "Catalogue", href: "/admin" }, { label: "Log path of the day" }]}
           who={who?.userDetails ?? null}
         />
-        <main className="rack">
+        <main id="main" tabIndex={-1} className="rack">
           <div className="void">
             <h2 className="void__h">The catalogue is not answering</h2>
             <p className="void__p">Nothing to pick from until the store is back. Reload in a moment.</p>
@@ -105,7 +105,7 @@ export default async function ShareOfTheDay({
         who={who?.userDetails ?? null}
       />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <BayHead
           name="Log path of the day"
           back={{ label: "Catalogue", href: "/admin" }}

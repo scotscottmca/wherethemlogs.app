@@ -25,7 +25,7 @@ export default async function NewVendor() {
         who={who?.userDetails ?? null}
       />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <BayHead
           name="New vendor"
           facts="A vendor groups its apps - they can inherit its icon"

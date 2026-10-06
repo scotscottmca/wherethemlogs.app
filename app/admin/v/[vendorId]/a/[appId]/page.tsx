@@ -49,7 +49,7 @@ export default async function AppPage({ params }: Ctx) {
         who={who?.userDetails ?? null}
       />
 
-      <main className="rack">
+      <main id="main" tabIndex={-1} className="rack">
         <BayHead
           name={app.name}
           back={{ label: vendor.name, href: `/admin/v/${vendor.id}` }}

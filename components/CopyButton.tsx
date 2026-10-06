@@ -32,17 +32,19 @@ export function CopyButton({ path, label }: { path: string; label: string }) {
 
   return (
     <span className="prow__copyWrap">
-      {state === "done" && (
-        <span className="plate__confirm mono" role="status">
-          <IconCheck size={14} />
-          Copied
-        </span>
-      )}
-      {state === "failed" && (
-        <span className="prow__note prow__note--copy" role="status">
-          Clipboard unavailable. Select the path and copy it by hand.
-        </span>
-      )}
+      <span className="prow__copyStatus" role="status">
+        {state === "done" && (
+          <span className="plate__confirm mono">
+            <IconCheck size={14} />
+            Copied
+          </span>
+        )}
+        {state === "failed" && (
+          <span className="prow__note prow__note--copy">
+            Clipboard unavailable. Select the path and copy it by hand.
+          </span>
+        )}
+      </span>
       <button
         type="button"
         className="prow__copy tag mono"

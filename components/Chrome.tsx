@@ -7,6 +7,9 @@ import { ShareMenu } from "./ShareMenu";
 export function Header() {
   return (
     <header>
+      <a href="#main" className="skip tag mono">
+        Skip to content
+      </a>
       <div className="hdr">
         <Link href="/" className="hdr__id" aria-label="Where Them Logs App - home">
           <Mark size={30} />
