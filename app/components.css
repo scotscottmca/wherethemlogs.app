@@ -537,6 +537,10 @@ main:focus {
 }
 .prow__label {
   padding-top: 0.22rem;
+  /* The column is fixed; a label that is one long word (a file name, say)
+     breaks inside it rather than running under the path. */
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .prow__path {
   font-family: "Spline Sans Mono", monospace;
