@@ -602,43 +602,55 @@ main:focus {
   padding: 0 0 0 0.75rem;
   border-left: var(--rule) solid var(--ink-rule);
   display: grid;
-  /* Wide enough that a name like IntuneManagementExtension.log sits on one
-     line; a longer one still breaks rather than overflowing its column. */
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  /* A file name never breaks after a hyphen, and only at a space when it
+     must. The column is sized from the longest name in the list, which the
+     component sets in ch, plus the dash in front of each, so on anything but
+     a phone no name breaks at all. A single run longer than the screen
+     overflows and the list scrolls sideways, rather than the page. */
+  --manifest-col: 17rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--manifest-col) + 1.2rem)), 1fr));
   gap: 0.1rem 1.25rem;
+  overflow-x: auto;
+  /* The names' size lives here so the ch measure above matches them. */
+  font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.82rem;
 }
 .manifest__file {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.2rem 0.5rem;
   max-width: 100%;
   min-width: 0;
   background: transparent;
   border: 0;
   padding: 0;
   cursor: pointer;
-  font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font: inherit;
   font-weight: 500;
-  font-size: 0.82rem;
   line-height: 1.6;
   color: var(--bone);
   text-align: left;
 }
-.manifest__file::before {
-  content: "";
-  width: 0.45rem;
-  height: var(--rule);
-  background: var(--ink-rule);
-  flex: none;
-}
 .manifest__file:hover {
   color: var(--hivis);
 }
-.manifest__file:hover::before {
-  background: var(--hivis);
+.manifest__word {
+  white-space: nowrap;
 }
-.manifest__name {
-  overflow-wrap: anywhere;
+/* The dash is drawn on the name, so the two never part when the row wraps
+   the copied confirmation onto its own line. */
+.manifest__name::before {
+  content: "";
+  display: inline-block;
+  width: 0.45rem;
+  height: var(--rule);
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  background: var(--ink-rule);
+}
+.manifest__file:hover .manifest__name::before {
+  background: var(--hivis);
 }
 .manifest__status:empty {
   display: none;
@@ -2137,7 +2149,7 @@ button.tog {
 .admProof .manifest__file:hover {
   color: var(--bone);
 }
-.admProof .manifest__file:hover::before {
+.admProof .manifest__file:hover .manifest__name::before {
   background: var(--ink-rule);
 }
 .admProof .manifest__name--dup {
