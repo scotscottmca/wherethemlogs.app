@@ -156,7 +156,7 @@ export default async function Home({
           <RecentSearches platform={platform} />
         </div>
 
-        <p className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+        <p className="rackNote" style={{ paddingInline: 0 }}>
           Missing something? Fill in the request form and it becomes a public GitHub
           issue - no GitHub account needed.{" "}
           <a href={requestAppUrl()} style={{ color: "var(--hivis)" }}>

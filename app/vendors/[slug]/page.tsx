@@ -149,7 +149,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
           </div>
         </div>
 
-        <div className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+        <div className="rackNote" style={{ paddingInline: 0 }}>
           <p style={{ margin: 0 }}>
             Every {vendor.name} application in the catalogue, with the log file locations
             recorded for each one.
