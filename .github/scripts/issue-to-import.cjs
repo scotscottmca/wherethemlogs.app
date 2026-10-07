@@ -30,6 +30,7 @@ function build(body) {
   const scopes = ticked("Scope");
   const scope = scopes.length === 1 ? scopes[0] : undefined;
   const variant = one("Variant") || undefined;
+  const version = one("Version") || undefined;
 
   const logs = [];
   for (const [os, name] of Object.entries(PLATFORMS)) {
@@ -39,7 +40,7 @@ function build(body) {
       const cut = line.lastIndexOf(" | ");
       const path = (cut < 0 ? line : line.slice(0, cut)).trim();
       const what = cut < 0 ? undefined : line.slice(cut + 3).trim() || undefined;
-      if (path) logs.push({ os, path, what, variant, types: types.length ? types : undefined, scope });
+      if (path) logs.push({ os, path, what, variant, version, types: types.length ? types : undefined, scope });
     }
   }
 
@@ -94,6 +95,7 @@ if (require.main === module) {
     "### Vendor", "", "Microsoft", "",
     "### Also known as", "", "vscode, code", "",
     "### Variant", "", "_No response_", "",
+    "### Version", "", "_No response_", "",
     "### Windows log paths", "", "```text", "%APPDATA%\\Code\\logs\\ | Session logs", "", "```", "",
     "### Windows installer type", "", "- [X] msi", "- [ ] exe", "- [ ] msix", "- [ ] appx", "",
     "### macOS log paths", "", "```text", "~/Library/Containers/com.microsoft.<Word|Excel>/Logs/", "```", "",
@@ -121,6 +123,9 @@ if (require.main === module) {
       }],
     }],
   });
+  const versioned = build(body.replace("### Version\r\n\r\n_No response_", "### Version\r\n\r\n```text\r\n1.80 and later\r\n```")).file;
+  assert.strictEqual(versioned.vendors[0].apps[0].logs[0].version, "1.80 and later");
+  assert.strictEqual(versioned.vendors[0].apps[0].logs[1].version, "1.80 and later");
   const twoScopes = build(body.replace("- [ ] per-machine", "- [X] per-machine")).file;
   assert.strictEqual(twoScopes.vendors[0].apps[0].logs[0].scope, undefined);
   assert.deepStrictEqual(build(body.replace("\r\nMicrosoft\r\n", "\r\n_No response_\r\n")).missing, ["the vendor"]);

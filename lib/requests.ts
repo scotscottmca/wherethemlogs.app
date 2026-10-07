@@ -55,6 +55,7 @@ export interface AddRequest {
   vendor: string;
   aliases?: string;
   variant?: string;
+  version?: string;
   /** One path per line, optionally followed by " | what it holds". */
   paths: Partial<Record<PlatformId, string>>;
   installers: Partial<Record<PlatformId, string[]>>;
@@ -82,6 +83,7 @@ export const LIMITS = {
   name: 160,
   aliases: 300,
   variant: 80,
+  version: 80,
   paths: 4000,
   prose: 2000,
   github: 39,
@@ -140,6 +142,7 @@ export function issueFor(request: SiteRequest): { title: string; body: string; l
       section("Vendor", fenced(request.vendor)),
       section("Also known as", fenced(request.aliases)),
       section("Variant", fenced(request.variant)),
+      section("Version", fenced(request.version)),
       ...platforms,
       section(
         "Architecture",

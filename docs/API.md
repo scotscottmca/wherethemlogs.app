@@ -35,6 +35,8 @@ LogPath {
   path: string          // verbatim; %LOCALAPPDATA%, ~, $XDG_STATE_HOME survive intact
   note?: string
   variant?: string      // "Classic (v1)"
+  version?: string      // "4.0 and later"; free text, unset = every version
+  files?: string[]      // names of the files under a folder path: "AgentExecutor.log"
   types: string[]       // msi exe msix appx pkg dmg mas deb rpm snap flatpak appimage x86 x64 arm64
   scope?: "per-user" | "per-machine" | "system"   // unset = nobody has confirmed it
 }
@@ -73,7 +75,7 @@ types: string[]                  // distinct across logPaths
 
 | Query | Meaning |
 | --- | --- |
-| `q` | Search term. Empty returns the whole index, alphabetically. |
+| `q` | Search term, matched against app names and aliases, and below those the file names listed under a path. Empty returns the whole index, alphabetically. |
 | `platform` | `windows` \| `macos` \| `linux`. Anything else means all. |
 | `type` | Repeatable, or comma-separated. Filters **stack** - every type must be true. |
 | `limit` | 1-100. Omit for everything. |
@@ -163,7 +165,7 @@ issue and `scripts/check-request-issue.mjs` proves the bot can read it.
 | `credit` | Optional `{ github, linkedin, social }`, published on the issue |
 | add: `app`, `vendor`, `verification` | Required |
 | add: `paths` | `{ windows?, macos?, linux? }`, one path per line, at least one platform |
-| add: `aliases`, `variant`, `installers`, `architectures`, `scope`, `notes` | Optional; choices must be the form's own values |
+| add: `aliases`, `variant`, `version`, `installers`, `architectures`, `scope`, `notes` | Optional; choices must be the form's own values |
 | correction: `app`, `platform`, `listed`, `problem`, `correct`, `verification` | Required |
 
 Answers `201 { number, url }`. A `400` names the field; `503 requests_off` means
@@ -185,7 +187,8 @@ section, for linking at from outside this repository.
 | `search_log_locations` | `query`, `platform?`, `limit?` (1-25, default 10) | Matching apps, each with its log paths by platform |
 | `get_app_log_locations` | `slug` | One app's log paths, or an error result naming the slug |
 
-Search matches app names and aliases, the same as `/api/search`. Results leave
+Search matches app names, aliases and listed file names, the same as
+`/api/search`. Results leave
 out ids, icons and timestamps, and a `path` holding several lines comes back as
 a `paths` list. Request bodies over 64 KB get `413`.
 
@@ -259,15 +262,20 @@ one app. Pass `?vendorId=` to skip the partition lookup.
 | Method | Route | Notes |
 | --- | --- | --- |
 | `GET` | `/api/admin/apps/{id}/logpaths` | |
-| `POST` | `/api/admin/apps/{id}/logpaths` | `{ platform, label, path, scope?, types?, note?, variant? }` |
+| `POST` | `/api/admin/apps/{id}/logpaths` | `{ platform, label, path, scope?, types?, note?, variant?, version?, files? }` |
 | `PATCH` | `/api/admin/apps/{id}/logpaths/{logPathId}` | Partial |
 | `DELETE` | `/api/admin/apps/{id}/logpaths/{logPathId}` | |
 
 `scope` is optional: leave it out when nobody has confirmed whose profile the
 path lives under, and send `scope: null` on `PATCH` to clear one.
 
-`POST` returns `400` if the same `platform` + `path` + `variant` already exists
-on the app. The same path twice on one platform is a duplicate, not a variant.
+`POST` returns `400` if the same `platform` + `path` + `variant` + `version`
+already exists on the app. The same path twice on one platform is a duplicate,
+not a variant. `version` is free text ("4.0 and later", "up to 3.6"): it is
+printed and matched, never compared, and a path without one holds for every
+version. `files` lists the names of the files under a folder path, up to 40
+names of 120 characters, names only: one holding a slash is refused with `400`.
+Repeats are dropped, order is kept, and an empty list clears the stored one.
 
 Create and update return `{ app, logPath }` - the whole app document comes back
 so the portal can hold the new `_etag`.
@@ -335,14 +343,14 @@ material describes them together; two names that are one tightly coupled tool
 
 An export also writes the optional keys that make a round trip lossless: vendor
 `slug` (only when it is not the name's), `website`, `icon`; app `slug`,
-`aliases`, `icon`; log `note`, `variant`, `types`, `scope`.
+`aliases`, `icon`; log `note`, `variant`, `version`, `files`, `types`, `scope`.
 
 - **Matching.** Vendors and apps match by slug, derived from `name` unless the
   file gives one. A vendor the file repeats is merged: its apps join the first
   entry, which is the one whose `website` and `icon` count. An app found under
   a different vendor is moved there. Log
-  paths match by platform and path (and variant, when the file gives one), and
-  a matched path keeps its id.
+  paths match by platform and path (and variant and version, when the file
+  gives them), and a matched path keeps its id.
 - **Missing versus empty.** A missing key leaves the stored value alone; an empty
   one clears it. `logs` is the exception - when present it is the app's whole
   list, and stored paths it leaves out are removed.

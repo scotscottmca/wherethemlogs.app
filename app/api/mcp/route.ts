@@ -29,6 +29,8 @@ const slim = (app: ResolvedApp) => ({
     paths: pathLines(p.path),
     scope: p.scope,
     variant: p.variant,
+    version: p.version,
+    files: p.files,
     note: p.note,
   })),
 });
@@ -63,7 +65,7 @@ function server() {
     {
       title: "Search log locations",
       description:
-        "Find where an application writes its log files. Matches app names and aliases (for example 'teams', 'zoom', 'docker'), not vendor names. Returns each app's log paths by platform.",
+        "Find where an application writes its log files. Matches app names and aliases (for example 'teams', 'zoom', 'docker') and the names of files listed under a path (for example 'AppWorkload.log'), not vendor names. Returns each app's log paths by platform.",
       inputSchema: {
         query: z.string().max(120).describe("App name or alias"),
         platform: z.enum(PLATFORMS).optional().describe("Only paths on this platform"),

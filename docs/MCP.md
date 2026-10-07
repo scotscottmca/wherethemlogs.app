@@ -47,7 +47,9 @@ Invoke-RestMethod https://wherethemlogs.app/api/mcp -Method Post -ContentType ap
 | `get_app_log_locations` | `slug` (as returned by a search) | One app's log paths, or an error result naming the slug |
 
 Search matches application names and aliases, not vendor names: `teams`,
-`zoom`, `docker`. Both tools are annotated `readOnlyHint`.
+`zoom`, `docker`. It also matches the names of files listed under a path, so
+`AppWorkload.log` finds the Intune Management Extension. Both tools are
+annotated `readOnlyHint`.
 
 A result, trimmed of everything an agent pays tokens for and cannot use - ids,
 icons, timestamps:
@@ -77,7 +79,7 @@ icons, timestamps:
 }
 ```
 
-`scope`, `variant`, `note`, `documentation` and `notes` appear on the records
+`scope`, `variant`, `version`, `files`, `note`, `documentation` and `notes` appear on the records
 that have them and are left out of the ones that do not - the example above is
 Teams, abridged to three of its five entries.
 

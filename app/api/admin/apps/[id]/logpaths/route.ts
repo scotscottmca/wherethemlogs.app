@@ -42,14 +42,22 @@ export async function POST(request: NextRequest, { params }: Ctx) {
       ...(input.scope ? { scope: input.scope } : {}),
       ...(input.note ? { note: input.note } : {}),
       ...(input.variant ? { variant: input.variant } : {}),
+      ...(input.version ? { version: input.version } : {}),
+      ...(input.files ? { files: input.files } : {}),
     };
 
     // The same path twice on one platform is a duplicate, not a variant.
     const clash = current.logPaths.find(
-      (p) => p.platform === record.platform && p.path === record.path && p.variant === record.variant,
+      (p) =>
+        p.platform === record.platform &&
+        p.path === record.path &&
+        p.variant === record.variant &&
+        p.version === record.version,
     );
     if (clash) {
-      throw badRequest("That platform already carries this exact path. Edit the existing one, or set a variant.");
+      throw badRequest(
+        "That platform already carries this exact path. Edit the existing one, or set a variant or version.",
+      );
     }
 
     const app = await saveLogPaths(current, vendorId, [...current.logPaths, record], ifMatch(request));

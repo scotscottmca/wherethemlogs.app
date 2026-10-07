@@ -3,7 +3,35 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconCopy, IconCheck } from "./Icons";
 
-type CopyState = "idle" | "done" | "failed";
+export type CopyState = "idle" | "done" | "failed";
+
+/**
+ * Copy one string to the clipboard and say how it went, right where it was
+ * asked. "done" clears itself; "failed" stays, because the fix is manual.
+ */
+export function useCopy(text: string): { state: CopyState; copy: () => void } {
+  const [state, setState] = useState<CopyState>("idle");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+
+  const copy = useCallback(() => {
+    if (timer.current) clearTimeout(timer.current);
+    void navigator.clipboard.writeText(text).then(
+      () => {
+        setState("done");
+        timer.current = setTimeout(() => setState("idle"), 1800);
+      },
+      () => {
+        // Clipboard is blocked (insecure origin, denied permission). Say so and
+        // leave the text selectable so it can be copied by hand.
+        setState("failed");
+      },
+    );
+  }, [text]);
+
+  return { state, copy };
+}
 
 /**
  * The row's own copy control. This is the only client-side part of a path
@@ -12,23 +40,7 @@ type CopyState = "idle" | "done" | "failed";
  * banner across the whole card.
  */
 export function CopyButton({ path, label }: { path: string; label: string }) {
-  const [state, setState] = useState<CopyState>("idle");
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-
-  const copy = useCallback(async () => {
-    if (timer.current) clearTimeout(timer.current);
-    try {
-      await navigator.clipboard.writeText(path);
-      setState("done");
-      timer.current = setTimeout(() => setState("idle"), 1800);
-    } catch {
-      // Clipboard is blocked (insecure origin, denied permission). Say so and
-      // leave the path selected so it can be copied by hand.
-      setState("failed");
-    }
-  }, [path]);
+  const { state, copy } = useCopy(path);
 
   return (
     <span className="prow__copyWrap">

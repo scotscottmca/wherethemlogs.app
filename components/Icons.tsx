@@ -44,6 +44,15 @@ export function IconCopy({ size = 20, className }: IconProps) {
   );
 }
 
+/** The disclosure mark on a folded list: points right closed, down open. */
+export function IconDisclose({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M8 4l8 8-8 8" />
+    </svg>
+  );
+}
+
 export function IconCheck({ size = 20, className }: IconProps) {
   return (
     <svg {...base(size, className)}>

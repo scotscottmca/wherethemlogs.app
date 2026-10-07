@@ -231,7 +231,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
         {plates.length ? (
           <div className="resultsBody">
             {plates.map((plate, i) => (
-              <Plate key={plate.key} plate={plate} index={i} animate />
+              <Plate key={plate.key} plate={plate} index={i} animate expandFiles />
             ))}
           </div>
         ) : (

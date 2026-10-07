@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { IconFlag } from "./Icons";
 import { CopyButton } from "./CopyButton";
+import { FileManifest } from "./FileManifest";
 import { PLATFORM_META, type LogPath, type Plate as PlateData, type Platform } from "@/lib/api";
 import { correctionUrl } from "@/lib/site";
 
@@ -39,14 +40,17 @@ export function Plate({
   animate = false,
   selected = false,
   id,
+  expandFiles = false,
 }: {
   plate: PlateData;
   index?: number;
   animate?: boolean;
   selected?: boolean;
   id?: string;
+  /** Open each path's file list. The app page does; a result card stays folded. */
+  expandFiles?: boolean;
 }) {
-  const { app, platform, variant, logPaths } = plate;
+  const { app, platform, variant, version, logPaths } = plate;
 
   // Qualifiers are per path; the foot prints the union across this platform.
   const types = [...new Set(logPaths.flatMap((p) => p.types))];
@@ -88,15 +92,17 @@ export function Plate({
               {" - "}
               {PLATFORM_NAME[platform]}
               {variant ? ` (${variant})` : ""}
+              {version ? `, ${version}` : ""}
             </span>
           </h3>
           {variant && <span className="tag mono plate__variant">{variant}</span>}
+          {version && <span className="tag mono plate__version">{version}</span>}
           <span className="tag mono plate__vendor">{app.vendor.name}</span>
         </div>
 
         <div className="plate__paths">
           {logPaths.map((p) => (
-            <PathRow key={p.id} logPath={p} />
+            <PathRow key={p.id} logPath={p} expandFiles={expandFiles} />
           ))}
         </div>
 
@@ -126,8 +132,8 @@ export function Plate({
   );
 }
 
-function PathRow({ logPath }: { logPath: LogPath }) {
-  const { label, path, note } = logPath;
+function PathRow({ logPath, expandFiles }: { logPath: LogPath; expandFiles: boolean }) {
+  const { label, path, note, files } = logPath;
 
   return (
     <div className="prow">
@@ -137,6 +143,7 @@ function PathRow({ logPath }: { logPath: LogPath }) {
         {note && <span className="prow__note">- {note}</span>}
       </code>
       <CopyButton path={path} label={label} />
+      {files && files.length > 0 && <FileManifest path={path} files={files} open={expandFiles} />}
     </div>
   );
 }
