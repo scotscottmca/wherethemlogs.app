@@ -49,6 +49,18 @@ export function invalidate(): void {
   snapshot = undefined;
 }
 
+/**
+ * Pick one record out of the snapshot; on a miss, reload once and look again.
+ * An admin lands on a record's page right after writing it, and the write may
+ * have gone to another replica, whose invalidate() this one never saw.
+ */
+export async function pickFresh<T>(pick: (s: Snapshot) => T | null): Promise<T | null> {
+  const hit = pick(await getSnapshot());
+  if (hit) return hit;
+  invalidate();
+  return pick(await getSnapshot());
+}
+
 export interface SearchArgs {
   q: string;
   platform: Platform | "all";
