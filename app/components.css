@@ -484,7 +484,9 @@ main:focus {
 .plate__top {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  /* Centred, not baseline: the boxed tags have a border and padding below
+     their text, so on the baseline they hang under the name. */
+  align-items: center;
   gap: 0.55rem 0.75rem;
 }
 .plate__name {
