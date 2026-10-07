@@ -44,6 +44,13 @@ const bare = issueFor({ kind: "add", app: "X", vendor: "Y", paths: { linux: "/va
 const [log] = build(bare.body).file.vendors[0].apps[0].logs;
 assert.equal(log.scope, undefined);
 assert.equal(log.types, undefined);
+assert.equal(log.version, undefined);
+
+// A variant and a version each ride onto every path the request lists.
+const stamped = issueFor({ kind: "add", app: "X", vendor: "Y", variant: "Classic (v1)", version: "up to 3.6", paths: { linux: "/var/log/x.log" }, installers: {}, architectures: [], verification: "docs", credit: {} });
+const [stampedLog] = build(stamped.body).file.vendors[0].apps[0].logs;
+assert.equal(stampedLog.variant, "Classic (v1)");
+assert.equal(stampedLog.version, "up to 3.6");
 
 const correction = issueFor({ kind: "correction", app: "Teams", platform: "Windows", listed: "a", problem: "The path is incorrect", correct: "b", verification: "c", credit: {} });
 assert.equal(correction.title, "Correction: Teams (Windows)");

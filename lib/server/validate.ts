@@ -138,6 +138,7 @@ export function parseLogPath(body: unknown, { partial = false } = {}): Partial<L
   }
   if (b.note !== undefined) out.note = str(b.note, "note", { max: 500, required: false });
   if (b.variant !== undefined) out.variant = str(b.variant, "variant", { max: 80, required: false });
+  if (b.version !== undefined) out.version = str(b.version, "version", { max: 80, required: false });
   // Optional: blank or null means nobody has confirmed it, and clears a stored one.
   if (b.scope !== undefined) {
     const scope = str(b.scope, "scope", { max: 20, required: false }) as Scope | undefined;

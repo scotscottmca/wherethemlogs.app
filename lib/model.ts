@@ -46,6 +46,12 @@ export interface LogPath {
   note?: string;
   /** Distinguishes shipping flavours, e.g. "Classic (v1)". */
   variant?: string;
+  /**
+   * The versions this path holds for, as a tester would say it: "4.0 and
+   * later", "up to 3.6", "2.x". Free text, never compared. Unset means every
+   * version. Like `variant`, it splits the path onto its own plate.
+   */
+  version?: string;
   types: string[];
   /** Unset when nobody has confirmed whose profile the path lives under. */
   scope?: Scope;

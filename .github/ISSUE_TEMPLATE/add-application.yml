@@ -41,6 +41,13 @@ body:
       description: Only if the app ships in more than one flavour that logs to different places.
       placeholder: Classic (v1)
 
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: Only if these paths hold for some versions and not others. Say it the way a tester would.
+      placeholder: 4.0 and later
+
   - type: markdown
     attributes:
       value: |

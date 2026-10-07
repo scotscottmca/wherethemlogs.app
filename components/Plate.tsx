@@ -46,7 +46,7 @@ export function Plate({
   selected?: boolean;
   id?: string;
 }) {
-  const { app, platform, variant, logPaths } = plate;
+  const { app, platform, variant, version, logPaths } = plate;
 
   // Qualifiers are per path; the foot prints the union across this platform.
   const types = [...new Set(logPaths.flatMap((p) => p.types))];
@@ -88,9 +88,11 @@ export function Plate({
               {" - "}
               {PLATFORM_NAME[platform]}
               {variant ? ` (${variant})` : ""}
+              {version ? `, ${version}` : ""}
             </span>
           </h3>
           {variant && <span className="tag mono plate__variant">{variant}</span>}
+          {version && <span className="tag mono plate__version">{version}</span>}
           <span className="tag mono plate__vendor">{app.vendor.name}</span>
         </div>
 

@@ -77,7 +77,7 @@ icons, timestamps:
 }
 ```
 
-`scope`, `variant`, `note`, `documentation` and `notes` appear on the records
+`scope`, `variant`, `version`, `note`, `documentation` and `notes` appear on the records
 that have them and are left out of the ones that do not - the example above is
 Teams, abridged to three of its five entries.
 

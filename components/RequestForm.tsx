@@ -211,6 +211,7 @@ export function RequestForm({
   const [vendor, setVendor] = useState("");
   const [aliases, setAliases] = useState("");
   const [variant, setVariant] = useState("");
+  const [version, setVersion] = useState("");
   const [paths, setPaths] = useState<Record<PlatformId, string>>({ windows: "", macos: "", linux: "" });
   const [installers, setInstallers] = useState<Record<PlatformId, string[]>>({ windows: [], macos: [], linux: [] });
   const [architectures, setArchitectures] = useState<string[]>([]);
@@ -272,7 +273,7 @@ export function RequestForm({
     const credit = { github, linkedin, social };
     const body =
       kind === "add"
-        ? { kind, app, vendor, aliases, variant, paths, installers, architectures, scope, verification, notes, credit }
+        ? { kind, app, vendor, aliases, variant, version, paths, installers, architectures, scope, verification, notes, credit }
         : { kind, app, platform, listed, problem, correct, verification, credit };
 
     setBusy(true);
@@ -346,6 +347,7 @@ export function RequestForm({
               <Line label="Vendor" value={vendor} onChange={setVendor} max={LIMITS.name} required invalid={bad("vendor")} placeholder="Microsoft" />
               <Line label="Also known as" value={aliases} onChange={setAliases} max={LIMITS.aliases} placeholder="vscode, code" hint="Optional. Comma separated." />
               <Line label="Variant" value={variant} onChange={setVariant} max={LIMITS.variant} placeholder="Classic (v1)" hint="Optional. Only if the app ships in flavours that log to different places." />
+              <Line label="Version" value={version} onChange={setVersion} max={LIMITS.version} placeholder="4.0 and later" hint="Optional. Only if these paths hold for some versions and not others: 4.0 and later, up to 3.6, 2.x." />
               <Toggles
                 label="Architecture"
                 multi

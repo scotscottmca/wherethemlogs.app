@@ -18,6 +18,7 @@ const WATCH = [
   { key: "path" as const, label: "Path" },
   { key: "note" as const, label: "Note" },
   { key: "variant" as const, label: "Variant" },
+  { key: "version" as const, label: "Version" },
   { key: "types" as const, label: "Types" },
   { key: "scope" as const, label: "Scope" },
 ];
@@ -28,6 +29,7 @@ interface Form {
   path: string;
   note: string;
   variant: string;
+  version: string;
   types: string[];
   /** Blank is "unknown": nobody has confirmed whose profile the path lives under. */
   scope: Scope | "";
@@ -39,6 +41,7 @@ const formOf = (logPath: LogPath | null): Form => ({
   path: logPath?.path ?? "",
   note: logPath?.note ?? "",
   variant: logPath?.variant ?? "",
+  version: logPath?.version ?? "",
   types: logPath?.types ?? [],
   scope: logPath?.scope ?? "",
 });
@@ -49,6 +52,7 @@ const comparable = (form: Form) => ({
   path: form.path,
   note: form.note,
   variant: form.variant,
+  version: form.version,
   types: [...form.types].sort().join(" "),
   scope: form.scope,
 });
@@ -176,6 +180,7 @@ function LogPathRow({
         <div className="plate__top">
           <h3 className="plate__name">{logPath.label}</h3>
           {logPath.variant && <span className="tag mono plate__variant">{logPath.variant}</span>}
+          {logPath.version && <span className="tag mono plate__version">{logPath.version}</span>}
           <button
             type="button"
             className="admPath__edit tag mono"
@@ -259,6 +264,7 @@ function LogPathEditor({
           path: form.path,
           note: form.note,
           variant: form.variant,
+          version: form.version,
           types: form.types,
           // Null clears a stored scope; an absent key would leave it alone.
           scope: form.scope || null,
@@ -385,6 +391,17 @@ function LogPathEditor({
             maxLength={80}
             placeholder="Classic (v1)"
             hint="Optional. Splits this path onto its own card - the same path twice on one platform is a duplicate, not a variant."
+          />
+
+          <Text
+            label="Version"
+            mono
+            value={form.version}
+            onChange={(v) => set("version", v)}
+            error={write.fields.version}
+            maxLength={80}
+            placeholder="4.0 and later"
+            hint="Optional. The versions this path holds for, as a tester would say it: 4.0 and later, up to 3.6, 2.x. Splits this path onto its own card. Leave empty when the path is the same in every version."
           />
 
           {TYPE_GROUPS.map((group) => (

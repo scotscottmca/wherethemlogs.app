@@ -97,20 +97,23 @@ export interface PlateApp {
 }
 
 /**
- * One plate per app per platform per variant.
+ * One plate per app per platform per variant per version.
  *
  * A label plate's zone band names one platform and its header names one
  * shipping flavour, so Microsoft Teams racks as four plates: New Teams and
  * Classic, on Windows and on macOS. Splitting on variant as well as platform is
  * what keeps the header honest - a plate stamped "Classic (v1)" lists only
- * Classic paths. The split is presentation; the record underneath is one app
- * with many log paths.
+ * Classic paths. A version splits the same way: a path that moved in 4.0 racks
+ * as one plate stamped "4.0 and later" and one stamped "up to 3.6", and the
+ * paths that hold for every version stay on the unstamped plate. The split is
+ * presentation; the record underneath is one app with many log paths.
  */
 export interface Plate {
   key: string;
   app: PlateApp;
   platform: Platform;
   variant?: string;
+  version?: string;
   logPaths: LogPath[];
 }
 
@@ -124,12 +127,12 @@ export function toPlates(apps: ResolvedApp[]): Plate[] {
 
       // Insertion order decides plate order, so the catalogue's own ordering
       // survives instead of being alphabetised into nonsense.
-      const byVariant = new Map<string, LogPath[]>();
+      const byStamp = new Map<string, LogPath[]>();
       for (const logPath of onPlatform) {
-        const key = logPath.variant ?? "";
-        const bucket = byVariant.get(key);
+        const key = `${logPath.variant ?? ""}\n${logPath.version ?? ""}`;
+        const bucket = byStamp.get(key);
         if (bucket) bucket.push(logPath);
-        else byVariant.set(key, [logPath]);
+        else byStamp.set(key, [logPath]);
       }
 
       // Trimmed once per app, not once per plate - the card's-eye view of it.
@@ -140,12 +143,14 @@ export function toPlates(apps: ResolvedApp[]): Plate[] {
         vendor: { name: app.vendor.name },
       };
 
-      for (const [variant, logPaths] of byVariant) {
+      for (const [stamp, logPaths] of byStamp) {
+        const [variant, version] = stamp.split("\n") as [string, string];
         out.push({
-          key: `${app.id}:${platform}:${variant}`,
+          key: `${app.id}:${platform}:${variant}:${version}`,
           app: plateApp,
           platform,
           ...(variant ? { variant } : {}),
+          ...(version ? { version } : {}),
           logPaths,
         });
       }
@@ -183,7 +188,11 @@ export function platformSummaries(app: ResolvedApp): PlatformSummary[] {
     // the first line rather than printing a block of them mid-paragraph.
     const first = pathLines(onPlatform[0].path)[0] ?? onPlatform[0].path;
     const lineCount = onPlatform.reduce((n, p) => n + pathLines(p.path).length, 0);
-    const variants = [...new Set(onPlatform.flatMap((p) => (p.variant ? [p.variant] : [])))];
+    // Variants and versions read the same in the sentence: the flavours and
+    // releases the other paths are for.
+    const variants = [
+      ...new Set(onPlatform.flatMap((p) => [...(p.variant ? [p.variant] : []), ...(p.version ? [p.version] : [])])),
+    ];
     const installers = [
       ...new Set(onPlatform.flatMap((p) => p.types.filter((t) => INSTALLER_TYPE_SET.has(t)))),
     ];

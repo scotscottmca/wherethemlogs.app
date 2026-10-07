@@ -117,6 +117,7 @@ export function parseRequest(body: unknown): SiteRequest {
     vendor: line(b.vendor, "vendor", LIMITS.name, true)!,
     aliases: line(b.aliases, "aliases", LIMITS.aliases),
     variant: line(b.variant, "variant", LIMITS.variant),
+    version: line(b.version, "version", LIMITS.version),
     paths,
     installers,
     architectures: choices(b.architectures, "architectures", ARCHITECTURES),

@@ -29,6 +29,7 @@ const slim = (app: ResolvedApp) => ({
     paths: pathLines(p.path),
     scope: p.scope,
     variant: p.variant,
+    version: p.version,
     note: p.note,
   })),
 });

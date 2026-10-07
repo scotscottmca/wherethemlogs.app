@@ -502,6 +502,16 @@ main:focus {
   padding: 0.12rem 0.4rem;
   color: var(--bone-dim);
 }
+/* Same stock as the variant tag, one shade louder: it qualifies the paths by
+   release rather than naming another flavour of the app. Printed as typed,
+   because "4.0 and later" in caps reads as shouting. */
+.plate__version {
+  border: var(--rule) solid var(--hivis-deep);
+  padding: 0.12rem 0.4rem;
+  color: var(--hivis);
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
 .plate__vendor {
   color: var(--bone-faint);
 }

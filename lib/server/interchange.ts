@@ -28,6 +28,7 @@ export interface FileLog {
   what?: string;
   note?: string;
   variant?: string;
+  version?: string;
   types?: string[];
   scope?: string;
 }
@@ -90,6 +91,7 @@ function fileApp(a: App): FileApp {
       what: p.label,
       ...(p.note ? { note: p.note } : {}),
       ...(p.variant ? { variant: p.variant } : {}),
+      ...(p.version ? { version: p.version } : {}),
       ...(p.types.length ? { types: p.types } : {}),
       ...(p.scope ? { scope: p.scope } : {}),
     })),
@@ -128,7 +130,10 @@ const sameVendor = (a: Vendor, b: Vendor) =>
   a.name === b.name && a.slug === b.slug && a.iconUrl === b.iconUrl && (a.website ?? null) === (b.website ?? null);
 
 const pathShape = (p: LogPath) =>
-  [p.id, p.platform, p.label, p.path, p.note ?? null, p.variant ?? null, p.types.join(" "), p.scope ?? null];
+  [
+    p.id, p.platform, p.label, p.path, p.note ?? null, p.variant ?? null, p.version ?? null,
+    p.types.join(" "), p.scope ?? null,
+  ];
 
 const appShape = (a: App) =>
   JSON.stringify([
@@ -321,7 +326,8 @@ export function planImport(
             {
               platform,
               ...present(fl, {
-                path: "path", what: "label", note: "note", variant: "variant", types: "types", scope: "scope",
+                path: "path", what: "label", note: "note", variant: "variant", version: "version",
+                types: "types", scope: "scope",
               }),
             },
             { partial: true },
@@ -337,20 +343,21 @@ export function planImport(
           return;
         }
 
-        const key = `${platform}\n${input.path}\n${input.variant ?? ""}`;
+        const key = `${platform}\n${input.path}\n${input.variant ?? ""}\n${input.version ?? ""}`;
         if (seen.has(key)) {
           plan.warnings.push(`${lWhere}: ${input.path} is listed twice for ${platform}. The first one is kept.`);
           continue;
         }
         seen.add(key);
 
-        // A variant in the file pins the match; without one, the first path on
-        // that platform with the same text is the same path.
+        // A variant or version in the file pins the match; without one, the
+        // first path on that platform with the same text is the same path.
         const at = unclaimed.findIndex(
           (p) =>
             p.platform === platform &&
             p.path === input.path &&
-            (fl.variant === undefined || (p.variant ?? "") === (input.variant ?? "")),
+            (fl.variant === undefined || (p.variant ?? "") === (input.variant ?? "")) &&
+            (fl.version === undefined || (p.version ?? "") === (input.version ?? "")),
         );
         const matched = at >= 0 ? unclaimed.splice(at, 1)[0]! : undefined;
 
@@ -369,6 +376,7 @@ export function planImport(
             ...(input.scope ? { scope: input.scope } : {}),
             ...(input.note ? { note: input.note } : {}),
             ...(input.variant ? { variant: input.variant } : {}),
+            ...(input.version ? { version: input.version } : {}),
           });
         }
       }
