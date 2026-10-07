@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { useCopy } from "./CopyButton";
 import { IconCheck, IconDisclose } from "./Icons";
 import { joinFile } from "@/lib/model";
@@ -20,7 +21,12 @@ export function FileManifest({ path, files, open = false }: { path: string; file
         <IconDisclose size={11} />
         {files.length} {files.length === 1 ? "file" : "files"} in this folder
       </summary>
-      <ul className="manifest">
+      {/* The longest name sets the column width, in the names' own mono face,
+          so no name has to break: see .manifest in app/components.css. */}
+      <ul
+        className="manifest"
+        style={{ ["--manifest-col" as string]: `${Math.max(...files.map((f) => f.length))}ch` } as React.CSSProperties}
+      >
         {files.map((name) => (
           <FileName key={name} name={name} full={joinFile(path, name)} />
         ))}
@@ -34,7 +40,16 @@ function FileName({ name, full }: { name: string; full: string }) {
   return (
     <li>
       <button type="button" className="manifest__file" onClick={copy} aria-label={`Copy the full path of ${name}`}>
-        <span className="manifest__name">{name}</span>
+        <span className="manifest__name">
+          {/* A name may only break at a space it holds, never after a hyphen:
+              each run between spaces is set as one unbreakable word. */}
+          {name.split(" ").map((word, i) => (
+            <Fragment key={i}>
+              {i > 0 && " "}
+              <span className="manifest__word">{word}</span>
+            </Fragment>
+          ))}
+        </span>
         <span className="manifest__status" role="status">
           {state === "done" && (
             <span className="plate__confirm mono">
