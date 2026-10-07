@@ -166,7 +166,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
           </div>
         </div>
 
-        <div className="rackNote" style={{ paddingInline: 0, maxWidth: "72ch" }}>
+        <div className="rackNote" style={{ paddingInline: 0 }}>
           <p style={{ margin: 0 }}>
             <Link className="tag mono" href={`/vendors/${app.vendor.slug}`}>
               {app.vendor.name}
