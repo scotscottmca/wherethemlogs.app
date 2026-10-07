@@ -29,6 +29,7 @@ export interface FileLog {
   note?: string;
   variant?: string;
   version?: string;
+  files?: string[];
   types?: string[];
   scope?: string;
 }
@@ -92,6 +93,7 @@ function fileApp(a: App): FileApp {
       ...(p.note ? { note: p.note } : {}),
       ...(p.variant ? { variant: p.variant } : {}),
       ...(p.version ? { version: p.version } : {}),
+      ...(p.files?.length ? { files: p.files } : {}),
       ...(p.types.length ? { types: p.types } : {}),
       ...(p.scope ? { scope: p.scope } : {}),
     })),
@@ -132,7 +134,7 @@ const sameVendor = (a: Vendor, b: Vendor) =>
 const pathShape = (p: LogPath) =>
   [
     p.id, p.platform, p.label, p.path, p.note ?? null, p.variant ?? null, p.version ?? null,
-    p.types.join(" "), p.scope ?? null,
+    (p.files ?? []).join("\n"), p.types.join(" "), p.scope ?? null,
   ];
 
 const appShape = (a: App) =>
@@ -327,7 +329,7 @@ export function planImport(
               platform,
               ...present(fl, {
                 path: "path", what: "label", note: "note", variant: "variant", version: "version",
-                types: "types", scope: "scope",
+                files: "files", types: "types", scope: "scope",
               }),
             },
             { partial: true },
@@ -377,6 +379,7 @@ export function planImport(
             ...(input.note ? { note: input.note } : {}),
             ...(input.variant ? { variant: input.variant } : {}),
             ...(input.version ? { version: input.version } : {}),
+            ...(input.files ? { files: input.files } : {}),
           });
         }
       }

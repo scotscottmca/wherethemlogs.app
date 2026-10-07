@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DeletePress, Field, Fields, Notice, Reading, Superseded, Text, Toggles, stamp, useWrite } from "./AdminField";
 import { ZoneSwatch } from "./Chrome";
+import { FileManifest } from "./FileManifest";
 import { IconArrow, IconPlus } from "./Icons";
 import { PLATFORM_META, TYPE_GROUPS, type Platform } from "@/lib/api";
 import { SCOPES, pathLines, type Scope } from "@/lib/model";
@@ -19,6 +20,7 @@ const WATCH = [
   { key: "note" as const, label: "Note" },
   { key: "variant" as const, label: "Variant" },
   { key: "version" as const, label: "Version" },
+  { key: "files" as const, label: "Files" },
   { key: "types" as const, label: "Types" },
   { key: "scope" as const, label: "Scope" },
 ];
@@ -30,6 +32,8 @@ interface Form {
   note: string;
   variant: string;
   version: string;
+  /** One file name per line, as typed; `pathLines` is what gets stored. */
+  files: string;
   types: string[];
   /** Blank is "unknown": nobody has confirmed whose profile the path lives under. */
   scope: Scope | "";
@@ -42,6 +46,7 @@ const formOf = (logPath: LogPath | null): Form => ({
   note: logPath?.note ?? "",
   variant: logPath?.variant ?? "",
   version: logPath?.version ?? "",
+  files: (logPath?.files ?? []).join("\n"),
   types: logPath?.types ?? [],
   scope: logPath?.scope ?? "",
 });
@@ -53,9 +58,28 @@ const comparable = (form: Form) => ({
   note: form.note,
   variant: form.variant,
   version: form.version,
+  files: storedFiles(form.files).kept.join("\n"),
   types: [...form.types].sort().join(" "),
   scope: form.scope,
 });
+
+/**
+ * What the Files box will store, read back the way the validator reads it:
+ * trimmed, blank lines dropped, repeats dropped, order kept. A name holding a
+ * slash is a path, not a name, and the save will be refused for it.
+ */
+function storedFiles(text: string): { lines: string[]; kept: string[]; dups: Set<number>; bad: Set<number> } {
+  const lines = pathLines(text);
+  const kept: string[] = [];
+  const dups = new Set<number>();
+  const bad = new Set<number>();
+  lines.forEach((name, i) => {
+    if (/[\\/]/.test(name)) bad.add(i);
+    else if (kept.includes(name)) dups.add(i);
+    else kept.push(name);
+  });
+  return { lines, kept, dups, bad };
+}
 
 /**
  * The log path stack.
@@ -199,6 +223,9 @@ function LogPathRow({
               {logPath.path}
               {logPath.note && <span className="prow__note">- {logPath.note}</span>}
             </code>
+            {logPath.files && logPath.files.length > 0 && (
+              <FileManifest path={logPath.path} files={logPath.files} />
+            )}
           </div>
         </div>
 
@@ -211,7 +238,10 @@ function LogPathRow({
             ))}
             {logPath.scope && <span className="chip tag mono chip--scope">{logPath.scope}</span>}
           </div>
-          <span className="tag mono admPath__len">{logPath.path.length} chars</span>
+          <span className="tag mono admPath__len">
+            {logPath.path.length} chars
+            {logPath.files && logPath.files.length > 0 && ` · ${logPath.files.length} files`}
+          </span>
         </div>
       </div>
     </article>
@@ -254,6 +284,7 @@ function LogPathEditor({
   const lines = pathLines(form.path);
   const stored = lines.join("\n");
   const trimmed = form.path !== stored;
+  const files = storedFiles(form.files);
 
   const save = (withEtag = etag) =>
     void write.run(
@@ -265,6 +296,9 @@ function LogPathEditor({
           note: form.note,
           variant: form.variant,
           version: form.version,
+          // The validator drops repeats itself; sending every line means its
+          // refusal names the line the curator can see.
+          files: files.lines,
           types: form.types,
           // Null clears a stored scope; an absent key would leave it alone.
           scope: form.scope || null,
@@ -364,6 +398,58 @@ function LogPathEditor({
                       {lines.length > 1 && `${lines.length} paths · `}
                       {stored.length} characters
                       {trimmed && " · spaces at the edges of each line and blank lines are dropped on save"}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </Field>
+
+          <Field
+            label="Files"
+            error={write.fields.files}
+            hint="Optional. The files that live under this path, one name per line, when the path is a folder. Names only, no folders: a name with a slash in it is refused. Up to 40 names of 120 characters. Printed under the path, and each one copies as the full path."
+          >
+            {({ id, describedBy }) => (
+              <>
+                <textarea
+                  id={id}
+                  aria-describedby={describedBy}
+                  className="frow__in mono"
+                  value={form.files}
+                  rows={Math.min(Math.max(files.lines.length, 1) + 1, 14)}
+                  spellCheck={false}
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  placeholder={"AgentExecutor.log\nAppWorkload.log"}
+                  onChange={(e) => set("files", e.target.value)}
+                  aria-invalid={write.fields.files ? true : undefined}
+                />
+                {files.lines.length > 0 && (
+                  <div className="admProof">
+                    <p className="admProof__code tag mono">Stored as</p>
+                    <ul className="manifest">
+                      {files.lines.map((name, i) => (
+                        <li key={i}>
+                          <span className="manifest__file">
+                            <span
+                              className={`manifest__name${
+                                files.bad.has(i) ? " manifest__name--bad" : files.dups.has(i) ? " manifest__name--dup" : ""
+                              }`}
+                            >
+                              {name}
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="tag mono admProof__len">
+                      {files.kept.length} {files.kept.length === 1 ? "file" : "files"}
+                      {files.dups.size > 0 && ` · ${files.dups.size} ${files.dups.size === 1 ? "repeat" : "repeats"} dropped`}
+                      {files.bad.size > 0 &&
+                        ` · ${files.bad.size} ${files.bad.size === 1 ? "name holds" : "names hold"} a slash and will be refused`}
+                      {" · order kept as typed"}
                     </p>
                   </div>
                 )}

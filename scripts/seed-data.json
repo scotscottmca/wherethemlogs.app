@@ -472,17 +472,18 @@
           "platform": "windows",
           "label": "Agent logs",
           "path": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs\\",
-          "types": [
-            "msi",
-            "x64"
+          "files": [
+            "AgentExecutor.log",
+            "AppActionProcessor.log",
+            "AppWorkload.log",
+            "ClientCertCheck.log",
+            "ClientHealth.log",
+            "DeviceHealthMonitoring.log",
+            "HealthScripts.log",
+            "IntuneManagementExtension.log",
+            "Sensor.log",
+            "Win32AppInventory.log"
           ],
-          "scope": "per-machine"
-        },
-        {
-          "id": "1db21d17-85f1-4191-9d72-5342a3c25df0",
-          "platform": "windows",
-          "label": "Win32 app log",
-          "path": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs\\IntuneManagementExtension.log",
           "types": [
             "msi",
             "x64"

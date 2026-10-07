@@ -52,6 +52,12 @@ export interface LogPath {
    * version. Like `variant`, it splits the path onto its own plate.
    */
   version?: string;
+  /**
+   * The files that live under this path, by name, when the path is a folder:
+   * "AgentExecutor.log", never a path of their own. Printed under the path,
+   * each one copies as the full path. Unset or empty means none are listed.
+   */
+  files?: string[];
   types: string[];
   /** Unset when nobody has confirmed whose profile the path lives under. */
   scope?: Scope;
@@ -110,6 +116,17 @@ export function slugify(value: string): string {
  */
 export const pathLines = (path: string): string[] =>
   path.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+
+/**
+ * A file under a folder path: folder plus name, joined with the separator the
+ * path already uses. A path that ends in one takes the name straight on. Only
+ * the first line of a multi-line path counts, as the summary sentence does.
+ */
+export function joinFile(path: string, name: string): string {
+  const folder = pathLines(path)[0] ?? path;
+  if (/[\\/]$/.test(folder)) return folder + name;
+  return folder + (folder.includes("\\") ? "\\" : "/") + name;
+}
 
 export function resolveApp(app: App, vendor: Vendor | undefined): ResolvedApp {
   const platforms = [...new Set(app.logPaths.map((p) => p.platform))] as Platform[];

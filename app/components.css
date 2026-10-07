@@ -568,6 +568,89 @@ main:focus {
   white-space: normal;
   text-align: right;
 }
+/* The files under a folder path: a manifest beneath it. One column rule
+   continues from the path, the names set in the machine face one size down.
+   The row spans the path and copy columns, clear of the label column. */
+.prow__files {
+  grid-column: 2 / -1;
+  margin-top: 0.45rem;
+}
+.prow__files summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--bone-dim);
+  padding: 0.1rem 0;
+}
+.prow__files summary::-webkit-details-marker {
+  display: none;
+}
+.prow__files summary:hover {
+  color: var(--hivis);
+}
+.prow__files summary svg {
+  transition: transform 160ms ease;
+}
+.prow__files[open] summary svg {
+  transform: rotate(90deg);
+}
+.manifest {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0 0 0 0.75rem;
+  border-left: var(--rule) solid var(--ink-rule);
+  display: grid;
+  /* Wide enough that a name like IntuneManagementExtension.log sits on one
+     line; a longer one still breaks rather than overflowing its column. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 0.1rem 1.25rem;
+}
+.manifest__file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: "Spline Sans Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 500;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--bone);
+  text-align: left;
+}
+.manifest__file::before {
+  content: "";
+  width: 0.45rem;
+  height: var(--rule);
+  background: var(--ink-rule);
+  flex: none;
+}
+.manifest__file:hover {
+  color: var(--hivis);
+}
+.manifest__file:hover::before {
+  background: var(--hivis);
+}
+.manifest__name {
+  overflow-wrap: anywhere;
+}
+.manifest__status:empty {
+  display: none;
+}
+.manifest .plate__confirm {
+  font-size: 0.6rem;
+  padding: 0.05rem 0.4rem;
+}
+.manifest .prow__note {
+  margin: 0;
+}
+
 .prow__copy {
   display: flex;
   align-items: center;
@@ -1280,6 +1363,12 @@ body:has(.consent) {
   .prow__note--copy {
     max-width: none;
     text-align: left;
+  }
+  /* One column here, so the manifest takes its turn in the stack: label,
+     path, copy, files. */
+  .prow__files {
+    grid-column: auto;
+    margin-top: 0.1rem;
   }
   .plate {
     grid-template-columns: 34px minmax(0, 1fr);
@@ -2032,6 +2121,31 @@ button.tog {
 }
 .admPath__row {
   grid-template-columns: minmax(0, 1fr);
+}
+.admPath__row .prow__files {
+  grid-column: 1 / -1;
+}
+/* The editor's proof of the file list: the names as they will be stored, a
+   repeat struck through, a name that is really a path flagged. */
+.admProof .manifest {
+  border: 0;
+  padding: 0;
+}
+.admProof .manifest__file {
+  cursor: default;
+}
+.admProof .manifest__file:hover {
+  color: var(--bone);
+}
+.admProof .manifest__file:hover::before {
+  background: var(--ink-rule);
+}
+.admProof .manifest__name--dup {
+  color: var(--bone-faint);
+  text-decoration: line-through;
+}
+.admProof .manifest__name--bad {
+  color: var(--zone-lnx);
 }
 .admPath__len {
   color: var(--bone-faint);

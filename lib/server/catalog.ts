@@ -68,6 +68,17 @@ function score(app: App, needle: string): number {
     else if (hay.split(/[\s-]+/).some((w) => w.startsWith(needle))) best = Math.max(best, 65);
     else if (hay.includes(needle)) best = Math.max(best, 55);
   }
+
+  // A file name that turned up in a ticket. Below the app's own names, above
+  // a loose substring of one, so "AppWorkload.log" finds its extension without
+  // "log" matching every file in the catalogue.
+  for (const logPath of app.logPaths) {
+    for (const file of logPath.files ?? []) {
+      const name = file.toLowerCase();
+      if (name === needle) best = Math.max(best, 75);
+      else if (needle.length >= 3 && name.startsWith(needle)) best = Math.max(best, 50);
+    }
+  }
   return best;
 }
 

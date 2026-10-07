@@ -43,6 +43,7 @@ export async function POST(request: NextRequest, { params }: Ctx) {
       ...(input.note ? { note: input.note } : {}),
       ...(input.variant ? { variant: input.variant } : {}),
       ...(input.version ? { version: input.version } : {}),
+      ...(input.files ? { files: input.files } : {}),
     };
 
     // The same path twice on one platform is a duplicate, not a variant.
