@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { getSnapshot } from "./catalog";
+import { getSnapshot, pickFresh } from "./catalog";
 import { requireAdmin, type ClientPrincipal } from "./auth";
 import type { App, Vendor } from "../model";
 import type { StockRow } from "../admin";
@@ -60,27 +60,27 @@ export async function stock(): Promise<StockRow[]> {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function vendorRecord(
-  id: string,
-): Promise<{ vendor: Vendor; apps: App[] } | null> {
-  const { vendors, apps } = await getSnapshot();
-  const vendor = vendors.get(id);
-  if (!vendor) return null;
-  return {
-    vendor,
-    apps: apps.filter((a) => a.vendorId === id).sort((a, b) => a.name.localeCompare(b.name)),
-  };
+export function vendorRecord(id: string): Promise<{ vendor: Vendor; apps: App[] } | null> {
+  return pickFresh(({ vendors, apps }) => {
+    const vendor = vendors.get(id);
+    if (!vendor) return null;
+    return {
+      vendor,
+      apps: apps.filter((a) => a.vendorId === id).sort((a, b) => a.name.localeCompare(b.name)),
+    };
+  });
 }
 
-export async function appRecord(
+export function appRecord(
   vendorId: string,
   appId: string,
 ): Promise<{ vendor: Vendor; app: App } | null> {
-  const { vendors, apps } = await getSnapshot();
-  const vendor = vendors.get(vendorId);
-  const app = apps.find((a) => a.id === appId && a.vendorId === vendorId);
-  if (!vendor || !app) return null;
-  return { vendor, app };
+  return pickFresh(({ vendors, apps }) => {
+    const vendor = vendors.get(vendorId);
+    const app = apps.find((a) => a.id === appId && a.vendorId === vendorId);
+    if (!vendor || !app) return null;
+    return { vendor, app };
+  });
 }
 
 /**
