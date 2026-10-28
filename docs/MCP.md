@@ -114,7 +114,8 @@ A wrong or missing path is a [public issue](https://github.com/scotscottmca/wher
 no account with this site needed.
 
 The same data is on the [HTTP API](API.md) if a JSON endpoint suits better
-than a tool call.
+than a tool call. [SCOPE.md](SCOPE.md) benchmarks whether attaching this server
+makes coding agents answer correctly more often.
 
 ## Listing this server in a registry
 
