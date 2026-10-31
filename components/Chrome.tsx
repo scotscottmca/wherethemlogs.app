@@ -124,6 +124,7 @@ export function Footer({ entryCount }: { entryCount: number | null }) {
           <Link href="/guides">Guides</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy &amp; cookies</Link>
+          <Link href="/terms">Terms</Link>
           <a href={requestAppUrl()}>
             Request an app
           </a>

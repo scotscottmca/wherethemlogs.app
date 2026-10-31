@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { GUIDES } from "@/lib/guides";
 import { getSnapshot } from "@/lib/server/catalog";
-import { PRIVACY_LAST_UPDATED } from "@/lib/site";
+import { PRIVACY_LAST_UPDATED, TERMS_LAST_UPDATED } from "@/lib/site";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://wherethemlogs.app";
 
@@ -35,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: guide.updated,
     })),
     { url: `${siteUrl}/privacy`, lastModified: PRIVACY_LAST_UPDATED },
+    { url: `${siteUrl}/terms`, lastModified: TERMS_LAST_UPDATED },
   ];
 
   try {
