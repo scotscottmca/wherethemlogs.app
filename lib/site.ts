@@ -75,6 +75,9 @@ export const GA_ID = "G-CG11KY5XE3";
  */
 export const PRIVACY_LAST_UPDATED = new Date("2026-10-06T00:00:00.000Z");
 
+/** Same contract as PRIVACY_LAST_UPDATED, for /terms. */
+export const TERMS_LAST_UPDATED = new Date("2026-10-31T00:00:00.000Z");
+
 /** Renders a Date as "11 September 2026", independent of server locale/timezone. */
 export function formatLongDate(date: Date): string {
   return new Intl.DateTimeFormat("en-GB", {
