@@ -109,11 +109,10 @@ export default function Terms() {
             <Link href="/privacy">privacy and cookies page</Link>.
           </p>
 
-          <h2>Changes and law</h2>
+          <h2>Changes</h2>
           <p>
             These terms may change. The date at the top is updated when they do, and
-            continuing to use the site after a change means accepting the new terms. These
-            terms are governed by the law of England and Wales.
+            continuing to use the site after a change means accepting the new terms.
           </p>
 
           <p style={{ marginTop: "2.5rem" }}>
