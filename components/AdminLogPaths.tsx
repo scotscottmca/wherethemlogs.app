@@ -10,7 +10,7 @@ import { PLATFORM_META, TYPE_GROUPS, type Platform } from "@/lib/api";
 import { SCOPES, pathLines, type Scope } from "@/lib/model";
 import { createLogPath, deleteLogPath, patchLogPath, type App, type LogPath } from "@/lib/admin";
 
-const ZONE_CODE: Record<Platform, string> = { windows: "WIN", macos: "MAC", linux: "LNX" };
+const PLATFORM_NAME: Record<Platform, string> = { windows: "Windows", macos: "macOS", linux: "Linux" };
 const ARCH = new Set(["x86", "x64", "arm64"]);
 
 const WATCH = [
@@ -124,7 +124,7 @@ export function LogPathStack({ app, vendorId }: { app: App; vendorId: string }) 
     <section className="admRecord" aria-label="Log paths" ref={root}>
       <div className="rackHead admRecord__head">
         <h2 className="tag mono">
-          Log paths · {String(app.logPaths.length).padStart(2, "0")}
+          Log paths · {app.logPaths.length}
         </h2>
         <span className="tag mono admRecord__hint">
           Stored byte for byte - variables are never expanded
@@ -197,12 +197,10 @@ function LogPathRow({
 }) {
   return (
     <article className="plate admPath rack-in" style={{ ["--i" as string]: index }}>
-      <div className="plate__zone" data-zone={logPath.platform}>
-        <span className="plate__zoneCode">{ZONE_CODE[logPath.platform]}</span>
-      </div>
       <div className="plate__body">
         <div className="plate__top">
           <h3 className="plate__name">{logPath.label}</h3>
+          <span className="tag plate__os">{PLATFORM_NAME[logPath.platform]}</span>
           {logPath.variant && <span className="tag mono plate__variant">{logPath.variant}</span>}
           {logPath.version && <span className="tag mono plate__version">{logPath.version}</span>}
           <button
@@ -312,12 +310,9 @@ function LogPathEditor({
 
   return (
     <article className="plate admPath admPath--edit" ref={root} aria-busy={write.busy}>
-      <div className="plate__zone" data-zone={form.platform}>
-        <span className="plate__zoneCode">{ZONE_CODE[form.platform]}</span>
-      </div>
-
       <div className="plate__body">
         <div className="admPath__head">
+          <span className="tag plate__os">{PLATFORM_NAME[form.platform]}</span>
           <span className="tag mono">{logPath ? "Editing this path" : "New log path"}</span>
         </div>
 

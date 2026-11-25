@@ -159,7 +159,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
             </h1>
           </div>
           <div>
-            <p className="tag mono" style={{ margin: 0 }}>
+            <p className="tag" style={{ margin: 0 }}>
               {pathCount} log {pathCount === 1 ? "location" : "locations"}
               {platforms.length ? ` · ${platforms.join(", ")}` : ""}
             </p>
@@ -168,7 +168,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
 
         <div className="rackNote" style={{ paddingInline: 0 }}>
           <p style={{ margin: 0 }}>
-            <Link className="tag mono" href={`/vendors/${app.vendor.slug}`}>
+            <Link href={`/vendors/${app.vendor.slug}`}>
               {app.vendor.name}
             </Link>
             {app.documentation && (
@@ -178,7 +178,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
                   href={app.documentation}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: "var(--hivis)" }}
+                  style={{ color: "var(--accent)" }}
                 >
                   Vendor documentation
                 <span className="visually-hidden"> (opens in a new tab)</span></a>
@@ -201,7 +201,9 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
               <p key={s.platform}>
                 {/* The answer sentence stands on its own, so it can be read,
                     quoted or lifted without the table underneath. */}
-                <strong>{s.answer}</strong>
+                <strong>
+                  {app.name} logs to <code className="mono">{s.path}</code> on {s.name}.
+                </strong>
                 {s.detail && ` ${s.detail}`}
               </p>
             ))}
@@ -210,7 +212,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
               like <code className="mono">%LOCALAPPDATA%</code> and{" "}
               <code className="mono">$XDG_STATE_HOME</code> are never expanded, so a path
               can be pasted straight into a shell. Where a path differs between installer
-              types or shipping flavours, each one is racked as its own card below -{" "}
+              types or shipping flavours, each one gets its own card below -{" "}
               <Link href="/guides/why-log-paths-differ">why that happens</Link>.
             </p>
             <p className="appPanel__aside">
@@ -231,7 +233,7 @@ export default async function AppPage({ params }: { params: Promise<{ slug: stri
         {plates.length ? (
           <div className="resultsBody">
             {plates.map((plate, i) => (
-              <Plate key={plate.key} plate={plate} index={i} animate expandFiles />
+              <Plate key={plate.key} plate={plate} index={i} animate expandFiles tree />
             ))}
           </div>
         ) : (

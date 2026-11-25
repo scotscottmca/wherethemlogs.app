@@ -1,302 +1,371 @@
 ---
 name: Where Them Logs App
-description: A warehouse aisle for log file locations - flat printed racking, signal cyan, two voices.
+description: The Folder - a calm lookup page with one manila tab colour, paths in mono, light and dark from the device.
 colors:
-  ink: "#111311"
-  ink-raised: "#1b1e1b"
-  ink-rule: "#2e322d"
-  hivis: "#22d3ee"
-  hivis-deep: "#0e7c90"
-  hivis-ink: "#0a4a55"
-  bone: "#e8e4da"
-  bone-dim: "#a8a496"
-  bone-faint: "#8a8779"
+  bg: "#f6f6fa"
+  bg-dark: "#131520"
+  surface: "#ffffff"
+  surface-dark: "#1b1e2e"
+  line: "#d9dae6"
+  line-dark: "#2e3247"
+  hover: "#eeeef6"
+  hover-dark: "#232740"
+  chip: "#ecedf4"
+  chip-dark: "#24283b"
+  fg: "#191b2a"
+  fg-dark: "#ecebf3"
+  muted: "#5b5e75"
+  muted-dark: "#a3a5bb"
+  faint: "#63667c"
+  faint-dark: "#9092a9"
+  accent: "#7a4f00"
+  accent-dark: "#f4c95d"
+  tab: "#ffd978"
+  tab-dark: "#f4c95d"
+  tabhi: "#ffe6a3"
+  tabhi-dark: "#ffdd85"
+  tabfg: "#2a2000"
+  tabfg-dark: "#231a00"
+  tabdim: "#5c4a12"
+  tabdim-dark: "#5c4a12"
+  tabedge: "#a67c00"
+  tabedge-dark: "#f4c95d"
   zone-win: "#2952cc"
-  zone-mac: "#e8e4da"
-  zone-lnx: "#e4533b"
+  zone-win-dark: "#5b7fe8"
+  zone-mac: "#5b5e75"
+  zone-mac-dark: "#a3a5bb"
+  zone-lnx: "#c8442e"
+  zone-lnx-dark: "#e4533b"
 typography:
   display:
-    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
-    fontSize: "clamp(2.6rem, 11.35vw, 10.5rem)"
-    fontWeight: 900
-    lineHeight: 0.86
-    letterSpacing: "-0.014em"
-    fontVariation: "wdth 62"
+    fontFamily: "Bricolage Grotesque, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(2.3rem, 7vw, 4.25rem)"
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   headline:
-    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
-    fontSize: "clamp(1.5rem, 3.4vw, 2.4rem)"
-    fontWeight: 900
-    lineHeight: 1.02
-    letterSpacing: "normal"
-    fontVariation: "wdth 70"
-  title:
-    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
-    fontSize: "clamp(1.05rem, 1.5vw, 1.3rem)"
-    fontWeight: 800
+    fontFamily: "Bricolage Grotesque, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(1.6rem, 4vw, 2.4rem)"
+    fontWeight: 700
     lineHeight: 1.1
-    letterSpacing: "0.005em"
-    fontVariation: "wdth 78"
+    letterSpacing: "-0.02em"
+  title:
+    fontFamily: "Bricolage Grotesque, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.15rem"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.01em"
   body:
-    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
-    fontSize: "clamp(0.95rem, 1.15vw, 1.1rem)"
+    fontFamily: "Bricolage Grotesque, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.5
-    letterSpacing: "normal"
+  label:
+    fontFamily: "Bricolage Grotesque, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 500
+    lineHeight: 1.4
+    fontFeature: "tabular-nums"
   path:
     fontFamily: "Spline Sans Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
-    fontSize: "clamp(0.85rem, 1.05vw, 0.97rem)"
+    fontSize: "0.9rem"
     fontWeight: 500
     lineHeight: 1.45
-    letterSpacing: "normal"
-    fontFeature: "tabular-nums"
-  label:
+  code-tag:
     fontFamily: "Spline Sans Mono, ui-monospace, monospace"
-    fontSize: "0.6875rem"
-    fontWeight: 600
-    lineHeight: 1.5
-    letterSpacing: "0.16em"
-    fontFeature: "tabular-nums"
+    fontSize: "0.74rem"
+    fontWeight: 500
+    lineHeight: 1.35
 rounded:
-  none: "0"
+  r: "10px"
+  r-sm: "6px"
 spacing:
-  hair: "0.35rem"
-  tight: "0.6rem"
-  cell: "0.85rem"
-  bay: "clamp(0.9rem, 1.6vw, 1.25rem)"
   gutter: "clamp(1rem, 3.2vw, 3.25rem)"
-  aisle: "clamp(2rem, 4vw, 3.25rem)"
+  card: "clamp(0.9rem, 1.6vw, 1.25rem)"
+  stack: "0.6rem"
 components:
-  scanner-bar:
-    backgroundColor: "{colors.hivis}"
-    textColor: "{colors.ink}"
+  search-field:
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
+    rounded: "{rounded.r}"
+    padding: "0 0.4rem 0 1rem"
+    height: "58px"
+  search-button:
+    backgroundColor: "{colors.tabfg}"
+    textColor: "{colors.tab}"
+    rounded: "{rounded.r-sm}"
+    padding: "0 1.1rem"
+  card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.r}"
+    padding: "1rem clamp(0.9rem, 1.6vw, 1.25rem) 0.85rem"
+  path-block:
+    backgroundColor: "{colors.chip}"
+    textColor: "{colors.fg}"
     typography: "{typography.path}"
-    rounded: "{rounded.none}"
-    padding: "0 clamp(0.9rem, 1.6vw, 1.25rem)"
-    height: "clamp(66px, 7.2vw, 86px)"
-  plate:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.bone}"
-    rounded: "{rounded.none}"
-    padding: "0.85rem clamp(0.9rem, 1.6vw, 1.25rem) 0.7rem"
-  plate-hover:
-    backgroundColor: "{colors.ink-raised}"
-    textColor: "{colors.bone}"
-  plate-confirmed:
-    backgroundColor: "{colors.hivis}"
-    textColor: "{colors.ink}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.45rem 0.7rem"
+  tree-leaf:
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
+    typography: "{typography.path}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.12rem 0.55rem"
+  copy-button:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.4rem 0.8rem"
+  copy-confirm:
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.2rem 0.55rem"
   button-primary:
-    backgroundColor: "{colors.hivis}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0.65rem 1rem"
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.6rem 1rem"
   button-primary-hover:
-    backgroundColor: "{colors.bone}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.tabhi}"
+    textColor: "{colors.tabfg}"
   button-ghost:
     backgroundColor: "transparent"
-    textColor: "{colors.bone}"
-    rounded: "{rounded.none}"
-    padding: "0.65rem 1rem"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.6rem 1rem"
+  button-ghost-hover:
+    backgroundColor: "{colors.hover}"
+    textColor: "{colors.fg}"
   button-consent:
-    backgroundColor: "{colors.bone}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "0.6rem 1.4rem"
-    width: "132px"
-  chip:
     backgroundColor: "transparent"
-    textColor: "{colors.bone-dim}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0.14rem 0.4rem"
-  chip-arch:
-    backgroundColor: "{colors.bone-dim}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "0.14rem 0.4rem"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.r-sm}"
+    padding: "0.55rem 1.4rem"
+    width: "132px"
+  button-consent-hover:
+    backgroundColor: "{colors.fg}"
+    textColor: "{colors.bg}"
+  header-request-link:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.fg}"
+    rounded: "{rounded.r}"
+    padding: "0.35rem 0.85rem"
+  platform-link:
+    backgroundColor: "transparent"
+    textColor: "{colors.muted}"
+    rounded: "{rounded.r}"
+    padding: "0.3rem 0.8rem"
+  platform-link-current:
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
   toggle:
     backgroundColor: "transparent"
-    textColor: "{colors.bone-dim}"
+    textColor: "{colors.muted}"
     typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0.24rem 0.5rem"
+    rounded: "{rounded.r-sm}"
+    padding: "0.22rem 0.55rem"
   toggle-pressed:
-    backgroundColor: "{colors.hivis}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
-    padding: "0.24rem 0.5rem"
-  zone-tab:
-    backgroundColor: "transparent"
-    textColor: "{colors.bone-dim}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0.7rem 1.15rem"
-  zone-tab-current:
-    backgroundColor: "{colors.hivis}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.tab}"
+    textColor: "{colors.tabfg}"
+  type-tag:
+    backgroundColor: "{colors.chip}"
+    textColor: "{colors.muted}"
+    typography: "{typography.code-tag}"
+    rounded: "4px"
+    padding: "0.12rem 0.45rem"
+  type-tag-arch:
+    backgroundColor: "{colors.chip}"
+    textColor: "{colors.fg}"
 ---
 
 # Design System: Where Them Logs App
 
 ## Overview
 
-**Creative North Star: "The Location Code"**
+**Creative North Star: "The Folder"**
 
-A log path is a location code, so the site is a wall of warehouse racking rather than a documentation page. Painted-steel near-black ground, bone label stock, high-vis signal cyan owning whole regions, and hazard tape banding the top and bottom edges. Structure comes from stencilled hairlines and banding hard against a shared grid - never from a card floating on a background. Density is the material: content runs edge to edge, the aisle sign shouts at a scale the web rarely permits, and nothing is padded to look calm.
+A log path is a folder location, so the site is a folder you look things up in. The ground is calm: pale cool grey in light, deep navy in dark. On it sits one manila tab colour, used for every fill the visitor acts on: the search field, the current filter, the main button, the file at the end of a path. Everything else is white or navy cards with hairline borders, grey text, and paths set in mono.
 
-The surfaces are printed, not rendered. There are no gradients anywhere except the 45° repeating hard-stop stripe that draws hazard tape, no shadows of any kind, no radii, no translucency, no blur. Every colour is a flat fill of one value. This is what keeps signal cyan reading as printed vinyl instead of neon: it is a solid field with dead-black type on it, never a light source.
+The page is simple on purpose. The visitor already knows the app name and is usually in the middle of fixing something. One search field does the work, the answer appears under it with a copy button beside each path, and nothing competes with that. There are no gradients, no uppercase labels, no condensed type, and one soft shadow that only appears under things that float over the page.
 
-Two voices carry everything, strictly assigned. Archivo (self-hosted variable, weight 100-900, width 62-125%) is the human voice - headings, prose, app names, button words. Spline Sans Mono (self-hosted variable, weight 300-700) is the machine voice - paths, codes, counts, filter values, and every stencilled label. The build ships this assignment without exception, and it is what makes a path look like a fact rather than a sentence.
+Light and dark are both first-class. Each follows the visitor's device and there is no switch. Every colour is a token with a value for each theme, so a new screen that uses only tokens is correct in both without extra work.
+
+The admin pages run on the same tokens and the same parts (cards, the manila field, toggles, buttons), laid out denser: a list rail beside the record, rows split by hairlines.
 
 **Key Characteristics:**
-- Flat printed surfaces: zero gradients (except hazard stripes), zero shadows, zero radii
-- Signal cyan owns whole regions - a bar, a tab, a plate - never a hairline highlight
-- Structure is 1px/2px stencilled rules and full-bleed banding, never bordered cards
-- Two typefaces, hard-assigned to human vs machine content
-- Every signal carries colour, shape, and text together
-- One authored motion moment; nothing else animates
+- One manila tab colour for every fill you act on, always with dark brown text on it
+- Calm ground, surface cards with hairline borders, gaps between cards
+- Bricolage Grotesque for words, Spline Sans Mono for paths, type tags and keys
+- Soft corners at 10px and 6px; flat fills with no gradients
+- Light and dark from the device, every colour a token with both values
+- One motion: cards rise and fade in once
 
 ## Colors
 
-A painted-steel dark ground with bone label stock, one high-vis signal, and three zone codes that behave like painted floor markings.
+A cool grey or navy ground, one warm manila signal, and three small platform markers. Each token below has a light value and a dark value in the frontmatter (the dark one carries the `-dark` suffix there; in the stylesheet it is the same custom property redefined under the dark colour scheme).
 
 ### Primary
-- **Signal Cyan** (`hivis`): The high-vis field. It commits at page scale - the whole scanner bar, the current zone tab, a confirmed plate, a primary button, the hazard stripe. Type on it is always near-black `ink` or the deep teal `hivis-ink` for stencilled labels. **This value is a user pin.** The direction was approved with safety yellow and the user replaced it mid-build with cyan, with the layout explicitly unchanged. Do not "restore" the yellow.
-- **Deep Cyan** (`hivis-deep`): Underline and rule colour for links on the bone privacy sheet, where full-strength cyan would be too light on light stock.
-- **Cyan Ink** (`hivis-ink`): The stencilled-label colour used on top of a cyan field (scanner bar labels, current-tab hints, hover state on pick-list rows). It is the on-cyan equivalent of `bone-dim`, not a second accent.
-
-### Neutral
-- **Painted Steel** (`ink`): The page ground, and the text colour on every cyan or bone field.
-- **Raised Steel** (`ink-raised`): Hover fill on plates and links, section header bands, the consent bar. A one-step tonal lift, the only depth device in the system.
-- **Rule Steel** (`ink-rule`): Every hairline and heavy rule, chip and toggle borders, scrollbar thumb. Structure colour, never text.
-- **Label Stock** (`bone`): Body and heading text on the dark ground, path text, the privacy sheet ground, and the hover fill of the primary cyan button.
-- **Dim Stock** (`bone-dim`): Secondary prose, unselected tabs and toggles, chip text, and the fill of architecture chips.
-- **Faint Stock** (`bone-faint`): The quietest text role - vendor names, path notes, footer seed copy. Raised to `#8a8779` specifically so this role still clears 4.5:1 on `ink`. It is the floor; nothing dimmer exists.
+- **Manila Tab** (`tab`): The folder tab. Every fill the visitor acts on or that marks the current choice: the search field and its tab, the current platform link, pressed toggles, the primary button, the file leaf in a folder tree, the "copied" confirmation, the skip link, text selection.
+- **Tab Highlight** (`tabhi`): Hover fill for the primary button. Nothing else.
+- **Tab Ink** (`tabfg`): The dark brown text that always sits on a tab fill. Also the fill of the Search button inside the field.
+- **Tab Dim** (`tabdim`): The quiet text on a tab fill: the placeholder, hints and clear control inside the search field, counts on a current admin row.
+- **Tab Edge** (`tabedge`): A 1px edge on the search field and its tab. In light the tab fill barely differs from the ground, so the edge is what marks the field; in dark it equals the fill and disappears.
+- **Accent** (`accent`): The colour for coloured text and thin signals on the ground: links, the slashes in the headline, the mark's middle bar, focus rings, the selected-card outline, hover borders, version tags. Dark amber in light, manila in dark.
 
 ### Tertiary
-- **Cobalt** (`zone-win`), **Bone** (`zone-mac`), **Hazard Red** (`zone-lnx`): Platform zone codes. Used as solid blocks and bands only - the vertical band down a plate's left edge and the active zone tab.
+- **Windows Blue** (`zone-win`), **macOS Grey** (`zone-mac`), **Linux Red** (`zone-lnx`): Platform markers. Small filled squares only, each with its own line pattern and sitting beside the platform's name or code.
+
+### Neutral
+- **Ground** (`bg`): The page.
+- **Surface** (`surface`): Cards, lists, panels, menus, the consent bar, copy buttons, the outlined header link.
+- **Line** (`line`): Every hairline border and divider, the folder-tree guide line, scrollbar thumb.
+- **Hover** (`hover`): Hover fill for list rows, menu items and ghost buttons.
+- **Chip** (`chip`): The quiet fill behind a path, a type tag, a platform label, inline code, table headers.
+- **Text** (`fg`): Headings, body text, path text.
+- **Muted** (`muted`): Secondary text: labels, the line under the headline, unselected filters, notes.
+- **Faint** (`faint`): The quietest text: vendor names, "wrong path" links, clear links.
 
 ### Named Rules
-**The Whole Region Rule.** Signal cyan is committed at region scale - a full-width bar, a whole tab, an entire plate - or not used at all. It never appears as a 1px accent line, a dot, a gradient stop, or a glow.
+**The Token Pair Rule.** Every colour is a token with a light value and a dark value. No hex, rgb or named colour is written in a component. If a new colour is needed, add the token with both values first.
 
-**The Flat Print Rule.** Near-black on cyan is printed vinyl, not a light source. No `box-shadow`, no `text-shadow`, no `filter: drop-shadow`, no colour-matched glow, no gradient on any cyan surface. The palette invites neon; the world refuses it.
+**The Tab Fill Rule.** `tab` is for fills only and always carries `tabfg` text (with `tabdim` for the quiet text on the same fill). It is never a text colour on the ground, because manila on pale grey cannot be read. The one inverse is the Search button inside the field: a `tabfg` fill with `tab` text, so the pair is the same.
 
-**The Path Stays Bone Rule.** Colour never touches path text. A path is `bone` at full contrast on the dark ground, or `ink` on the confirmed cyan plate. Never cyan, never a zone colour, never dimmed, never syntax-highlighted.
+**The Accent Text Rule.** Coloured text uses `accent`. In dark, `accent` and `tab` happen to share a value; in light they do not. Keep them as two tokens and never swap one for the other.
 
-**The Zone-Never-Speaks Rule.** `zone-win` and `zone-lnx` are block-and-band colours only and must never carry body text. Zone colour appears as a filled band with a code printed on it in `bone` or `ink`.
+**The Device Theme Rule.** Themes follow the device's colour scheme. There is no theme switch, no stored preference and no theme class to set.
 
-**The Three-Part Signal Rule.** Colour never carries a signal alone. Every platform zone ships a colour, a distinct SVG fill pattern in `ZoneSwatch` (WIN one horizontal bar, MAC two diagonals, LNX two horizontal bars, ALL a cross), and a three-letter text code. The pattern is part of the token, not decoration.
+**The Marker Rule.** Platform colours are small blocks only and never carry text. A platform is always also named in words or by its code, and its marker has its own pattern, so colour is never the only signal.
 
 ## Typography
 
-**Display Font:** Archivo - self-hosted variable, `wght 100-900`, `wdth 62-125%` (with Helvetica Neue, Arial)
-**Body Font:** Archivo, same file
-**Label/Mono Font:** Spline Sans Mono - self-hosted variable, `wght 300-700` (with ui-monospace, SFMono-Regular, Menlo)
+**Display Font:** Bricolage Grotesque - self-hosted variable, weight 200-800 (with Helvetica Neue, Arial)
+**Body Font:** Bricolage Grotesque, same files
+**Label/Mono Font:** Spline Sans Mono - self-hosted variable, weight 300-700 (with ui-monospace, SFMono-Regular, Menlo)
 
-**Character:** Archivo compressed hard and set heavy reads as painted aisle signage; Spline Sans Mono is a clean, tabular machine hand that keeps paths and counts scannable at small sizes over a degraded remote session. `font-synthesis-weight: none` - width and weight come from the variable axes, never from faux bolding.
+**Character:** Bricolage Grotesque is a friendly grotesque with a little irregularity, set bold and tight for headings and plain for everything else. Spline Sans Mono is a clean machine hand that makes a path read as a fact you can paste. Faux bold is off; weight comes from the variable axis.
 
 ### Hierarchy
-- **Display** (900, `wdth 62%`, clamp 2.6rem-10.5rem, line-height 0.86, uppercase): The aisle sign - the page's one shouted line, hard to the left margin. Also the privacy sheet's H1 at `wdth 64%`.
-- **Headline** (900, `wdth 70%`, clamp 1.5rem-2.4rem, uppercase): Empty-state and no-results headings.
-- **Title** (800, `wdth 78%`, clamp 1.05rem-1.3rem, uppercase): App names on a label plate; the header wordmark at 0.8125rem; section headings on the privacy sheet at `wdth 74%`.
-- **Body** (400, clamp 0.95rem-1.1rem, line-height 1.5-1.65): Prose. Capped at 62ch in the aisle sign lede, 68ch on the privacy sheet, 84ch in the footer seed note.
-- **Path** (mono 500, clamp 0.85rem-0.97rem, line-height 1.45): Log paths. `word-break: break-word` plus `overflow-wrap: anywhere` so a long Windows path wraps rather than scrolls, and `user-select: all` so one click grabs the whole path.
-- **Label** (mono 600, 0.6875rem, letter-spacing 0.16em, uppercase, tabular): The stencilled `.tag` - section headings, zone codes, chips, toggles, hints, footer nav. The most-used role in the system.
+- **Display** (700, clamp 2.3rem-4.25rem, line-height 1, tracking -0.03em): The home headline, the site name drawn as a path with accent slashes, lower case. Reading-page titles use the same role at clamp 2.2rem-3.6rem.
+- **Headline** (700, clamp 1.6rem-2.4rem, line-height 1.1, tracking -0.02em): Page titles on results, app and vendor pages, and "nothing found" headings.
+- **Title** (700, 1.15rem, line-height 1.2, tracking -0.01em): The app name on a card. Section headings on reading pages run clamp 1.15rem-1.4rem.
+- **Body** (400, 1rem, line-height 1.5; 1.65 on reading pages): Prose. It wraps with the window.
+- **Label** (500, 0.8125rem, line-height 1.4, tabular figures, sentence case): Section names, counts, qualifiers, footer links, button words. Muted by default.
+- **Path** (mono 500, 0.9rem, line-height 1.45): Log paths. Wraps anywhere rather than scrolling, keeps one path per line when a location lists several, and selects whole on one click.
+- **Code tag** (mono 500, 0.72rem-0.78rem): Installer and architecture tags, keyboard keys, the path preview in suggestions.
 
 ### Named Rules
-**The Two Voices Rule.** Archivo for anything human - headings, prose, app names, button words. Spline Sans Mono for anything machine-true - paths, codes, counts, filter values, entry totals, and every `.tag` stencil label. There is no third face, and no piece of content gets to choose.
+**The Two Faces Rule.** Bricolage Grotesque for words. Spline Sans Mono for what the machine wrote or reads: paths, file names, type tags, keys, inline code. Labels and counts are words, so they stay in Bricolage with tabular figures.
 
-**The Tabular Figures Rule.** Every number the machine produced - entry counts, zone counts, the 046 bay figure - is set in mono with `tabular-nums`, so figures do not shift width when they change.
+**The Sentence Case Rule.** No uppercase transforms and no letter-spaced labels. Labels are plain words in sentence case; only headings carry tracking, and it is negative.
+
+**The Open Measure Rule.** Text blocks are never width-capped in `ch`. Prose wraps with the window or its column; a column is sized by the layout (in rem or grid tracks), not by a character count on the text. The file list under a path sizes its columns to the longest file name; that is a layout track, not a text cap.
 
 ## Layout
 
-One shared page grid, everything hard against it. Horizontal inset is a single `gutter` token (clamp 1rem-3.25rem) applied by the `.rack` wrapper; chrome elements (header, zone banding, hazard stripes, footer) run full-bleed edge to edge and use the gutter only on their first/last cell, so the banding touches the viewport edge.
+The page wrapper gives one horizontal inset, `gutter` (clamp 1rem-3.25rem), shared by header, main and footer. The header is a single slim row (min-height 60px): mark and name on the left, links on the right, wrapping when it runs out of room.
 
-Home splits below the aisle sign into an asymmetric two-column rack: results column `minmax(0,1fr)` plus a fixed 300px pick-list gutter, separated by a single hairline rather than a gap. The results page inverts the emphasis: a 264px sticky filter rail, then the plate column. Both collapse to a single column at 1080px, where the results rail moves *below* the plates (`order: 2`) so results are never buried and the filter summary becomes a sticky disclosure. At 720px the header wraps its nav to a full-width row of equal-width cells, path rows drop from three columns to stacked, and the plate's zone band narrows from 46px to 34px.
+Home is one centred column (max 46rem): headline, one grey line, search field, platform filter, a row of recently added apps, a short note. Results, app and vendor pages use the full width inside the gutter: a title row, filters above, then a stack of cards.
 
-Vertical rhythm is clamped rather than stepped: `bay` (clamp 0.9-1.25rem) for cell padding, `aisle` (clamp 2-3.25rem) for the space between major racks. Cells inside plates are tight - 0.5rem block padding on a path row - because density is the point. There are no gaps between plates; they are separated by a hairline and stack flush like labels on an upright.
+Repeated things are separated by space, not shared rules: cards sit 0.6rem-0.9rem apart, each with its own border. Inside a container (a list of apps, the suggestions) rows are split by hairlines.
 
-**The No Gap Rule.** Repeated elements share a rule, they do not share a gap. Plates, path rows, pick-list rows, rack columns, and header nav cells are all `gap: 0` with a 1px divider. Whitespace between siblings is a defect in this world.
+Reading pages (privacy, terms, docs, guides) are two columns: a sticky head column up to 21rem with the title, and the body beside it. Below 1000px they stack and the head stops sticking.
+
+Below 720px: a path and its copy button stack, keyboard hints hide (also on touch pointers), suggestion rows drop vendor and platform, and the two consent buttons share the row equally. The consent bar is fixed to the bottom and the page reserves room for it.
+
+Admin is a 260px sticky list rail beside the record; below 1080px the record comes first and the list follows.
 
 ## Elevation & Depth
 
-There are no shadows in this system. None. Depth is a single one-step tonal lift: `ink-raised` on top of `ink`, used for hover fills, section header bands, and the consent bar. Everything else is a plane, and separation comes from a 1px (`--rule`) or 2px (`--rule-heavy`) stencilled line in `ink-rule` - 2px marks a structural break (the band under the zone tabs, the top of the results grid, a rack head), 1px marks a division within a rack.
+Flat by default. Depth is one tonal step, `surface` on `bg` with a `line` hairline, and `hover` for rows under the pointer.
 
-Nothing floats. Overlays are docked to an edge and full-bleed: the type-ahead rack is flush under the scanner bar with `border-top: 0` so it reads as the same object continuing; the consent bar is pinned to the bottom inset-inline 0 with a hairline top rule, and the body reserves space for it rather than letting it cover content.
+### Shadow Vocabulary
+- **Float** (`--shadow`: `0 4px 16px rgba(25, 27, 42, 0.12)` in light, `0 8px 22px rgba(0, 0, 0, 0.45)` in dark): Only for layers that sit over other content: the suggestions under the search field, the share menu, the fixed consent bar.
 
 ### Named Rules
-**The No Shadow Rule.** `box-shadow`, `text-shadow`, `drop-shadow`, and `backdrop-filter` do not appear in this system at any elevation, on any state, in any world variant. If something needs to separate, give it a rule or a tonal step.
-
-**The Docked Overlay Rule.** Anything that appears over the page docks to an edge and spans it. No centred modal, no floating popover, no `⌘K` dialog, no toast.
+**The One Shadow Rule.** There is one shadow token and it marks one thing: this layer floats over the page. Cards, buttons and hover states never take a shadow.
 
 ## Shapes
 
-Radius is zero everywhere - plates, buttons, chips, inputs, toggles, the logo mark, the focus ring. Every corner is cut square, because a label plate is die-cut and a rack upright is folded steel.
+Soft corners on two tokens: 10px (`r`) for cards, the search field, platform links, panels and menus; 6px (`r-sm`) for buttons, inputs, toggles, path blocks, tree leaves and the copy confirmation. The smallest tags, keys, inline code and app icons use a literal 4px.
 
-Borders are rules, not outlines: elements more often carry a single `border-left` or `border-bottom` than a full box. Chips and toggles are the exception and carry a full 1px `ink-rule` box; scope chips distinguish themselves with `border-style: dashed` rather than a second colour. Selection and confirmation use `outline` with negative `outline-offset` so the marker sits inside the plate's own footprint and does not shift the grid.
+Borders are full 1px hairlines in `line`. A scope tag (per-user, per-machine) is told apart by a dashed border, not a second colour.
 
-Recurring geometry: the vertical zone band down a plate's left edge with its code set in `writing-mode: vertical-rl` rotated 180°; the single shared vertical rule down the path stack so every path in a plate aligns into one scannable column; the 45° hard-stop hazard stripe (12px cyan / 12px ink, 10px tall) at the very top of the header and the top of the footer.
+Two recurring forms carry the world:
+- **The folder tab.** A small manila tab stands up from the top left of the search field, rounded on its top corners only, and the field squares off the corner beneath it so the two read as one folder. This form belongs to the search field. It is not a general pattern for a small label above content.
+- **The tree line.** Nested folders indent 1.1rem behind a 1.5px `line` guide. File lists under a path use the same guide.
 
-Icons are an authored 24-unit-grid SVG set: stroke width 2, `butt` caps, `miter` joins, `fill: none`, colour inherited. Cut vinyl, not a rounded UI kit. The mark is a bin location plate - bone ground, cyan band across the middle, code bars top and bottom in ink.
+Icons are one authored set on a 24-unit grid: stroke 2, butt caps, no fill, colour inherited. The mark is a spine with three bars, the middle one in `accent`.
 
-**The Square Corner Rule.** Radius is 0. There is no `sm`/`md`/`lg` scale to reach for; adding one breaks the world.
+Focus is a 2px `accent` outline at 2px offset. On a tab fill the outline is `tabfg`, and the search field as a whole takes a 2px `fg` outline when anything inside it has focus.
 
 ## Components
 
 ### Buttons
-- **Shape:** Square (0 radius), no border on the primary.
-- **Primary:** Solid signal cyan ground, near-black text, mono uppercase label, padding 0.65rem 1rem. Used for the single forward action in an empty state and for "Request an app" in the header.
-- **Hover:** Ground swaps cyan → bone (`.btn:hover`), text stays ink. Colour swap only; nothing lifts, scales, or glows.
-- **Ghost:** Transparent ground with a 2px `ink-rule` box, bone text; hover fills `ink-raised` and lightens the border to `bone-dim`.
-- **Consent pair:** Both consent buttons are identical bone plates, `min-width: 132px`, same weight and padding - equal weight by construction, not by wording. Do not make one of them ghost.
+- **Shape:** Gently rounded (6px), no border on the primary.
+- **Primary:** Manila fill, tab-ink text, weight 600, padding 0.6rem 1rem. Hover lightens the fill to `tabhi`. One per empty state or main action.
+- **Ghost:** Transparent with a 1px `line` border and `fg` text; hover fills `hover` and darkens the border to `muted`.
+- **Copy:** A small surface button with a hairline border, a copy icon and the word Copy; hover turns the border `accent`. One per path, to the right of it.
+- **Consent pair:** Two identical outlined buttons (1px `fg` border, min-width 132px, weight 600); hover inverts to `fg` fill with `bg` text. Accept and Decline are equal by construction. Never make one of them the manila button.
 
 ### Chips
-- **Style:** 1px `ink-rule` box, `bone-dim` mono uppercase label, padding 0.14rem 0.4rem. These are installer-type tags (MSI, EXE, DEB, PKG).
-- **Architecture variant:** Inverted - solid `bone-dim` ground, `ink` text, weight 700. Architecture reads louder than installer type because it is the differentiator.
-- **Scope variant:** Same as base with a dashed border (PER-USER, PER-MACHINE).
-- **On a confirmed plate:** Chip borders drop to `rgba(17,19,17,0.32)` and the architecture chip inverts again to ink-on-cyan.
+- **Platform filter:** Four links (All platforms, Windows, macOS, Linux), each with its count, 10px corners and a hairline border. The current one fills manila with tab-ink text at weight 600.
+- **Filter toggles:** Smaller, 6px corners, same idea: muted with a hairline at rest, manila when pressed.
+- **Type tags:** Mono on a `chip` fill, 4px corners, muted text. Architecture tags (x64, arm64) take `fg` at weight 600. Scope tags drop the fill for a dashed hairline.
+- **Card qualifiers:** The platform name on a `chip` fill; variant in a hairline box; version in an `accent` hairline box with `accent` text.
 
 ### Cards / Containers
-There are no cards. The label plate is the container primitive: a two-column grid (46px zone band + body), flat `ink` ground, separated from its neighbours by a `border-bottom` hairline that is removed on the last child. Hover fills `ink-raised`. Keyboard/URL selection draws a 2px cyan outline at `-2px` offset. No radius, no shadow, no margin between plates.
+- **Corner Style:** 10px.
+- **Background:** `surface` on the `bg` ground.
+- **Shadow Strategy:** None. See Elevation.
+- **Border:** 1px `line`. A card reached by keyboard or URL takes a 2px `accent` outline inside its own edge.
+- **Internal Padding:** 1rem block, `card` inline (clamp 0.9rem-1.25rem), 0.8rem between its parts.
+- **Result card:** One per app, per platform, per variant. Top row: icon, app name (links to the app page), platform, variant, version, vendor. Then each location as a muted label, the path in a `chip` block with any note under it in body type, and a copy button. Foot: type tags on the left, a faint "wrong path" link on the right.
+- **Lists and panels:** A list of apps is one surface container with hairline-split rows that fill `hover`. Reading panels on app pages are the same surface card with body text.
 
 ### Inputs / Fields
-The scanner bar is the only text input. It is a full-width solid cyan bar, 66-86px tall, with a transparent borderless mono input in near-black and a near-black caret; the placeholder is `hivis-ink` at full opacity. Focus is `:focus-within` on the bar drawing a 3px bone outline inset `-3px` - the bar itself is the focus target, not the input. The browser's search-cancel and search-decoration pseudo-elements are reset to `none`; the field draws its own clear control, an ink glyph that inverts to cyan-on-ink on hover. Keyboard hints (`/` to scan, `↵` for all results) print as bordered `kbd` keys and hide on coarse pointers and below 860px.
-
-Global focus for everything else is `3px solid` signal cyan at `2px` offset.
+- **Search field:** The one manila field: 58px tall, 10px corners, the "Find an app" tab standing on its top left corner, a borderless input in tab-ink at 1.1rem weight 500, placeholder in `tabdim`, the field's own clear control, and a dark Search button inside on the right. Keyboard hints sit under it as muted text with mono keys.
+- **Focus:** The whole field takes a 2px `fg` outline at 2px offset.
+- **Suggestions:** A surface panel floating 6px under the field with the Float shadow. A status line and "all results" link on top, then the best match as a full result card (borderless, with working copy buttons), then other matches as rows: name, vendor, a mono path preview, platforms. The row under the cursor fills `hover`.
 
 ### Navigation
-The header is a single 58px row: mark plus stacked wordmark in condensed Archivo caps, bay code, then nav cells divided by `border-left` hairlines with no gap. "Request an app" is the one cyan cell. Hover on a plain cell fills `ink-raised`; hover on the cyan cell swaps to bone. Below 720px the nav becomes a full-width second row of equal-flex cells.
+- **Header:** The mark and the site name at weight 700; links in `muted` at 0.9rem that turn `fg` on hover. "Request an app" is the one outlined link (surface fill, hairline, 10px corners; hover border `accent`). A share icon opens a small floating menu.
+- **Footer:** A hairline, then a wrapping row of muted label links and the app count.
 
-Zone banding sits directly beneath as a horizontally scrollable band (scrollbar hidden) with a 2px bottom rule. Each tab carries its swatch, its three-letter code, and its count. The current tab fills with its own zone colour and switches to weight 700; WIN fills cobalt with bone text, MAC and LNX and ALL take ink text.
+### Folder Tree (signature)
+On an app page each platform's paths are merged into one tree. A folder that several paths share prints once in mono; the files and folders that differ hang under it behind the tree line. Each end point is a manila leaf with its label and its own copy button. A run of folders with nothing else in them prints on one line. Lines that are not filesystem paths (a command, a log channel) print whole as ordinary path rows.
 
-### Scan-to-Confirm Plate (signature)
-The signature interaction. Activating a path row's SCAN control inverts the **entire plate** to solid signal cyan for 1.8s: name, paths, notes, labels, and chips all flip to `ink`, internal rules drop to 32% ink, and a stencilled `plate__confirm` reading prints into the plate's own header line ("…on the clipboard") with a check glyph. It returns on its own. The path stays fully legible in black throughout - that legibility is the whole point of the confirmation.
+**The Whole Path Rule.** The tree is presentation only. A path is never expanded, edited or shortened; environment variables stay as written, and every copy button copies the full stored path, however it is drawn.
 
-This is deliberately not a toast, not a row flash, not a button label swap, not a tooltip. State prints as label text in the system's own voice, in place.
+### Copy confirmation
+Copying prints a small manila chip with a check and the words, right beside the button that did it, for 1.8 seconds. It is a live region, so it is announced. If the clipboard is unavailable the path is printed in place to copy by hand. No toast.
 
-**The One Motion Rule.** The system has exactly one authored motion moment: `rack-in` - a `clip-path: inset(0 100% 0 0)` wipe plus a 6px rise over 460ms on `cubic-bezier(0.16, 1, 0.3, 1)`, staggered 42ms per item via `--i`, applied to the plate stack on query change from an already-visible default. The confirm reading reuses the same keyframe at 320ms. Nothing else animates. Colour/background transitions are 120ms linear state swaps, not motion. Adding scattered hover lifts, scale, fade-ins, or scroll reveals breaks the system.
+### Motion
+**The One Motion Rule.** One keyframe: a rise of 6px with a fade from 0.35 to full, 320ms on `cubic-bezier(0.16, 1, 0.3, 1)`. Result cards use it once on load, staggered 30ms per card up to the eighth; the copy confirmation reuses it. The only other movement is a disclosure arrow turning (160ms). Reduced-motion preference turns all of it off.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** write interface copy in plain words - search, add, delete, platform, log locations. The warehouse lives in the visuals (racking, plates, zone colours), never in vocabulary a visitor has to decode.
-- **Do** commit signal cyan (`#22d3ee`) at region scale - a whole bar, tab, plate, or button - with near-black type on it.
-- **Do** print every path in `bone` (or `ink` on the confirmed cyan plate) at full contrast, in Spline Sans Mono.
-- **Do** give every zone all three signals: colour, its `ZoneSwatch` fill pattern, and its three-letter code.
-- **Do** separate repeated elements with a 1px `ink-rule` hairline (2px for a structural break) and `gap: 0`.
-- **Do** set anything machine-true - paths, codes, counts, filter values, `.tag` labels - in Spline Sans Mono with tabular figures, and anything human in Archivo.
-- **Do** keep every text role at or above `bone-faint` (`#8a8779`), which is the 4.5:1 floor on `ink`.
-- **Do** dock overlays to an edge and span it full-bleed, the way the type-ahead rack and consent bar do.
-- **Do** reuse `rack-in` if a new list needs entrance motion, staggered by `--i`.
+- **Do** write interface copy in plain words: search, add, delete, platform, log locations. Class names such as plate, zone, rack, scan and sheet are legacy names in the code only; they never appear in what a visitor reads and they say nothing about how a thing should look.
+- **Do** give every colour as a token with a light and a dark value, and check a new screen in both themes.
+- **Do** use the manila `tab` for fills you act on or that mark the current choice, with `tabfg` text on it.
+- **Do** use `accent` for coloured text, links, focus rings and thin signals.
+- **Do** set paths, file names, type tags and keys in Spline Sans Mono, and everything else in Bricolage Grotesque.
+- **Do** print paths exactly as stored and let them wrap; give each one its own copy button.
+- **Do** let text wrap with the window or its layout column.
+- **Do** separate cards with space and split rows inside a container with a `line` hairline.
+- **Do** keep the consent buttons identical.
 
 ### Don't:
-- **Don't** restore the safety yellow. The cyan is a user pin made mid-build with the layout explicitly unchanged.
-- **Don't** add glow, gradient, `text-shadow`, or `box-shadow` to a cyan surface - or to anything else. The palette invites neon and the world refuses it.
-- **Don't** tint, dim, or syntax-highlight path text, or let a zone colour touch any body text.
-- **Don't** introduce a corner radius. Radius is 0 system-wide.
-- **Don't** float a card, centre a modal, or open a `⌘K` dialog; nothing detaches from the grid.
-- **Don't** add a third typeface, or set a path in Archivo, or set prose in mono.
-- **Don't** add hover lifts, scale transforms, fade-ins, or scroll-triggered reveals. One authored motion moment is the whole grammar.
-- **Don't** announce state with a toast or a temporary button label. State prints in place, as label text, in the system's own voice.
-- **Don't** make the consent decline visually lighter than the accept; they are identical plates by construction.
+- **Don't** use `tab` as a text colour on the ground, or put any text other than `tabfg` or `tabdim` on a tab fill.
+- **Don't** add a theme switch or store a theme choice. The device decides.
+- **Don't** write a raw colour value in a component.
+- **Don't** cap a text block's width in `ch`.
+- **Don't** use uppercase or letter-spaced labels, condensed type, or a third typeface.
+- **Don't** add gradients, or a shadow on anything that does not float over the page.
+- **Don't** colour text with a platform colour, or show a platform by colour alone.
+- **Don't** announce a copy with a toast; say it beside the button.
+- **Don't** reuse the folder tab as a small label above other content. It belongs to the search field.
+- **Don't** add hover lifts, scale effects or scroll reveals. One motion is the whole grammar.
+- **Don't** bring back warehouse words or looks: no stencil caps, hazard stripes, square steel plates or signal cyan.

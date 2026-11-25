@@ -15,8 +15,8 @@ IT and endpoint administrators, application packagers, technical enthusiasts. Th
 
 ## Task and constraints
 
-- Home is single-screen: header + logo, search bar, recent searches, recent additions, platform filter (Windows / macOS / Linux, default All).
-- Type-ahead shows the most likely result live; Enter commits to `/search`, which lists all matches, filterable by platform and by type.
+- Home is single-screen: header, search field, platform filter (Windows / macOS / Linux, default All), recent additions, the visitor's recent searches.
+- Type-ahead answers with the best match's paths in place and links the other matches to their app pages; Enter commits to `/search`, which lists all matches, filterable by platform and by type.
 - Privacy page; cookie consent prompt for usage tracking with a genuine, equally-weighted decline.
 - "Request an app" links to GitHub Issues - repo URL is an unresolved placeholder in one constant.
 - Catalogue entries are labelled **seed data**: real, verifiable paths, no invented entry counts, contributor counts, or usage statistics.
@@ -24,32 +24,23 @@ IT and endpoint administrators, application packagers, technical enthusiasts. Th
 
 ## Direction contract
 
-**THESIS:** A log path is a location code, so this is a warehouse aisle, not a documentation site. It refuses the arrangement this category always ships - centred hero, ⌘K modal, sidebar nav, cards in a grid - and refuses the terminal-green cliché that is its predictable opposite. The page is a wall of racking: overhead bay sign, high-vis label plates, and a scanner field.
+**THESIS:** A log path is a folder location, so the site is a folder you look things up in. One search field does the work and the answer appears under it. It refuses the look-alike of a general search engine (big centred logo over a pill box) and refuses the stencilled warehouse wall it replaces.
 
-**OWN-WORLD:** Near-black ground (#111311) as painted steel; signal cyan (#22D3EE) as the high-vis field - the user pinned this mid-build, replacing the safety yellow the direction was presented with; the layout was explicitly to stay unchanged, owning whole regions rather than accenting; bone label stock (#E8E4DA); cobalt (#2C6FE8) and hazard red (#D8442F) as zone codes only. Flat printed surfaces, zero gradients, zero soft shadows. Structure is stencilled rules and floor-tape banding, never borders on cards. Two voices, strictly assigned: Archivo (variable width, condensed and heavy) for anything human; Spline Sans Mono for anything machine-true - paths, codes, counts, filter values. Every element sits hard against a shared grid with no floating containers.
+**OWN-WORLD:** Calm ground, deep navy (#131520) in dark and pale cool grey (#f6f6fa) in light, both following the visitor's device. One manila tab colour (#f4c95d dark, #ffd978 light) for every fill the visitor acts on, always carrying dark brown text. Bricolage Grotesque for words, Spline Sans Mono for paths, tags and keys. Soft 10px corners, hairline borders, one soft shadow for the floating suggestions. No uppercase labels, no condensed type.
 
-**STORY:** The visitor understands in one glance that this is a location index, not an article. They believe it because the first thing they see is a real path at a size they can read across a room, qualified by OS and installer type. They type, they copy, they go.
+**STORY:** The visitor sees a path-shaped name and a field that looks like a folder tab, types an app name, and reads the path under the field with a copy button beside it. They copy and leave, or open the app page for every platform.
 
-**FIRST VIEWPORT:** Full-bleed floor-tape zone banding across the very top edge carrying the platform tabs (ALL / WIN / MAC / LNX). Beneath it, hard to the left margin, the aisle sign: WHERE THEM LOGS AT in Archivo condensed black at the largest scale the viewport allows, with the bay code WTLA·01 stencilled beside it. Directly under, the scanner field - a full-width safety-yellow bar, black caret, mono placeholder - is the primary action and sits above the fold at all widths. Typing drops the type-ahead as a stack of label plates directly beneath the bar, each plate: OS zone band down its left edge with a text label, app name in condensed caps, path in mono, type tags as thermal-printed chips, and a scan-to-confirm copy control. Recent searches print as a pick list in the right gutter; recent additions stack below as putaway tags.
+**FIRST VIEWPORT:** Slim header: mark and name left, links right. One left-aligned column: the name drawn as a path, where/them/logs/, at display size with the slashes in the accent; one line of grey text under it; the manila search field with a small "Find an app" tab standing up from its top left corner and a dark Search button inside; a one-line keyboard hint (the "/" shortcut and its off switch, which accessibility rules require); the platform filter as four small links with counts; one row of recently added apps; the visitor's own recent searches when there are any; two short grey paragraphs that say what the site is and how to request an app.
 
-**FORM:** The Location Code - warehouse racking labels, aisle signage, and bin location codes. Candidate 4 of my ordered grounded list; assigned by the roll. Seed key e1908f14, kind assigned, build path code-led.
+**FORM:** The Folder - manila folder tabs and a folder tree. seed: none (pinned). The user asked for a wild card ("design something totally new with your own choices"), so the world was the builder's choice with no roll. It was shown as a working HTML mockup and the user then picked it by name ("The wild card"). The mockup was a private published page and is not kept in the repository.
 
-Raises carried in from the weighed hand, each named for its donor:
-- *TDR Info-Noise Sleeve:* density is the material - flat print surfaces, no gradients, content gridded hard to the page edge, no floating cards, and the aisle sign shouting at a scale the web rarely permits.
-- *Phosphor Terminal:* the scanner field is a real command line - `/` focuses, arrows walk the type-ahead, Enter commits, Shift+Enter on the highlighted plate copies (plain Enter already owns commit-to-results). State prints as label text in the system's own voice, never as toast chrome.
-- *Mesophotic Deep Dive:* two voices only, with one shared vertical rule so every path stacks into a single scannable column.
-- *Cyclorama Dawn:* every platform and type band carries a text label and its own shape; colour is never the sole signal.
-- *HyperCard Shoebox:* reading and contributing are the same object - each plate carries its own "wrong path / add a variant" affordance in the plate's grammar.
-- *Seedbed Lobes:* colour commits at page scale, but never touches the path text, which stays maximum-contrast ink.
-
-**Signature interaction:** scan-to-confirm copy - the plate's copy control inverts the plate to a solid signal-cyan CONFIRMED state with the path still legible in black, then returns. **Motion grammar:** one authored moment, the plate stack racking in on query change (exponential ease-out, staggered, from an already-visible default), and nothing else animates.
+**Signature interaction:** on an app page each platform's paths are merged into one folder tree: the folders they share print once and each file hangs under them as a manila leaf with its own copy button, which still copies the whole stored path. **Motion grammar:** result cards rise and fade in once on load, briefly staggered; nothing else animates.
 
 **FINISH:** unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
 
 ## Unresolved
 
 - GitHub owner/repo for the request link (single placeholder constant).
-- Analytics vendor behind the usage-tracking cookie - the consent prompt and privacy page must not name one until decided.
 - Whether entries carry contributor attribution or verification dates.
 
-**COPY (2026-09-11):** Interface text is plain, at the user's request - Catalogue, Add, Delete, Platform filter, Search for an app, log locations tracked. Warehouse terms survive only in class names and the visuals.
+**COPY (2026-09-11):** Interface text is plain, at the user's request - Catalogue, Add, Delete, Platform filter, Search for an app, log locations tracked. Older warehouse terms survive only in class names.

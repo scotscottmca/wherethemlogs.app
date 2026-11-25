@@ -308,7 +308,7 @@ export function RequestForm({
           and it closes when the catalogue is updated.
         </p>
         <p>
-          <a href={sent.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--hivis)" }}>
+          <a href={sent.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
             Open issue #{sent.number}
           </a>
         </p>

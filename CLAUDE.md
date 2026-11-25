@@ -13,11 +13,12 @@ npm run build        # what CI runs, after typecheck (CI also builds and boots t
 npx next start -p 3777
 node scripts/check-interchange.mjs [base-url] [file.json]   # export, re-import, assert zero writes; optionally preview a file
 node scripts/check-request-issue.mjs                         # request-form issues parse as the import-file bot expects
+node scripts/check-tree.mjs [file.json]                      # every path survives the app page's folder tree unchanged
 npm run seed -- --endpoint https://<account>.documents.azure.com:443/
 node scripts/unseed.mjs --endpoint <same> [--yes]           # removes only records whose ids are in scripts/seed-data.json
 ```
 
-There is no lint script and no test framework. `scripts/check-interchange.mjs` and `scripts/check-request-issue.mjs` are the runnable checks; CI runs the second, plus `.github/scripts/issue-to-import.cjs`'s self-check.
+There is no lint script and no test framework. `scripts/check-interchange.mjs`, `scripts/check-request-issue.mjs` and `scripts/check-tree.mjs` are the runnable checks; CI runs the second, plus `.github/scripts/issue-to-import.cjs`'s self-check.
 
 - **Client components do not hydrate under `next dev`.** The CSP in `next.config.mjs` has no `'unsafe-eval'`, and dev mode needs it. To test type-ahead, the admin editors or the import screen, run `npm run build` and then `npx next start`.
 - **There is no local database.** The app talks to Cosmos DB with `DefaultAzureCredential`: key auth is disabled on the account, so run `az login` with an identity that holds the Cosmos data-plane role, and set `COSMOS_ENDPOINT`.
@@ -60,9 +61,12 @@ One Next.js 16 App Router app (`output: "standalone"`) runs as a single Azure Co
 
 ## Design
 
-`DESIGN.md`, `PRODUCT.md` and `.impeccable/surfaces/*` define the visual world: warehouse racking labels, signal cyan `#22D3EE`, Archivo for human text and Spline Sans Mono for machine text (paths, codes, counts), flat surfaces with no gradients. Styles are plain CSS in `app/globals.css` and `app/components.css`.
+`DESIGN.md`, `PRODUCT.md` and `.impeccable/surfaces/*` define the visual world: a folder you look things up in. One manila tab colour (`--tab`) for every fill you act on, always with `--tabfg` text; calm navy ground in dark and pale grey in light, following the visitor's device (`prefers-color-scheme`, no switch); Bricolage Grotesque for words and Spline Sans Mono for machine text (paths, installer tags, keys). Styles are plain CSS in `app/globals.css` (tokens, both themes) and `app/components.css`. The admin portal shares the same tokens and components.
 
-Class and component names (`plate`, `zone`, `rack`, `bay`, `aisle`) are visual vocabulary only. **Interface copy must use plain words** - search, add, delete, platform, log locations.
+- Every colour is a token with a light and a dark value. Never hardcode a colour in a component, and use `--accent` (not `--tab`) for coloured text, because the tab colour is unreadable as text on the light ground.
+- An app page draws each card's paths as a folder tree (`lib/tree.ts`, `PathTree` in `components/Plate.tsx`). The tree is presentation only: `node scripts/check-tree.mjs` asserts every path comes back out of it unchanged.
+
+Class and component names (`plate`, `zone`, `rack`, `scan`, `sheet`) are left over from the previous design and are names only. **Interface copy must use plain words** - search, add, delete, platform, log locations.
 
 ## Conventions
 

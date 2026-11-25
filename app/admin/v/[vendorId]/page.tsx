@@ -48,8 +48,8 @@ export default async function VendorPage({ params }: Ctx) {
           back={{ label: "Catalogue", href: "/admin" }}
           facts={
             <>
-              {vendor.slug} · {String(apps.length).padStart(2, "0")} app
-              {apps.length === 1 ? "" : "s"} · {String(logPaths).padStart(3, "0")} log path
+              {vendor.slug} · {apps.length} app
+              {apps.length === 1 ? "" : "s"} · {logPaths} log path
               {logPaths === 1 ? "" : "s"}
             </>
           }
@@ -61,7 +61,7 @@ export default async function VendorPage({ params }: Ctx) {
           <section className="admRecord" aria-label="Apps from this vendor">
             <div className="rackHead admRecord__head">
               <h2 className="tag mono">
-                Apps · {String(apps.length).padStart(2, "0")}
+                Apps · {apps.length}
               </h2>
               <span className="tag mono admRecord__hint">
                 An app with no log path never appears in a result
@@ -85,7 +85,7 @@ export default async function VendorPage({ params }: Ctx) {
                       </span>
                       <ZoneTags platforms={platforms} />
                       <span className="tag mono admStock__count">
-                        {String(app.logPaths.length).padStart(2, "0")} paths
+                        {app.logPaths.length} paths
                       </span>
                     </Link>
                   );

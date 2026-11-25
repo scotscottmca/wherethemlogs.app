@@ -17,7 +17,7 @@ import { joinFile } from "@/lib/model";
 export function FileManifest({ path, files, open = false }: { path: string; files: string[]; open?: boolean }) {
   return (
     <details className="prow__files" open={open || undefined}>
-      <summary className="tag mono">
+      <summary className="tag">
         <IconDisclose size={11} />
         {files.length} {files.length === 1 ? "file" : "files"} in this folder
       </summary>
@@ -52,7 +52,7 @@ function FileName({ name, full }: { name: string; full: string }) {
         </span>
         <span className="manifest__status" role="status">
           {state === "done" && (
-            <span className="plate__confirm mono">
+            <span className="plate__confirm">
               <IconCheck size={11} />
               Copied
             </span>

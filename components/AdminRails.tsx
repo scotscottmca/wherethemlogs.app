@@ -17,14 +17,14 @@ export function VendorRail({
 }) {
   return (
     <>
-      <RailHead legend="Apps · paths">Vendors · {String(vendors.length).padStart(2, "0")}</RailHead>
+      <RailHead legend="Apps · paths">Vendors · {vendors.length}</RailHead>
       {vendors.map((vendor) => (
         <RailRow
           key={vendor.id}
           href={`/admin/v/${vendor.id}`}
           name={vendor.name}
           current={vendor.id === currentId}
-          meta={`${String(vendor.appCount).padStart(2, "0")} · ${String(vendor.logPathCount).padStart(2, "0")}`}
+          meta={`${vendor.appCount} · ${vendor.logPathCount}`}
         />
       ))}
     </>
@@ -45,7 +45,7 @@ export function AppRail({
   return (
     <>
       <RailHead legend="Log paths">
-        {vendorName} · {String(apps.length).padStart(2, "0")}
+        {vendorName} · {apps.length}
       </RailHead>
       <Link href="/admin" className="admRail__row admRail__row--up">
         <span className="tag mono">All vendors</span>
@@ -56,7 +56,7 @@ export function AppRail({
           href={`/admin/v/${vendorId}/a/${app.id}`}
           name={app.name}
           current={app.id === currentId}
-          meta={`${String(app.logPaths.length).padStart(2, "0")} paths`}
+          meta={`${app.logPaths.length} paths`}
         />
       ))}
     </>

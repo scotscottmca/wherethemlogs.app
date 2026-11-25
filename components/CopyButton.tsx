@@ -46,20 +46,20 @@ export function CopyButton({ path, label }: { path: string; label: string }) {
     <span className="prow__copyWrap">
       <span className="prow__copyStatus" role="status">
         {state === "done" && (
-          <span className="plate__confirm mono">
+          <span className="plate__confirm">
             <IconCheck size={14} />
             Copied
           </span>
         )}
         {state === "failed" && (
           <span className="prow__note prow__note--copy">
-            Clipboard unavailable. Select the path and copy it by hand.
+            Clipboard unavailable. Copy it by hand: <code>{path}</code>
           </span>
         )}
       </span>
       <button
         type="button"
-        className="prow__copy tag mono"
+        className="prow__copy tag"
         onClick={copy}
         aria-label={`Copy the ${label} path`}
       >

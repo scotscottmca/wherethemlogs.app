@@ -1,27 +1,26 @@
 /* ==========================================================================
-   Where Them Logs App - The Location Code
-   Warehouse racking labels, aisle signage, bin location codes.
-   Flat printed surfaces. No gradients. No floating cards. Density is the material.
+   Where Them Logs App - The Folder
+   A log path is a folder location. One manila tab colour for anything you
+   act on, calm ground behind it, paths in mono. Light and dark both follow
+   the visitor's device.
    ========================================================================== */
 
 @font-face {
-  font-family: "Archivo";
+  font-family: "Bricolage Grotesque";
   font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-weight: 200 800;
   font-display: swap;
-  src: url("/fonts/archivo-latin.woff2") format("woff2");
+  src: url("/fonts/bricolage-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Archivo";
+  font-family: "Bricolage Grotesque";
   font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-weight: 200 800;
   font-display: swap;
-  src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
+  src: url("/fonts/bricolage-latin-ext.woff2") format("woff2");
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
     U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
@@ -48,34 +47,70 @@
 }
 
 :root {
-  /* Painted steel */
-  --ink: #111311;
-  --ink-raised: #1b1e1b;
-  --ink-rule: #2e322d;
+  /* Ground */
+  --bg: #f6f6fa;
+  --surface: #ffffff;
+  --line: #d9dae6;
+  --hover: #eeeef6;
+  --chip: #ecedf4;
 
-  /* Signal field - industrial labelling cyan, flat printed, never glowing */
-  --hivis: #22d3ee;
-  --hivis-deep: #0e7c90;
-  /* Label ink for anything set on the signal field. */
-  --hivis-ink: #0a4a55;
+  /* Text */
+  --fg: #191b2a;
+  --muted: #5b5e75;
+  --faint: #63667c;
+  /* Links and small signals. Dark enough to read as text on the ground. */
+  --accent: #7a4f00;
 
-  /* Label stock */
-  --bone: #e8e4da;
-  --bone-dim: #a8a496;
-  --bone-faint: #8a8779;
+  /* The folder tab: every fill you act on. Text on it is always --tabfg. */
+  --tab: #ffd978;
+  --tabhi: #ffe6a3;
+  --tabfg: #2a2000;
+  --tabdim: #5c4a12;
+  /* The tab fill barely differs from the light ground, so fields get an edge. */
+  --tabedge: #a67c00;
 
-  /* Zone codes - blocks and bands only, never body text */
+  /* Platform markers - small blocks only, never text. */
   --zone-win: #2952cc;
-  --zone-mac: #e8e4da;
-  --zone-lnx: #e4533b;
+  --zone-mac: #5b5e75;
+  --zone-lnx: #c8442e;
 
+  --shadow: 0 4px 16px rgba(25, 27, 42, 0.12);
+  --r: 10px;
+  --r-sm: 6px;
   --gutter: clamp(1rem, 3.2vw, 3.25rem);
   --rule: 1px;
   --rule-heavy: 2px;
 
   --ease-rack: cubic-bezier(0.16, 1, 0.3, 1);
 
-  color-scheme: dark;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131520;
+    --surface: #1b1e2e;
+    --line: #2e3247;
+    --hover: #232740;
+    --chip: #24283b;
+
+    --fg: #ecebf3;
+    --muted: #a3a5bb;
+    --faint: #9092a9;
+    --accent: #f4c95d;
+
+    --tab: #f4c95d;
+    --tabhi: #ffdd85;
+    --tabfg: #231a00;
+    --tabdim: #5c4a12;
+    --tabedge: #f4c95d;
+
+    --zone-mac: #a3a5bb;
+    --zone-lnx: #e4533b;
+    --zone-win: #5b7fe8;
+
+    --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  }
 }
 
 *,
@@ -90,9 +125,9 @@ html {
 
 body {
   margin: 0;
-  background: var(--ink);
-  color: var(--bone);
-  font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -102,12 +137,12 @@ body {
 /* --- Browser surfaces: these belong to the design system too ------------- */
 
 ::selection {
-  background: var(--hivis);
-  color: var(--ink);
+  background: var(--tab);
+  color: var(--tabfg);
 }
 
 * {
-  scrollbar-color: var(--ink-rule) var(--ink);
+  scrollbar-color: var(--line) var(--bg);
   scrollbar-width: thin;
 }
 ::-webkit-scrollbar {
@@ -115,18 +150,18 @@ body {
   height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--ink);
-  border-left: var(--rule) solid var(--ink-rule);
+  background: var(--bg);
+  border-left: var(--rule) solid var(--line);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--ink-rule);
+  background: var(--line);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bone-faint);
+  background: var(--faint);
 }
 
 :focus-visible {
-  outline: 3px solid var(--hivis);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -138,9 +173,11 @@ a {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
+  border-radius: var(--r-sm);
 }
 
 /* The field draws its own clear control; the browser's belongs to no design system. */
@@ -157,22 +194,21 @@ input[type="search"]::-webkit-search-decoration {
   font-variant-numeric: tabular-nums;
 }
 
-/* Stencilled section label - the printed tag above a rack section. */
+/* Small label: section names, counts, qualifiers. Plain words, sentence case. */
 .tag {
-  font-family: "Spline Sans Mono", ui-monospace, monospace;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--bone-dim);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+.tag.mono {
+  font-family: inherit;
+}
 
-/* The page's bottom edge, and the top edge of anything docked over it. Two
-   pixels of signal, on the rule weight the rest of the system already uses. */
 .edge {
-  height: var(--rule-heavy);
-  background: var(--hivis);
+  height: var(--rule);
+  background: var(--line);
 }
 
 /* Present to assistive tech and search engines, invisible on screen. Used to
@@ -204,18 +240,18 @@ input[type="search"]::-webkit-search-decoration {
 
 @keyframes rack-in {
   from {
-    clip-path: inset(0 100% 0 0);
+    opacity: 0.35;
     transform: translateY(6px);
   }
   to {
-    clip-path: inset(0 0 0 0);
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 .rack-in {
-  animation: rack-in 460ms var(--ease-rack) both;
-  animation-delay: calc(var(--i, 0) * 42ms);
+  animation: rack-in 320ms var(--ease-rack) both;
+  animation-delay: calc(min(var(--i, 0), 8) * 30ms);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -116,7 +116,7 @@ export default function Terms() {
           </p>
 
           <p style={{ marginTop: "2.5rem" }}>
-            <Link href="/">← Back to the index</Link>
+            <Link href="/">Back to the home page</Link>
           </p>
           </div>
         </div>

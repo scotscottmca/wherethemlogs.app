@@ -17,7 +17,7 @@ export default async function AppleIcon() {
           height: "100%",
           display: "flex",
           position: "relative",
-          backgroundColor: "#111311",
+          backgroundColor: "#131520",
         }}
       >
         <div
@@ -27,7 +27,7 @@ export default async function AppleIcon() {
             top: "9.375%",
             width: "18.75%",
             height: "81.25%",
-            backgroundColor: "#E8E4DA",
+            backgroundColor: "#ecebf3",
           }}
         />
         <div
@@ -37,7 +37,7 @@ export default async function AppleIcon() {
             top: "15.625%",
             width: "43.75%",
             height: "18.75%",
-            backgroundColor: "#A8A496",
+            backgroundColor: "#a3a5bb",
           }}
         />
         <div
@@ -47,7 +47,7 @@ export default async function AppleIcon() {
             top: "40.625%",
             width: "62.5%",
             height: "21.875%",
-            backgroundColor: "#22D3EE",
+            backgroundColor: "#f4c95d",
           }}
         />
         <div
@@ -57,7 +57,7 @@ export default async function AppleIcon() {
             top: "68.75%",
             width: "43.75%",
             height: "18.75%",
-            backgroundColor: "#A8A496",
+            backgroundColor: "#a3a5bb",
           }}
         />
       </div>

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   description:
     "A searchable index of application log file locations across Windows, macOS and Linux, qualified by installer type and architecture.",
-  // The image itself is app/opengraph-image.png, which Next wires in.
+  // The image itself is drawn by app/opengraph-image.tsx, which Next wires in.
   openGraph: {
     type: "website",
     siteName: "Where Them Logs App",
@@ -28,8 +28,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111311",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f6fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#131520" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

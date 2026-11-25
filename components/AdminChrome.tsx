@@ -149,7 +149,7 @@ export function ZoneTags({ platforms }: { platforms: Platform[] }) {
       {PLATFORM_META.filter((m) => platforms.includes(m.id)).map((m) => (
         <span key={m.id} className="zonetag tag mono">
           <ZoneSwatch zone={m.id} size={9} />
-          {m.code}
+          {m.name}
         </span>
       ))}
     </span>

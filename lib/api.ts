@@ -173,6 +173,8 @@ export interface PlatformSummary {
   name: string;
   /** Self-contained and quotable on its own: "X logs to Y on Windows." */
   answer: string;
+  /** The path inside `answer`, so the page can set it in mono. */
+  path: string;
   /** What qualifies that answer: the other paths, the installs it applies to. */
   detail: string;
 }
@@ -216,6 +218,7 @@ export function platformSummaries(app: ResolvedApp): PlatformSummary[] {
       platform: id,
       name,
       answer: `${app.name} logs to ${first} on ${name}.`,
+      path: first,
       detail: detail.join(" "),
     });
   }

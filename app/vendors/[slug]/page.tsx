@@ -160,7 +160,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
                   href={vendor.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: "var(--hivis)" }}
+                  style={{ color: "var(--accent)" }}
                 >
                   Vendor website
                 <span className="visually-hidden"> (opens in a new tab)</span></a>
@@ -179,7 +179,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
                   {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (
                     <span key={m.id} className="zonetag tag mono">
                       <ZoneSwatch zone={m.id} size={9} />
-                      {m.code}
+                      {m.name}
                     </span>
                   ))}
                 </span>

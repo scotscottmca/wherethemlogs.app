@@ -55,7 +55,7 @@ export default async function AppPage({ params }: Ctx) {
           back={{ label: vendor.name, href: `/admin/v/${vendor.id}` }}
           facts={
             <>
-              {app.slug} · {String(app.logPaths.length).padStart(2, "0")} log path
+              {app.slug} · {app.logPaths.length} log path
               {app.logPaths.length === 1 ? "" : "s"} · updated{" "}
               {app.updatedAt ? app.updatedAt.slice(0, 10) : "-"}
             </>

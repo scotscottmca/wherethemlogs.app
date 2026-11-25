@@ -1,10 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
+import { Header, Footer, ZoneTabs } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { RecentSearches } from "@/components/RecentSearches";
 import { Consent } from "@/components/Consent";
-import { IconArrow } from "@/components/Icons";
 import { PLATFORM_META, type Platform } from "@/lib/api";
 import { summary } from "@/lib/server/catalog";
 import { requestAppUrl } from "@/lib/site";
@@ -72,97 +71,68 @@ export default async function Home({
         dangerouslySetInnerHTML={{ __html: websiteJsonLd }}
       />
       <Header />
-      <ZoneTabs
-        active={platform}
-        counts={counts}
-        hrefFor={(p) => (p === "all" ? "/" : `/?platform=${p}`)}
-      />
 
       <main id="main" tabIndex={-1} className="rack">
-        <div className="sign">
+        <div className="home">
           <h1 className="sign__h">
-            Where them logs at
+            {/* The name drawn as a path. The words themselves follow, hidden,
+                for screen readers and search engines. */}
+            <span aria-hidden="true">
+              where<i>/</i>them<i>/</i>logs<i>/</i>
+            </span>
+            <span className="visually-hidden">Where them logs at</span>
             <span className="sign__hSub">
               Log file locations for Windows, macOS and Linux
+              {data ? ` · ${data.apps} apps tracked` : ""}
             </span>
           </h1>
-          <div className="sign__row">
-            <p className="sign__sub">
-              The log file location for any application, on Windows, macOS or Linux - every
-              path qualified by installer type and architecture, printed exactly as the
-              machine writes it.
+
+          <Scanner platform={platform} />
+
+          <ZoneTabs
+            active={platform}
+            counts={counts}
+            hrefFor={(p) => (p === "all" ? "/" : `/?platform=${p}`)}
+          />
+
+          {!data ? (
+            <p className="rackNote" style={{ margin: 0 }}>
+              The catalogue is not answering. The index is still there - reload in a moment, or
+              search anyway and it will retry.
             </p>
-            <p className="sign__count">
-              <span className="sign__countNum">
-                {data ? String(data.apps).padStart(3, "0") : "---"}
-              </span>
-              <span className="tag mono">apps tracked</span>
+          ) : recent.length ? (
+            <p className="added">
+              <span>Recently added:</span>
+              {recent.slice(0, 4).map((app) => (
+                <Link key={app.id} href={`/apps/${app.slug}`}>
+                  {app.name}
+                </Link>
+              ))}
+              <Link href={platform === "all" ? "/search" : `/search?platform=${platform}`}>
+                Browse every app
+              </Link>
+            </p>
+          ) : (
+            <p className="rackNote" style={{ margin: 0 }}>
+              Nothing added for this platform yet. Switch the platform filter above, or request
+              the application you were looking for.
+            </p>
+          )}
+
+          <RecentSearches platform={platform} />
+
+          <div className="rackNote">
+            <p style={{ margin: 0 }}>
+              The log file location for any application, on Windows, macOS or Linux - every path
+              qualified by installer type and architecture, printed exactly as the machine writes
+              it.
+            </p>
+            <p style={{ margin: 0 }}>
+              Missing something? Fill in the request form and it becomes a public GitHub issue -
+              no GitHub account needed. <a href={requestAppUrl()}>Open a request.</a>
             </p>
           </div>
         </div>
-
-        <Scanner platform={platform} />
-
-        <div className="racks">
-          <section className="rackCol" aria-labelledby="added-h">
-            <div className="rackHead">
-              <h2 className="tag mono" id="added-h" style={{ margin: 0 }}>
-                Recent additions
-              </h2>
-              <Link
-                href={platform === "all" ? "/search" : `/search?platform=${platform}`}
-                className="ahead__all tag mono"
-              >
-                Browse the whole index
-                <IconArrow size={14} />
-              </Link>
-            </div>
-
-            {!data ? (
-              <div className="rackNote">
-                <p style={{ margin: 0 }}>
-                  The catalogue is not answering. The index is still there - reload in a
-                  moment, or search anyway and it will retry.
-                </p>
-              </div>
-            ) : recent.length ? (
-              <ul className="picks">
-                {recent.map((app) => (
-                  <li key={app.id} className="pick">
-                    <Link className="pick__link" href={`/apps/${app.slug}`}>
-                      <span className="pick__app">{app.name}</span>
-                      <span className="pick__zones">
-                        {PLATFORM_META.filter((m) => app.platforms.includes(m.id)).map((m) => (
-                          <span key={m.id} className="zonetag tag mono">
-                            <ZoneSwatch zone={m.id} size={9} />
-                            {m.code}
-                          </span>
-                        ))}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="rackNote">
-                <p style={{ margin: 0 }}>
-                  Nothing added for this platform yet. Switch the platform filter above, or request
-                  the application you were looking for.
-                </p>
-              </div>
-            )}
-          </section>
-
-          <RecentSearches platform={platform} />
-        </div>
-
-        <p className="rackNote" style={{ paddingInline: 0 }}>
-          Missing something? Fill in the request form and it becomes a public GitHub
-          issue - no GitHub account needed.{" "}
-          <a href={requestAppUrl()} style={{ color: "var(--hivis)" }}>
-            Open a request.
-          </a>
-        </p>
       </main>
 
       <Footer entryCount={data?.apps ?? null} />
