@@ -16,7 +16,7 @@ IT and endpoint administrators, application packagers, technical enthusiasts. Th
 ## Task and constraints
 
 - Home is single-screen: header, search field, platform filter (Windows / macOS / Linux, default All), recent additions, the visitor's recent searches.
-- Type-ahead answers with the best match's paths in place and links the other matches to their app pages; Enter commits to `/search`, which lists all matches, filterable by platform and by type.
+- Type-ahead lists the matches as rows, each showing its first path and linking to its app page; Enter commits to `/search`, which lists all matches, filterable by platform and by type.
 - Privacy page; cookie consent prompt for usage tracking with a genuine, equally-weighted decline.
 - "Request an app" links to GitHub Issues - repo URL is an unresolved placeholder in one constant.
 - Catalogue entries are labelled **seed data**: real, verifiable paths, no invented entry counts, contributor counts, or usage statistics.

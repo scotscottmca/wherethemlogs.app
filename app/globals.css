@@ -123,7 +123,12 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* The page is a column at least one screen tall, and the main area takes the
+   slack, so the footer sits at the bottom of the window on a short page. */
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   margin: 0;
   background: var(--bg);
   color: var(--fg);
@@ -236,6 +241,10 @@ input[type="search"]::-webkit-search-decoration {
   padding-inline: var(--gutter);
 }
 
+#main {
+  flex: 1 0 auto;
+}
+
 /* --- Motion: one authored moment ---------------------------------------- */
 
 @keyframes rack-in {
@@ -268,6 +277,7 @@ input[type="search"]::-webkit-search-decoration {
 
 @media print {
   body {
+    display: block;
     background: #fff;
     color: #000;
   }

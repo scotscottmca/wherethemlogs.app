@@ -266,7 +266,7 @@ A cool grey or navy ground, one warm manila signal, and three small platform mar
 
 The page wrapper gives one horizontal inset, `gutter` (clamp 1rem-3.25rem), shared by header, main and footer. The header is a single slim row (min-height 60px): mark and name on the left, links on the right, wrapping when it runs out of room.
 
-Home is one centred column (max 46rem): headline, one grey line, search field, platform filter, a row of recently added apps, a short note. Results, app and vendor pages use the full width inside the gutter: a title row, filters above, then a stack of cards.
+Home is one centred column (max 52rem): headline, one grey line, search field, platform filter, a row of recently added apps, a short note. Results, app and vendor pages use the full width inside the gutter: a title row, filters above, then a stack of cards.
 
 Repeated things are separated by space, not shared rules: cards sit 0.6rem-0.9rem apart, each with its own border. Inside a container (a list of apps, the suggestions) rows are split by hairlines.
 
@@ -327,7 +327,7 @@ Focus is a 2px `accent` outline at 2px offset. On a tab fill the outline is `tab
 ### Inputs / Fields
 - **Search field:** The one manila field: 58px tall, 10px corners, the "Find an app" tab standing on its top left corner, a borderless input in tab-ink at 1.1rem weight 500, placeholder in `tabdim`, the field's own clear control, and a dark Search button inside on the right. Keyboard hints sit under it as muted text with mono keys.
 - **Focus:** The whole field takes a 2px `fg` outline at 2px offset.
-- **Suggestions:** A surface panel floating 6px under the field with the Float shadow. A status line and "all results" link on top, then the best match as a full result card (borderless, with working copy buttons), then other matches as rows: name, vendor, a mono path preview, platforms. The row under the cursor fills `hover`.
+- **Suggestions:** A surface panel floating 6px under the field with the Float shadow. A status line and "all results" link on top, then every match as a row: name, vendor, a mono path preview, platforms. The row under the cursor fills `hover`.
 
 ### Navigation
 - **Header:** The mark and the site name at weight 700; links in `muted` at 0.9rem that turn `fg` on hover. "Request an app" is the one outlined link (surface fill, hairline, 10px corners; hover border `accent`). A share icon opens a small floating menu.
