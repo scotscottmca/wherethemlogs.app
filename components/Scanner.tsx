@@ -4,7 +4,6 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconClose, IconArrow } from "./Icons";
-import { Plate } from "./Plate";
 import { pushRecent } from "@/lib/recent";
 import { pathLines } from "@/lib/model";
 import { SLASH_KEY, requestAppUrl } from "@/lib/site";
@@ -21,8 +20,7 @@ type State = "idle" | "loading" | "ready" | "error";
 
 /**
  * The search field. "/" focuses it and typing lists the matching apps under
- * it. The best match answers in place, as its card with its copy buttons; the
- * rest are links to their app pages. Arrow keys walk the list, Enter opens the
+ * it, each a link to its app page showing its first path. Arrow keys walk the list, Enter opens the
  * highlighted app, or every result when nothing is highlighted, and
  * Shift+Enter drops the best match's first path straight onto the clipboard.
  */
@@ -121,7 +119,7 @@ export function Scanner({
     };
   }, [q, platform]);
 
-  // The best match's card: its first platform, or the one being filtered to.
+  // The best match, on its first platform or the one being filtered to: Shift+Enter copies its path.
   const top: PlateData | undefined = apps.length
     ? toPlates([apps[0]]).find((p) => platform === "all" || p.platform === platform)
     : undefined;
@@ -175,9 +173,6 @@ export function Scanner({
 
   const term = q.trim();
   const showList = open && term.length > 0;
-  // With a card answering for the best match, the rows start at the second.
-  const rows = top ? apps.slice(1) : apps;
-  const rowOffset = top ? 1 : 0;
 
   return (
     <section className="scan" aria-label="Search the catalogue">
@@ -277,21 +272,15 @@ export function Scanner({
               </div>
             )}
 
-            {top && (
-              <div className="ahead__top">
-                <Plate plate={top} selected={cursor === 0} />
-              </div>
-            )}
-
-            {rows.length > 0 && (
+            {apps.length > 0 && (
               <ul className="ahead__list">
-                {rows.map((app, i) => {
+                {apps.map((app, i) => {
                   const first = app.logPaths.find((p) => platform === "all" || p.platform === platform);
                   return (
                     <li key={app.id}>
                       <Link
                         href={`/apps/${app.slug}`}
-                        className={`ahead__row${cursor === i + rowOffset ? " ahead__row--sel" : ""}`}
+                        className={`ahead__row${cursor === i ? " ahead__row--sel" : ""}`}
                       >
                         <span className="ahead__name">
                           <span>
@@ -316,16 +305,17 @@ export function Scanner({
 
       <p className="scan__hint" id={`${listId}-hint`}>
         {slash && (
-          <>
-            <kbd className="scan__key">/</kbd>
-            <span>to search ·</span>
-          </>
+          <span className="scan__hintItem">
+            <kbd className="scan__key">/</kbd> to search
+          </span>
         )}
-        <kbd className="scan__key">Enter</kbd>
-        <span>for all results ·</span>
-        <kbd className="scan__key">Shift</kbd>
-        <kbd className="scan__key">Enter</kbd>
-        <span>copies the top path ·</span>
+        <span className="scan__hintItem">
+          <kbd className="scan__key">Enter</kbd> for all results
+        </span>
+        <span className="scan__hintItem">
+          <kbd className="scan__key">Shift</kbd>
+          <kbd className="scan__key">Enter</kbd> copies the top path
+        </span>
         <button type="button" className="scan__hintBtn" aria-pressed={slash} onClick={toggleSlash}>
           / shortcut {slash ? "on" : "off"}
         </button>
