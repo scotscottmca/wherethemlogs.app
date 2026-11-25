@@ -7,32 +7,27 @@ import { ShareMenu } from "./ShareMenu";
 export function Header() {
   return (
     <header>
-      <a href="#main" className="skip tag mono">
+      <a href="#main" className="skip">
         Skip to content
       </a>
       <div className="hdr">
         <Link href="/" className="hdr__id" aria-label="Where Them Logs App - home">
-          <Mark size={30} />
-          <span className="hdr__word">
-            Where Them
-            <br />
-            Logs App
-          </span>
-          <span className="tag mono hdr__bay">WTLA-01</span>
+          <Mark size={22} />
+          <span className="hdr__word">Where Them Logs App</span>
         </Link>
         <nav className="hdr__nav" aria-label="Primary">
           <ShareMenu />
-          <Link href="/guides" className="hdr__link tag mono">
+          <Link href="/guides" className="hdr__link">
             Guides
           </Link>
-          <Link href="/docs" className="hdr__link tag mono">
+          <Link href="/docs" className="hdr__link">
             Docs
           </Link>
-          <Link href="/privacy" className="hdr__link tag mono">
+          <Link href="/privacy" className="hdr__link">
             Privacy
           </Link>
           <a href={requestAppUrl()} className="hdr__link hdr__link--req">
-            <span className="tag mono">Request an app</span>
+            Request an app
           </a>
         </nav>
       </div>
@@ -40,7 +35,7 @@ export function Header() {
   );
 }
 
-/** Zone banding: platform is a filter, and it is also the aisle you are standing in. */
+/** The platform filter: plain links, so it works before any script loads. */
 export function ZoneTabs({
   active,
   counts,
@@ -50,8 +45,8 @@ export function ZoneTabs({
   counts: Record<string, number>;
   hrefFor: (p: Platform | "all") => string;
 }) {
-  const zones: { id: Platform | "all"; code: string; name: string }[] = [
-    { id: "all", code: "ALL", name: "All platforms" },
+  const zones: { id: Platform | "all"; name: string }[] = [
+    { id: "all", name: "All platforms" },
     ...PLATFORM_META,
   ];
 
@@ -66,26 +61,22 @@ export function ZoneTabs({
           aria-current={active === z.id ? "true" : undefined}
           scroll={false}
         >
-          <ZoneSwatch zone={z.id} />
-          <span className="tag mono">{z.code}</span>
-          <span className="tag mono zone__count">{counts[z.id] ?? 0}</span>
+          {z.name}
+          <span className="zone__count">{counts[z.id] ?? 0}</span>
         </Link>
       ))}
-      <span className="zones__legend tag mono" aria-hidden>
-        Platform filter · default all
-      </span>
     </nav>
   );
 }
 
 /**
- * Colour is never the only signal: each zone also carries its own fill pattern
- * and its own three-letter code.
+ * A small platform marker. Colour is never the only signal: each platform also
+ * carries its own fill pattern, and sits beside its name or code.
  */
 export function ZoneSwatch({ zone, size = 11 }: { zone: Platform | "all"; size?: number }) {
   const fill =
     zone === "all"
-      ? "var(--hivis)"
+      ? "var(--tab)"
       : zone === "windows"
         ? "var(--zone-win)"
         : zone === "macos"
@@ -94,22 +85,13 @@ export function ZoneSwatch({ zone, size = 11 }: { zone: Platform | "all"; size?:
 
   return (
     <svg width={size} height={size} viewBox="0 0 12 12" aria-hidden focusable="false">
-      <rect x="0.75" y="0.75" width="10.5" height="10.5" fill={fill} />
-      <g stroke="var(--ink)" strokeWidth="1.4">
+      <rect x="0.75" y="0.75" width="10.5" height="10.5" rx="2" fill={fill} />
+      <g stroke="var(--surface)" strokeWidth="1.4">
         {zone === "windows" && <path d="M0 6h12" />}
         {zone === "macos" && <path d="M-1 9 9 -1M3 13 13 3" />}
         {zone === "linux" && <path d="M0 3h12M0 9h12" />}
         {zone === "all" && <path d="M6 0v12M0 6h12" />}
       </g>
-      <rect
-        x="0.75"
-        y="0.75"
-        width="10.5"
-        height="10.5"
-        fill="none"
-        stroke="var(--ink-rule)"
-        strokeWidth="1.5"
-      />
     </svg>
   );
 }
@@ -117,20 +99,17 @@ export function ZoneSwatch({ zone, size = 11 }: { zone: Platform | "all"; size?:
 export function Footer({ entryCount }: { entryCount: number | null }) {
   return (
     <footer className="foot no-print">
-      <div className="edge" role="presentation" />
       <div className="foot__row">
-        <nav className="foot__nav tag mono" aria-label="Footer">
-          <Link href="/">Index</Link>
+        <nav className="foot__nav tag" aria-label="Footer">
+          <Link href="/">Home</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/privacy">Privacy &amp; cookies</Link>
           <Link href="/terms">Terms</Link>
-          <a href={requestAppUrl()}>
-            Request an app
-          </a>
+          <a href={requestAppUrl()}>Request an app</a>
         </nav>
-        <p className="tag mono" style={{ margin: 0 }}>
-          {entryCount === null ? "Catalogue" : `${entryCount} entries`}
+        <p className="tag" style={{ margin: 0 }}>
+          {entryCount === null ? "Log file locations for Windows, macOS and Linux" : `${entryCount} apps`}
         </p>
       </div>
     </footer>

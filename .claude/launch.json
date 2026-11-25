@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "wtla", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3777 }
+    { "name": "wtla", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3777 },
+    { "name": "wtla-start", "runtimeExecutable": "npx", "runtimeArgs": ["next", "start", "-p", "3778"], "port": 3778 }
   ]
 }

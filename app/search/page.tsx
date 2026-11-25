@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Header, Footer, ZoneTabs, ZoneSwatch } from "@/components/Chrome";
+import { Header, Footer, ZoneTabs } from "@/components/Chrome";
 import { Scanner } from "@/components/Scanner";
 import { Consent } from "@/components/Consent";
 import { Plate } from "@/components/Plate";
@@ -134,90 +134,31 @@ export default async function Results({ searchParams }: { searchParams: Promise<
   return (
     <>
       <Header />
-      <ZoneTabs active={platform} counts={counts} hrefFor={(p) => buildHref({ q, platform: p, types })} />
 
       <main id="main" tabIndex={-1} className="rack">
         <div className="picklist">
-          <div>
-            {q ? (
-              <h1 className="picklist__q mono">{q}</h1>
-            ) : (
-              <h1
-                className="picklist__q mono"
-                style={{ fontFamily: "inherit", fontStretch: "68%", fontWeight: 900, textTransform: "uppercase" }}
-              >
-                The whole index
-              </h1>
-            )}
-          </div>
-          <div>
-            <p className="tag mono" style={{ margin: 0 }}>
-              {failed
-                ? "The catalogue is not answering"
-                : `${pathCount(plates)} log ${pathCount(plates) === 1 ? "location" : "locations"} tracked${
-                    hasFilters ? ` · ${pathCount(poolPlates)} match the query` : ""
-                  }`}
-            </p>
-            <a className="picklist__refine tag mono" href="#refine">
-              Jump to refine
-              <IconArrow size={13} />
-            </a>
-          </div>
+          <h1 className={`picklist__q${q ? " picklist__q--quoted" : ""}`}>{q || "Every app"}</h1>
+          <p className="tag" style={{ margin: 0 }}>
+            {failed
+              ? "The catalogue is not answering"
+              : `${pathCount(plates)} log ${pathCount(plates) === 1 ? "location" : "locations"}${
+                  hasFilters ? ` · ${pathCount(poolPlates)} match the search` : ""
+                }`}
+          </p>
         </div>
 
         <Scanner platform={platform} initialQuery={q} />
 
         <div className="results">
-          <details className="filters" id="refine" aria-label="Refine results" open>
-            <summary className="rackHead filters__summary">
-              <span className="tag mono">
-                Refine
-                {hasFilters ? ` · ${(platform === "all" ? 0 : 1) + types.length} active` : ""}
-              </span>
-              <span className="tag mono filters__chevron" aria-hidden>
-                Open / close
-              </span>
-            </summary>
-
-            {hasFilters && (
-              <div className="filters__group">
-                <Link className="filters__clear tag mono" href={buildHref({ q, platform: "all", types: [] })}>
-                  <IconClose size={12} />
-                  Clear every filter
-                </Link>
-              </div>
-            )}
-
-            <div className="filters__group">
-              <p className="tag mono" style={{ margin: 0 }}>
-                Platform
-              </p>
-              <div className="filters__set">
-                {[{ id: "all" as const, code: "All" }, ...PLATFORM_META.map((p) => ({ id: p.id, code: p.name }))].map(
-                  (z) => (
-                    <Link
-                      key={z.id}
-                      className="tog tag mono"
-                      href={buildHref({ q, platform: z.id, types })}
-                      aria-current={platform === z.id ? "true" : undefined}
-                      style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
-                    >
-                      <ZoneSwatch zone={z.id} size={10} />
-                      {z.code}
-                    </Link>
-                  ),
-                )}
-              </div>
-            </div>
+          <div className="filters" id="refine">
+            <ZoneTabs active={platform} counts={counts} hrefFor={(p) => buildHref({ q, platform: p, types })} />
 
             {TYPE_GROUPS.map((group) => {
               const shown = group.types.filter((t) => offered.has(t) || types.includes(t));
               if (!shown.length) return null;
               return (
                 <div className="filters__group" key={group.label}>
-                  <p className="tag mono" style={{ margin: 0 }}>
-                    {group.label}
-                  </p>
+                  <span className="tag">{group.label}</span>
                   <div className="filters__set">
                     {shown.map((t) => {
                       const on = types.includes(t);
@@ -238,16 +179,18 @@ export default async function Results({ searchParams }: { searchParams: Promise<
               );
             })}
 
-            <div className="rackNote">
-              <p style={{ margin: 0 }}>
-                Filters stack: every tag you switch on must be true of the entry, so{" "}
-                <span className="mono" style={{ color: "var(--bone-dim)" }}>
-                  msi + x64
-                </span>{" "}
-                returns only 64-bit MSI deployments.
-              </p>
-            </div>
-          </details>
+            {hasFilters && (
+              <div className="filters__group">
+                <Link className="filters__clear tag" href={buildHref({ q, platform: "all", types: [] })}>
+                  <IconClose size={12} />
+                  Clear every filter
+                </Link>
+                <span className="tag">
+                  Filters stack: msi + x64 returns only 64-bit MSI installs.
+                </span>
+              </div>
+            )}
+          </div>
 
           <div className="resultsBody">
             <h2 className="visually-hidden">Results</h2>
@@ -267,10 +210,10 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                 {hiddenCount > 0 && (
                   <div className="void">
                     <p className="void__p" style={{ marginTop: 0 }}>
-                      Showing {shownPlates.length} of {plates.length}. The rest are one click away.
+                      Showing {shownPlates.length} of {plates.length}. Load the next page to see more.
                     </p>
                     <Link
-                      className="btn tag mono"
+                      className="btn"
                       href={buildHref({ q, platform, types, limit: (limit ?? 0) + BROWSE_STEP })}
                     >
                       Show {Math.min(BROWSE_STEP, hiddenCount)} more
@@ -294,13 +237,13 @@ export default async function Results({ searchParams }: { searchParams: Promise<
                     : "Check the spelling, try the vendor name, or open a request - the catalogue grows from them."}
                 </p>
                 {poolPlates.length ? (
-                  <Link className="btn tag mono" href={buildHref({ q, platform: "all", types: [] })}>
+                  <Link className="btn" href={buildHref({ q, platform: "all", types: [] })}>
                     Clear the filters
                     <IconArrow size={15} />
                   </Link>
                 ) : (
                   <a
-                    className="btn tag mono"
+                    className="btn"
                     href={requestAppUrl(q || undefined)}
                   >
                     {q ? `Request “${q}”` : "Request an application"}

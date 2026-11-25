@@ -36,7 +36,7 @@ export default async function ImportExport() {
           facts={
             failed
               ? "The store is not answering"
-              : `${String(vendors.length).padStart(2, "0")} vendors · ${String(apps).padStart(2, "0")} apps · ${String(logPaths).padStart(3, "0")} log paths stored now`
+              : `${vendors.length} vendors · ${apps} apps · ${logPaths} log paths stored now`
           }
         />
         <Aisle rail={<VendorRail vendors={vendors} />}>

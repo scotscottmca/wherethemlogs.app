@@ -56,8 +56,8 @@ export function StockList({ rows }: { rows: StockRow[] }) {
         )}
         <span className="scan__hint tag mono" role="status">
           {shown.length === rows.length
-            ? `${String(rows.length).padStart(3, "0")} apps`
-            : `${String(shown.length).padStart(3, "0")} of ${rows.length}`}
+            ? `${rows.length} apps`
+            : `${shown.length} of ${rows.length}`}
         </span>
       </div>
 
@@ -80,7 +80,7 @@ export function StockList({ rows }: { rows: StockRow[] }) {
               </span>
               <ZoneTags platforms={row.platforms} />
               <span className="tag mono admStock__count">
-                {String(row.logPathCount).padStart(2, "0")} paths
+                {row.logPathCount} paths
               </span>
             </Link>
           ))}

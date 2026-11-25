@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { IconCorner } from "./Icons";
 import { clearRecent, readRecent, type RecentSearch } from "@/lib/recent";
 import type { Platform } from "@/lib/api";
 
-/** The pick list: what this browser looked up, held in this browser. */
+/**
+ * What this browser looked up, held in this browser's local storage. Nothing
+ * shows until there is something to show.
+ */
 export function RecentSearches({ platform }: { platform: Platform | "all" }) {
-  const [items, setItems] = useState<RecentSearch[] | null>(null);
+  const [items, setItems] = useState<RecentSearch[]>([]);
 
   useEffect(() => {
     const sync = () => setItems(readRecent());
@@ -21,51 +23,19 @@ export function RecentSearches({ platform }: { platform: Platform | "all" }) {
     };
   }, []);
 
-  return (
-    <section className="rackCol" aria-labelledby="recent-h">
-      <div className="rackHead">
-        <h2 className="tag mono" id="recent-h" style={{ margin: 0 }}>
-          Recent searches
-        </h2>
-        {items && items.length > 0 && (
-          <button
-            type="button"
-            className="tag mono"
-            onClick={clearRecent}
-            style={{ background: "none", border: 0, cursor: "pointer", color: "var(--bone-faint)" }}
-          >
-            Clear
-          </button>
-        )}
-      </div>
+  if (!items.length) return null;
 
-      {items === null ? (
-        <p className="rackNote" style={{ margin: 0 }}>
-          Reading this browser&hellip;
-        </p>
-      ) : items.length === 0 ? (
-        <div className="rackNote">
-          <p style={{ margin: 0 }}>Nothing picked yet. Searches you run will print here.</p>
-          <p style={{ margin: 0 }}>
-            This list is written to your browser&rsquo;s local storage and never leaves this
-            device. It is not a cookie and it is not sent to the server.
-          </p>
-        </div>
-      ) : (
-        <ul className="picks">
-          {items.map((r) => (
-            <li key={r.q} className="pick">
-              <Link
-                className="pick__link"
-                href={`/search?q=${encodeURIComponent(r.q)}&platform=${platform}`}
-              >
-                <span className="pick__q">{r.q}</span>
-                <IconCorner size={14} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+  return (
+    <p className="added" aria-label="Recent searches">
+      <span>Your recent searches:</span>
+      {items.map((r) => (
+        <Link key={r.q} href={`/search?q=${encodeURIComponent(r.q)}&platform=${platform}`}>
+          {r.q}
+        </Link>
+      ))}
+      <button type="button" onClick={clearRecent}>
+        Clear
+      </button>
+    </p>
   );
 }

@@ -36,7 +36,7 @@ export default async function StockControl() {
           facts={
             failed
               ? "The store is not answering"
-              : `${String(vendors.length).padStart(2, "0")} vendors · ${String(rows.length).padStart(2, "0")} apps · ${String(logPaths).padStart(3, "0")} log paths${empty ? ` · ${empty} app${empty === 1 ? "" : "s"} with no path` : ""}`
+              : `${vendors.length} vendors · ${rows.length} apps · ${logPaths} log paths${empty ? ` · ${empty} app${empty === 1 ? "" : "s"} with no path` : ""}`
           }
           actions={
             <>

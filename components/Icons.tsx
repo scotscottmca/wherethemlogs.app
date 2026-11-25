@@ -132,11 +132,10 @@ export function Mark({ size = 34, className }: IconProps) {
       aria-hidden
       focusable="false"
     >
-      <rect width="32" height="32" fill="var(--ink)" />
-      <rect x="4" y="3" width="6" height="26" fill="var(--bone)" />
-      <rect x="12" y="5" width="14" height="6" fill="var(--bone-dim)" />
-      <rect x="12" y="13" width="20" height="7" fill="var(--hivis)" />
-      <rect x="12" y="22" width="14" height="6" fill="var(--bone-dim)" />
+      <rect x="4" y="3" width="6" height="26" rx="1.5" fill="var(--fg)" />
+      <rect x="12" y="5" width="14" height="6" rx="1.5" fill="var(--muted)" />
+      <rect x="12" y="13" width="20" height="7" rx="1.5" fill="var(--accent)" />
+      <rect x="12" y="22" width="14" height="6" rx="1.5" fill="var(--muted)" />
     </svg>
   );
 }
